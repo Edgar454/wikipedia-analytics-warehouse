@@ -1,0 +1,108 @@
+version: 2
+
+models:
+
+  - name: int_pageviews_classified
+    description: >
+      Pageviews table enriched with a page_type classification derived from
+      URL structure and namespace conventions.
+      Used to separate real article traffic from Wikimedia infrastructure,
+      system pages, and non-content namespaces.
+    columns:
+      - name: wiki
+        description: Wikipedia language community code (e.g. en, fr.m, ja)
+        tests:
+          - not_null
+
+      - name: title
+        description: URL-encoded Wikipedia page title (e.g. Kobe_Bryant)
+        tests:
+          - not_null
+
+      - name: views
+        description: Number of HTTP requests to the page in a given hour
+        tests:
+          - not_null
+
+      - name: datehour
+        description: Hour-level timestamp partition of the pageview event
+        tests:
+          - not_null
+
+      - name: page_type
+        description: >
+          Page classification derived from Wikipedia naming conventions:
+          article, namespace, wikiquote, wiktionary, mediawiki, donation,
+          commons, portal.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
+
+      - name: pageview_id
+        description: >
+          Surrogate key identifying a unique pageview grain:
+          (wiki, title, datehour)
+
+  - name: int_wikidata_instance_of
+    description: >
+      Flattened Wikidata instance_of relationships.
+      Each row represents a (entity → instance_of type) relationship.
+      Used as input for entity type aggregation and classification.
+    columns:
+      - name: en_wiki
+        description: English Wikipedia page title used as join key to pageviews
+        tests:
+          - not_null
+
+      - name: numeric_id
+        description: Wikidata numeric identifier of the instance_of type
+        tests:
+          - not_null
+
+  - name: int_structural_entities
+    description: >
+      Set of Wikidata entity type IDs identified as structural or
+      Wikimedia-infrastructure-related nodes.
+      Derived using subclass_of traversal starting from known structural roots.
+      Used to filter non-content entities in analytical models.
+    columns:
+      - name: numeric_id
+        description: Wikidata numeric ID of a structural entity type
+        tests:
+          - not_null
+
+  - name: bridge_entity_sitelinks
+    description: >
+      Flattened Wikidata sitelinks mapping entities to Wikipedia titles
+      across languages. Enables multilingual matching between pageviews
+      and Wikidata entities.
+
+      This model significantly improves match coverage compared to
+      English-only joins by leveraging language-specific sitelinks.
+
+    columns:
+      - name: numeric_id
+        description: Wikidata entity ID (foreign key to dim_entity)
+        tests:
+          - not_null
+
+      - name: wiki_code
+        description: >
+          Language code derived from sitelinks site (e.g. enwiki → en).
+          Used to align with pageviews wiki column after normalization.
+        tests:
+          - not_null
+
+      - name: site
+        description: Original Wikimedia sitelink site identifier (e.g. enwiki, frwiki)
+        tests:
+          - not_null
+
+      - name: title_raw
+        description: Raw page title from Wikidata sitelinks
+
+      - name: title
+        description: URL-encoded title aligned with pageviews.title format
+        tests:
+          - not_null

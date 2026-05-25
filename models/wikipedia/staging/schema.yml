@@ -1,0 +1,121 @@
+version: 2
+
+models:
+  - name: stg_pageviews_raw
+    description: >
+      Raw pageviews from bigquery-public-data.wikipedia.pageviews_2026.
+      Filtered to last 3 days to accommodate publication lag.
+      One row per wiki + title + datehour.
+    columns:
+      - name: wiki
+        description: Wikipedia language community code (e.g. en, fr.m, ja)
+        tests:
+          - not_null
+      - name: title
+        description: URL-encoded Wikipedia page title (e.g. Kobe_Bryant)
+        tests:
+          - not_null
+      - name: views
+        description: Number of HTTP requests to this page in this hour
+        tests:
+          - not_null
+      - name: datehour
+        description: Partition column — timestamp truncated to the hour
+        tests:
+          - not_null
+
+  - name: stg_wikidata_raw
+    description: >
+      Raw Wikidata snapshot from bigquery-public-data.wikipedia.wikidata.
+      Selects key columns only — excludes item (untouchable, causes quota errors),
+      labels, and aliases (heavy ARRAY columns with 14.5GB minimum scan floor).
+      Adds first_seen_in_pipeline metadata timestamp.
+      Rebuilt manually only when Wikidata snapshot is updated — never auto-refreshed.
+      Current snapshot date: May 13, 2026.
+    columns:
+      - name : id
+        description: Wikidata  entity ID — unique identifier (e.g. Q5 = human)
+        tests:
+          - unique
+          - not_null
+      - name: numeric_id
+        description: >
+          Wikidata numeric identifier. Not globally unique without namespace context
+          (Q-items vs P-properties). Used with entity context for disambiguation.
+        tests:
+          - not_null
+      - name: en_wiki
+        description: >
+          English Wikipedia page title. Primary join key to pageviews for English content.
+          NULL for entities without an English Wikipedia page (~89% of all wikidata entities).
+      - name: en_label
+        description: Human-readable English label for the entity
+      - name: first_seen_in_pipeline
+        description: Timestamp when this wikidata snapshot was loaded into the pipeline
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - type
+            - numeric_id
+
+  - name: stg_pageviews
+    description: >
+      Lightly cleaned pageviews — removes two known garbage rows (- and Index.php).
+      Does NOT filter by page_type or language — classification happens downstream
+      in int_pageviews_classified. Staging models should be 1-to-1 with source,
+      minimal transformation only.
+    columns:
+      - name: wiki
+        description: Wikipedia language community code
+        tests:
+          - not_null
+      - name: title
+        description: URL-encoded Wikipedia page title
+        tests:
+          - not_null
+      - name: views
+        description: Number of HTTP requests to this page in this hour
+        tests:
+          - not_null
+      - name: datehour
+        description: Partition column — timestamp truncated to the hour
+        tests:
+          - not_null
+
+  - name: stg_wikidata
+    description: >
+      Cleaned Wikidata items — filters stg_wikidata_raw to type = 'item' only,
+      excluding P properties which share numeric IDs with Q items and would
+      contaminate entity type resolution and dimension joins.
+      This is the canonical wikidata source for all downstream models.
+      All intermediate and mart models reference this, not stg_wikidata_raw directly.
+    columns:
+      - name: id
+        description: Wikidata entity ID (e.g. Q5)
+        tests:
+          - unique
+          - not_null
+      - name: numeric_id
+        description: >
+          Wikidata numeric ID. Unique within type = 'item' after filtering.
+          Q and P items can share the same numeric ID — filtering to items
+          ensures uniqueness here.
+        tests:
+          - not_null
+      - name: en_wiki
+        description: >
+          English Wikipedia page title. Primary join key to pageviews.
+          NULL for ~89% of entities without an English Wikipedia page.
+      - name: en_label
+        description: Human-readable English label
+      - name: first_seen_in_pipeline
+        description: Timestamp when this wikidata snapshot was loaded
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - type
+            - numeric_id

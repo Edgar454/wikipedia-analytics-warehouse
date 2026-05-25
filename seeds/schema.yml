@@ -1,0 +1,97 @@
+version: 2
+
+seeds:
+  - name: dim_languages
+    description: >
+      Static lookup table mapping Wikipedia wiki codes to language metadata.
+      Covers desktop and mobile variants (e.g. en, en.m) for all major 
+      Wikipedia language communities. Used to enrich pageviews with 
+      human-readable language names and grouping keys.
+    columns:
+      - name: wiki_code
+        description: Raw wiki code as it appears in pageviews (e.g. en, fr.m, ja)
+        tests:
+          - unique
+          - not_null
+      - name: language_name
+        description: Human readable language name
+        tests:
+          - not_null
+      - name: base_wiki
+        description: Base language code stripped of mobile suffix (e.g. en.m → en)
+        tests:
+          - not_null
+      - name: is_mobile
+        description: TRUE if this is a mobile wiki variant
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+      - name: wiki_group
+        description: >
+          Grouping key that combines desktop and mobile variants 
+          (e.g. en and en.m both belong to en_all). Used for 
+          aggregating traffic across device types.
+        tests:
+          - not_null
+
+  - name: structural_roots
+    description: >
+      Curated seed of known Wikidata entity type IDs that represent 
+      Wikimedia infrastructure rather than real-world content.
+      Used by int_structural_entities to flag noise entity types
+      via subclass_of graph traversal — any entity type that is a
+      subclass of these roots is considered structural.
+      Add new rows when new Wikimedia infrastructure types are discovered.
+    columns:
+      - name: numeric_id
+        description: Wikidata numeric ID (e.g. 4167836 for Wikimedia category)
+        tests:
+          - unique
+          - not_null
+      - name: label
+        description: Human readable label for the structural root
+        tests:
+          - not_null
+
+  - name: wiki_classifications
+    description: >
+      Seed-driven classification rules for Wikipedia wiki codes.
+      Maps wiki code patterns to page_type categories.
+      Used by int_pageviews_classified to classify non-article traffic
+      without hardcoding logic in SQL.
+      Adding a new Wikimedia project requires only a new CSV row —
+      no model changes needed.
+      Pattern matching uses BigQuery LIKE syntax:
+      % prefix = starts with, % suffix = ends with.
+    columns:
+      - name: pattern
+        description: >
+          LIKE pattern to match against the wiki column.
+          Examples: thankyou% matches thankyou and thankyou.m,
+          %.q matches en.q, fr.q etc.
+        tests:
+          - unique
+          - not_null
+      - name: match_type
+        description: >
+          Whether the pattern matches a prefix or suffix of the wiki code.
+          prefix = wiki LIKE pattern (e.g. thankyou%),
+          suffix = wiki LIKE pattern (e.g. %.q)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [prefix, suffix]
+      - name: page_type
+        description: >
+          The page_type value assigned when this pattern matches.
+          Must match accepted_values in int_pageviews_classified and gold_pageviews_enriched.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
+      - name: description
+        description: Human readable explanation of what this pattern covers
+        tests:
+          - not_null

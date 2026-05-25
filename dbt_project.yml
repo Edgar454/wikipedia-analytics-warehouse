@@ -1,0 +1,19 @@
+name: 'wikipedia'
+version: '1.0.0'
+config-version: 2
+
+profile: 'wikipedia'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+models:
+  wikipedia:
+    wikipedia:
+      staging:
+        +materialized: view
+      intermediate:
+        +materialized: view
+      marts:
+        +materialized: table

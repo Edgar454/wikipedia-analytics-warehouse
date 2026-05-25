@@ -1,0 +1,30 @@
+pattern,match_type,page_type,description
+%.q,suffix,wikiquote,Wikiquote project
+%.d,suffix,wiktionary,Wiktionary project
+%.w,suffix,mediawiki,MediaWiki project
+%.s,suffix,wikisource,Wikisource project
+%.b,suffix,wikibooks,Wikibooks project
+%.v,suffix,wikiversity,Wikiversity project
+%.voy,suffix,wikivoyage,Wikivoyage project
+%.n,suffix,wikinews,Wikinews project
+thankyou%,prefix,donation,Wikimedia donation pages
+commons%,prefix,commons,Wikimedia Commons
+species%,prefix,wikispecies,Wikispecies project
+www.%,prefix,portal,Wikimedia web portals
+meta%,prefix,portal,Wikimedia Meta
+foundation%,prefix,portal,Wikimedia Foundation
+wikitech%,prefix,portal,Wikimedia technical infrastructure
+m.wd%,prefix,portal,Wikidata mobile
+outreach%,prefix,portal,Wikimedia Outreach
+incubator%,prefix,portal,Wikimedia Incubator
+strategy%,prefix,portal,Wikimedia Strategy
+wikimania%,prefix,portal,Wikimania
+abstract%,prefix,portal,Abstract Wikipedia
+nostalgia%,prefix,portal,Nostalgia Wikipedia
+test%,prefix,portal,Wikimedia test wikis
+beta%,prefix,portal,Wikimedia Beta
+usability%,prefix,portal,Wikimedia Usability
+advisory%,prefix,portal,Wikimedia Advisory
+fdc%,prefix,portal,Wikimedia FDC
+wb%,prefix,portal,Wikimedia Wb portal
+wg-%,prefix,portal,Wikimedia working groups

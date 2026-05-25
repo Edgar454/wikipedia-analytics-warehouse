@@ -1,0 +1,449 @@
+version: 2
+
+models:
+
+  - name: dim_date
+    description: >
+      Hourly date dimension covering the analysis period.
+      Generated in dbt without external dependencies.
+      Supports time-based aggregation at hour, day, month, and year levels.
+    columns:
+      - name: date_id
+        description: Surrogate key in YYYYMMDDHH format used for joins with fact tables.
+        tests:
+          - unique
+          - not_null
+
+      - name: datehour
+        description: Hourly timestamp representing the grain of the dimension.
+        tests:
+          - unique
+          - not_null
+
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests: [not_null]
+
+      - name: day
+        tests: [not_null]
+
+      - name: day_of_week
+        description: Numeric representation of weekday.
+        tests: [not_null]
+
+      - name: hour
+        tests: [not_null]
+
+      - name: is_weekend
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: day_name
+        tests: [not_null]
+
+      - name: month_name
+        tests: [not_null]
+
+
+  - name: dim_entity
+    description: >
+      Entity dimension derived from Wikidata.
+      Represents Wikipedia-referenced entities enriched with descriptive metadata.
+      Each row corresponds to one Wikidata entity.
+    columns:
+      - name: entity_id
+        description: Wikidata entity identifier.
+        tests:
+          - unique
+          - not_null
+
+      - name: numeric_id
+        description: Numeric component of the Wikidata identifier.
+        tests:
+          - not_null
+
+      - name: en_wiki
+        description: English Wikipedia page title associated with the entity.
+
+      - name: en_label
+        description: Human-readable label of the entity.
+
+      - name: en_description
+        description: Short textual description of the entity.
+
+      - name: first_instance_of_id
+        description: >
+          Primary instance_of type associated with the entity.
+          Selected from the instance_of array without semantic ordering guarantees.
+
+
+  - name: dim_entity_type
+    description: >
+      Dimension mapping Wikidata instance_of identifiers to human-readable types.
+      Includes classification flags used for filtering non-content or infrastructure entities.
+    columns:
+      - name: numeric_id
+        description: Wikidata identifier of the entity type.
+        tests:
+          - unique
+          - not_null
+
+      - name: type_label
+        description: Human-readable label of the entity type.
+
+      - name: is_structural
+        description: >
+          Indicates whether the type belongs to Wikimedia infrastructure
+          rather than real-world content entities.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: is_leaf_like_type
+        description: >
+          Heuristic flag indicating whether the type appears as a terminal
+          node in the subclass hierarchy. Not strictly guaranteed.
+
+      - name: frequency
+        description: Occurrence count of this type in Wikidata instance_of relationships.
+
+
+  - name: fact_pageviews
+    description: >
+      Core fact table at grain (wiki, title, datehour).
+      Represents aggregated pageview events from Wikipedia.
+    columns:
+      - name: pageview_id
+        description: Surrogate key uniquely identifying a pageview record.
+        tests:
+          - not_null
+
+      - name: wiki
+        description: Wikipedia language edition code.
+        tests:
+          - not_null
+
+      - name: title
+        description: Wikipedia page title.
+        tests:
+          - not_null
+
+      - name: views
+        description: Number of page requests for the given hour.
+        tests:
+          - not_null
+
+      - name: datehour
+        description: Hourly timestamp of the pageview event.
+        tests:
+          - not_null
+
+      - name: page_type
+        description: Classification of page based on namespace and naming rules.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
+
+
+  - name: gold_pageviews_enriched
+    description: >
+      Analytical view joining pageviews with entity and language dimensions.
+      Provides multilingual entity enrichment and supports downstream aggregation
+      for dashboards and analytical marts.
+
+      Includes matched and unmatched signals used to analyze coverage gaps
+      between Wikipedia traffic and Wikidata coverage.
+    columns:
+      - name: pageview_id
+        description: Surrogate key from fact_pageviews.
+        tests:
+          - not_null
+
+      - name: wiki
+        tests: [not_null]
+
+      - name: title
+        tests: [not_null]
+
+      - name: views
+        tests: [not_null]
+
+      - name: page_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
+
+      - name: is_matched
+        description: Indicates whether pageview was matched to a Wikidata entity.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: language_name
+        description: Human-readable Wikipedia language name.
+
+      - name: is_mobile
+        description: Indicates whether traffic originates from mobile Wikipedia.
+
+      - name: year
+      - name: month
+
+      - name: type_label
+        description: Entity type label when available.
+
+      - name: is_structural
+        description: Indicates whether matched entity type is structural.
+
+      - name: en_label
+        description: Entity label when available.
+
+  - name: mart_daily_global_trends
+    description: >
+      Daily global Wikipedia traffic trends across all languages and page types.
+      This mart provides the main temporal aggregation for high-level monitoring
+      of overall Wikipedia consumption patterns.
+
+      Used for KPI cards and trend visualizations (total views, active pages,
+      language activity, and content-type distribution).
+
+    columns:
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests: [not_null]
+
+      - name: day
+        tests: [not_null]
+
+      - name: total_views
+        description: Total number of pageview requests aggregated for the day.
+        tests:
+          - not_null
+
+      - name: total_pageviews
+        description: Number of pageview records aggregated at daily level.
+        tests:
+          - not_null
+
+      - name: unique_pages
+        description: Distinct Wikipedia pages visited during the day.
+        tests:
+          - not_null
+
+      - name: active_wikis
+        description: Number of Wikipedia language editions active during the day.
+        tests:
+          - not_null
+
+      - name: article_views
+        description: Views corresponding to article namespace pages.
+        tests:
+          - not_null
+
+      - name: non_article_views
+        description: Views corresponding to non-article pages (special, media, portals, etc.).
+        tests:
+          - not_null
+
+      - name: article_ratio
+        description: Ratio of article views over total views.
+        tests:
+          - not_null
+
+
+  - name: mart_language_daily
+    description: >
+      Daily traffic distribution by Wikipedia language group.
+      Enables analysis of cross-language consumption patterns,
+      mobile vs desktop behavior, and comparative activity levels.
+
+    columns:
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests: [not_null]
+
+      - name: day
+        tests: [not_null]
+
+      - name: wiki_group
+        description: Language group combining desktop and mobile variants.
+        tests: [not_null]
+
+      - name: language_name
+        description: Human-readable language name.
+        tests: [not_null]
+
+      - name: total_views
+        tests: [not_null]
+
+      - name: pageviews
+        description: Number of pageview records for this language group.
+        tests: [not_null]
+
+      - name: unique_pages
+        description: Number of distinct pages visited per language group.
+        tests: [not_null]
+
+      - name: share_of_global_views
+        description: Share of global Wikipedia traffic contributed by this language group.
+        tests: [not_null]
+
+      - name: match_rate_weighted
+        description: Weighted proportion of views successfully matched to Wikidata entities.
+        tests: [not_null]
+
+      - name: is_mobile
+        description: Indicates whether the row represents mobile traffic aggregation.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: mobile_views
+        description: Total views originating from mobile Wikipedia traffic.
+        tests: [not_null]
+
+
+  - name: mart_page_type_trends
+    description: >
+      Daily distribution of Wikipedia traffic by page type.
+      Captures how users interact with Wikipedia at a system level
+      (articles vs namespaces vs special pages).
+
+      Useful for understanding platform behavior, bot activity,
+      and navigation patterns.
+
+    columns:
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests: [not_null]
+
+      - name: day
+        tests: [not_null]
+
+      - name: page_type
+        description: Classification of Wikipedia pages by namespace and function.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
+
+      - name: total_views
+        description: Total views per page type per day.
+        tests: [not_null]
+
+      - name: pageviews
+        description: Number of pageview records contributing to this group.
+        tests: [not_null]
+
+      - name: share_of_daily_views
+        description: Share of total daily traffic represented by this page type.
+        tests: [not_null]
+
+
+  - name: mart_entity_daily
+    description: >
+      Daily entity-level Wikipedia consumption aggregated by Wikidata entity.
+      Enables analysis of most viewed entities, entity popularity trends,
+      and structural content consumption patterns.
+
+      This mart is the foundation for entity-centric dashboards.
+
+    columns:
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests: [not_null]
+
+      - name: day
+        tests: [not_null]
+
+      - name: numeric_id
+        description: Wikidata numeric identifier of the entity.
+        tests:
+          - not_null
+
+      - name: en_label
+        description: Human-readable entity name.
+        tests: []
+
+      - name: type_label
+        description: Entity type classification label.
+        tests: []
+
+      - name: total_views
+        description: Total views for the entity on a given day.
+        tests:
+          - not_null
+
+      - name: pageviews
+        description: Number of pageview records contributing to entity aggregation.
+        tests:
+          - not_null
+
+      - name: rolling_7d_views
+        description: Rolling 7-day view sum per entity.
+        tests:
+          - not_null
+
+      - name: share_of_daily_views
+        description: Entity share of total daily traffic.
+        tests:
+          - not_null
+
+      - name: is_structural
+        description: Indicates whether the entity type is Wikimedia infrastructure.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+  - name: mart_language_coverage_gaps
+    description: >
+      Debug mart that identifies Wikipedia language codes present in the
+      pageviews dataset but not properly mapped in the dim_languages dimension.
+
+      This mart captures coverage gaps in language metadata enrichment:
+      rows appear when a wiki_code cannot be resolved to a known language
+      in the language seed/dimension table.
+
+      Used for:
+      - detecting missing or outdated language mappings
+      - monitoring evolution of Wikipedia language editions
+      - validating completeness of language dimension coverage
+
+    columns:
+
+      - name: wiki
+        description: Wikipedia language edition code (e.g. en, fr, ja, unknown)
+        tests:
+          - not_null
+
+      - name: pageviews
+        description: Number of pageview records for this unmapped wiki code
+        tests:
+          - not_null
+
+      - name: total_views
+        description: Total number of views for unmapped wiki codes
+        tests:
+          - not_null

@@ -1,0 +1,7 @@
+sources:
+  - name: wikipedia
+    database: bigquery-public-data
+    schema: wikipedia
+    tables:
+      - name: pageviews_2026
+      - name: wikidata

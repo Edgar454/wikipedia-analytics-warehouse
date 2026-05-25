@@ -1,0 +1,335 @@
+wiki_code,language_name,base_wiki,is_mobile,wiki_group
+en,English,en,FALSE,en_all
+en.m,English,en,TRUE,en_all
+fr,French,fr,FALSE,fr_all
+fr.m,French,fr,TRUE,fr_all
+de,German,de,FALSE,de_all
+de.m,German,de,TRUE,de_all
+es,Spanish,es,FALSE,es_all
+es.m,Spanish,es,TRUE,es_all
+ja,Japanese,ja,FALSE,ja_all
+ja.m,Japanese,ja,TRUE,ja_all
+ar,Arabic,ar,FALSE,ar_all
+ar.m,Arabic,ar,TRUE,ar_all
+zh,Chinese,zh,FALSE,zh_all
+ru,Russian,ru,FALSE,ru_all
+ru.m,Russian,ru,TRUE,ru_all
+pt,Portuguese,pt,FALSE,pt_all
+pt.m,Portuguese,pt,TRUE,pt_all
+it,Italian,it,FALSE,it_all
+it.m,Italian,it,TRUE,it_all
+pl,Polish,pl,FALSE,pl_all
+pl.m,Polish,pl,TRUE,pl_all
+nl,Dutch,nl,FALSE,nl_all
+nl.m,Dutch,nl,TRUE,nl_all
+sv,Swedish,sv,FALSE,sv_all
+sv.m,Swedish,sv,TRUE,sv_all
+uk,Ukrainian,uk,FALSE,uk_all
+uk.m,Ukrainian,uk,TRUE,uk_all
+no,Norwegian,no,FALSE,no_all
+no.m,Norwegian,no,TRUE,no_all
+fi,Finnish,fi,FALSE,fi_all
+fi.m,Finnish,fi,TRUE,fi_all
+cs,Czech,cs,FALSE,cs_all
+cs.m,Czech,cs,TRUE,cs_all
+hu,Hungarian,hu,FALSE,hu_all
+hu.m,Hungarian,hu,TRUE,hu_all
+ko,Korean,ko,FALSE,ko_all
+ko.m,Korean,ko,TRUE,ko_all
+tr,Turkish,tr,FALSE,tr_all
+tr.m,Turkish,tr,TRUE,tr_all
+vi,Vietnamese,vi,FALSE,vi_all
+vi.m,Vietnamese,vi,TRUE,vi_all
+ro,Romanian,ro,FALSE,ro_all
+ro.m,Romanian,ro,TRUE,ro_all
+id,Indonesian,id,FALSE,id_all
+id.m,Indonesian,id,TRUE,id_all
+he,Hebrew,he,FALSE,he_all
+he.m,Hebrew,he,TRUE,he_all
+ca,Catalan,ca,FALSE,ca_all
+ca.m,Catalan,ca,TRUE,ca_all
+fa,Persian,fa,FALSE,fa_all
+fa.m,Persian,fa,TRUE,fa_all
+ms,Malay,ms,FALSE,ms_all
+ms.m,Malay,ms,TRUE,ms_all
+sr,Serbian,sr,FALSE,sr_all
+sr.m,Serbian,sr,TRUE,sr_all
+da,Danish,da,FALSE,da_all
+da.m,Danish,da,TRUE,da_all
+bg,Bulgarian,bg,FALSE,bg_all
+bg.m,Bulgarian,bg,TRUE,bg_all
+sk,Slovak,sk,FALSE,sk_all
+sk.m,Slovak,sk,TRUE,sk_all
+hr,Croatian,hr,FALSE,hr_all
+hr.m,Croatian,hr,TRUE,hr_all
+lt,Lithuanian,lt,FALSE,lt_all
+lt.m,Lithuanian,lt,TRUE,lt_all
+sl,Slovenian,sl,FALSE,sl_all
+sl.m,Slovenian,sl,TRUE,sl_all
+et,Estonian,et,FALSE,et_all
+et.m,Estonian,et,TRUE,et_all
+gl,Galician,gl,FALSE,gl_all
+gl.m,Galician,gl,TRUE,gl_all
+eu,Basque,eu,FALSE,eu_all
+eu.m,Basque,eu,TRUE,eu_all
+th,Thai,th,FALSE,th_all
+th.m,Thai,th,TRUE,th_all
+lv,Latvian,lv,FALSE,lv_all
+lv.m,Latvian,lv,TRUE,lv_all
+simple,Simple English,simple,FALSE,en_all
+simple.m,Simple English,simple,TRUE,en_all
+sh,Serbo-Croatian,sh,FALSE,sh_all
+sh.m,Serbo-Croatian,sh,TRUE,sh_all
+nn,Norwegian Nynorsk,nn,FALSE,no_all
+nn.m,Norwegian Nynorsk,nn,TRUE,no_all
+sq,Albanian,sq,FALSE,sq_all
+sq.m,Albanian,sq,TRUE,sq_all
+hy,Armenian,hy,FALSE,hy_all
+hy.m,Armenian,hy,TRUE,hy_all
+ur,Urdu,ur,FALSE,ur_all
+ur.m,Urdu,ur,TRUE,ur_all
+ta,Tamil,ta,FALSE,ta_all
+ta.m,Tamil,ta,TRUE,ta_all
+mk,Macedonian,mk,FALSE,mk_all
+mk.m,Macedonian,mk,TRUE,mk_all
+eo,Esperanto,eo,FALSE,eo_all
+eo.m,Esperanto,eo,TRUE,eo_all
+be,Belarusian,be,FALSE,be_all
+be.m,Belarusian,be,TRUE,be_all
+ka,Georgian,ka,FALSE,ka_all
+ka.m,Georgian,ka,TRUE,ka_all
+af,Afrikaans,af,FALSE,af_all
+af.m,Afrikaans,af,TRUE,af_all
+bs,Bosnian,bs,FALSE,bs_all
+bs.m,Bosnian,bs,TRUE,bs_all
+ml,Malayalam,ml,FALSE,ml_all
+ml.m,Malayalam,ml,TRUE,ml_all
+az,Azerbaijani,az,FALSE,az_all
+az.m,Azerbaijani,az,TRUE,az_all
+bn,Bengali,bn,FALSE,bn_all
+bn.m,Bengali,bn,TRUE,bn_all
+mr,Marathi,mr,FALSE,mr_all
+mr.m,Marathi,mr,TRUE,mr_all
+cy,Welsh,cy,FALSE,cy_all
+cy.m,Welsh,cy,TRUE,cy_all
+pa,Punjabi,pa,FALSE,pa_all
+pa.m,Punjabi,pa,TRUE,pa_all
+oc,Occitan,oc,FALSE,oc_all
+oc.m,Occitan,oc,TRUE,oc_all
+is,Icelandic,is,FALSE,is_all
+is.m,Icelandic,is,TRUE,is_all
+el,Greek,el,FALSE,el_all
+el.m,Greek,el,TRUE,el_all
+la,Latin,la,FALSE,la_all
+la.m,Latin,la,TRUE,la_all
+ast,Asturian,ast,FALSE,ast_all
+ast.m,Asturian,ast,TRUE,ast_all
+sc,Sardinian,sc,FALSE,sc_all
+sc.m,Sardinian,sc,TRUE,sc_all
+ga,Irish,ga,FALSE,ga_all
+ga.m,Irish,ga,TRUE,ga_all
+zh.m,Chinese,zh,TRUE,zh_all
+wuu,Wu Chinese,wuu,FALSE,zh_all
+wuu.m,Wu Chinese,wuu,TRUE,zh_all
+zh_yue,Cantonese,zh_yue,FALSE,zh_all
+zh_yue.m,Cantonese,zh_yue,TRUE,zh_all
+zh_min_nan,Min Nan Chinese,zh_min_nan,FALSE,zh_all
+zh_min_nan.m,Min Nan Chinese,zh_min_nan,TRUE,zh_all
+war,Waray,war,FALSE,war_all
+war.m,Waray,war,TRUE,war_all
+sco,Scots,sco,FALSE,sco_all
+sco.m,Scots,sco,TRUE,sco_all
+be_x_old,Belarusian (Taraškievica),be_x_old,FALSE,be_all
+be_x_old.m,Belarusian (Taraškievica),be_x_old,TRUE,be_all
+arz,Egyptian Arabic,arz,FALSE,ar_all
+arz.m,Egyptian Arabic,arz,TRUE,ar_all
+azb,South Azerbaijani,azb,FALSE,az_all
+azb.m,South Azerbaijani,azb,TRUE,az_all
+bar,Bavarian,bar,FALSE,de_all
+bar.m,Bavarian,bar,TRUE,de_all
+ba,Bashkir,ba,FALSE,ba_all
+ba.m,Bashkir,ba,TRUE,ba_all
+fo,Faroese,fo,FALSE,fo_all
+fo.m,Faroese,fo,TRUE,fo_all
+fy,Western Frisian,fy,FALSE,fy_all
+fy.m,Western Frisian,fy,TRUE,fy_all
+hif,Fiji Hindi,hif,FALSE,hif_all
+hif.m,Fiji Hindi,hif,TRUE,hif_all
+ia,Interlingua,ia,FALSE,ia_all
+ia.m,Interlingua,ia,TRUE,ia_all
+ie,Interlingue,ie,FALSE,ie_all
+ie.m,Interlingue,ie,TRUE,ie_all
+io,Ido,io,FALSE,io_all
+io.m,Ido,io,TRUE,io_all
+jv,Javanese,jv,FALSE,jv_all
+jv.m,Javanese,jv,TRUE,jv_all
+ks,Kashmiri,ks,FALSE,ks_all
+ks.m,Kashmiri,ks,TRUE,ks_all
+kw,Cornish,kw,FALSE,kw_all
+kw.m,Cornish,kw,TRUE,kw_all
+ky,Kyrgyz,ky,FALSE,ky_all
+ky.m,Kyrgyz,ky,TRUE,ky_all
+lfn,Lingua Franca Nova,lfn,FALSE,lfn_all
+lfn.m,Lingua Franca Nova,lfn,TRUE,lfn_all
+mg,Malagasy,mg,FALSE,mg_all
+mg.m,Malagasy,mg,TRUE,mg_all
+mrj,Hill Mari,mrj,FALSE,mrj_all
+mrj.m,Hill Mari,mrj,TRUE,mrj_all
+mzn,Mazanderani,mzn,FALSE,mzn_all
+mzn.m,Mazanderani,mzn,TRUE,mzn_all
+pam,Kapampangan,pam,FALSE,pam_all
+pam.m,Kapampangan,pam,TRUE,pam_all
+pnb,Western Punjabi,pnb,FALSE,pnb_all
+pnb.m,Western Punjabi,pnb,TRUE,pnb_all
+vep,Veps,vep,FALSE,vep_all
+vep.m,Veps,vep,TRUE,vep_all
+hi,Hindi,hi,FALSE,hi_all
+hi.m,Hindi,hi,TRUE,hi_all
+ceb,Cebuano,ceb,FALSE,ceb_all
+ceb.m,Cebuano,ceb,TRUE,ceb_all
+kk,Kazakh,kk,FALSE,kk_all
+kk.m,Kazakh,kk,TRUE,kk_all
+ha,Hausa,ha,FALSE,ha_all
+ha.m,Hausa,ha,TRUE,ha_all
+uz,Uzbek,uz,FALSE,uz_all
+uz.m,Uzbek,uz,TRUE,uz_all
+te,Telugu,te,FALSE,te_all
+te.m,Telugu,te,TRUE,te_all
+my,Burmese,my,FALSE,my_all
+my.m,Burmese,my,TRUE,my_all
+mn,Mongolian,mn,FALSE,mn_all
+mn.m,Mongolian,mn,TRUE,mn_all
+sw,Swahili,sw,FALSE,sw_all
+sw.m,Swahili,sw,TRUE,sw_all
+tl,Tagalog,tl,FALSE,tl_all
+tl.m,Tagalog,tl,TRUE,tl_all
+km,Khmer,km,FALSE,km_all
+km.m,Khmer,km,TRUE,km_all
+si,Sinhala,si,FALSE,si_all
+si.m,Sinhala,si,TRUE,si_all
+ne,Nepali,ne,FALSE,ne_all
+ne.m,Nepali,ne,TRUE,ne_all
+gu,Gujarati,gu,FALSE,gu_all
+gu.m,Gujarati,gu,TRUE,gu_all
+ku,Kurdish,ku,FALSE,ku_all
+ku.m,Kurdish,ku,TRUE,ku_all
+zh-yue,Cantonese,zh-yue,FALSE,zh_all
+zh-yue.m,Cantonese,zh-yue,TRUE,zh_all
+an,Aragonese,an,FALSE,an_all
+an.m,Aragonese,an,TRUE,an_all
+zh-min-nan,Min Nan Chinese,zh-min-nan,FALSE,zh_all
+zh-min-nan.m,Min Nan Chinese,zh-min-nan,TRUE,zh_all
+bcl,Central Bikol,bcl,FALSE,bcl_all
+bcl.m,Central Bikol,bcl,TRUE,bcl_all
+tt,Tatar,tt,FALSE,tt_all
+tt.m,Tatar,tt,TRUE,tt_all
+ce,Chechen,ce,FALSE,ce_all
+ce.m,Chechen,ce,TRUE,ce_all
+hak,Hakka Chinese,hak,FALSE,zh_all
+hak.m,Hakka Chinese,hak,TRUE,zh_all
+kn,Kannada,kn,FALSE,kn_all
+kn.m,Kannada,kn,TRUE,kn_all
+new,Newari,new,FALSE,new_all
+zh-classical,Classical Chinese,zh-classical,FALSE,zh_all
+zh-classical.m,Classical Chinese,zh-classical,TRUE,zh_all
+dv,Dhivehi,dv,FALSE,dv_all
+dv.m,Dhivehi,dv,TRUE,dv_all
+so,Somali,so,FALSE,so_all
+so.m,Somali,so,TRUE,so_all
+ff,Fula,ff,FALSE,ff_all
+ff.m,Fula,ff,TRUE,ff_all
+cdo,Min Dong Chinese,cdo,FALSE,zh_all
+cdo.m,Min Dong Chinese,cdo,TRUE,zh_all
+ig,Igbo,ig,FALSE,ig_all
+ig.m,Igbo,ig,TRUE,ig_all
+lmo,Lombard,lmo,FALSE,lmo_all
+lmo.m,Lombard,lmo,TRUE,lmo_all
+lb,Luxembourgish,lb,FALSE,lb_all
+lb.m,Luxembourgish,lb,TRUE,lb_all
+min,Minangkabau,min,FALSE,min_all
+min.m,Minangkabau,min,TRUE,min_all
+sn,Shona,sn,FALSE,sn_all
+sn.m,Shona,sn,TRUE,sn_all
+als,Alemannic,als,FALSE,de_all
+als.m,Alemannic,als,TRUE,de_all
+tg,Tajik,tg,FALSE,tg_all
+tg.m,Tajik,tg,TRUE,tg_all
+as,Assamese,as,FALSE,as_all
+as.m,Assamese,as,TRUE,as_all
+gcr,Guianan Creole,gcr,FALSE,gcr_all
+gcr.m,Guianan Creole,gcr,TRUE,gcr_all
+nds,Low German,nds,FALSE,de_all
+nds.m,Low German,nds,TRUE,de_all
+sat,Santali,sat,FALSE,sat_all
+sat.m,Santali,sat,TRUE,sat_all
+dag,Dagbani,dag,FALSE,dag_all
+dag.m,Dagbani,dag,TRUE,dag_all
+be-tarask,Belarusian Taraškievica,be-tarask,FALSE,be_all
+be-tarask.m,Belarusian Taraškievica,be-tarask,TRUE,be_all
+ang,Old English,ang,FALSE,ang_all
+ang.m,Old English,ang,TRUE,ang_all
+ckb,Central Kurdish,ckb,FALSE,ckb_all
+ckb.m,Central Kurdish,ckb,TRUE,ckb_all
+shi,Tachelhit,shi,FALSE,shi_all
+br,Breton,br,FALSE,br_all
+br.m,Breton,br,TRUE,br_all
+su,Sundanese,su,FALSE,su_all
+su.m,Sundanese,su,TRUE,su_all
+frr,North Frisian,frr,FALSE,frr_all
+frr.m,North Frisian,frr,TRUE,frr_all
+gan,Gan Chinese,gan,FALSE,zh_all
+gan.m,Gan Chinese,gan,TRUE,zh_all
+vec,Venetian,vec,FALSE,vec_all
+vec.m,Venetian,vec,TRUE,vec_all
+ps,Pashto,ps,FALSE,ps_all
+ps.m,Pashto,ps,TRUE,ps_all
+ary,Moroccan Arabic,ary,FALSE,ar_all
+ary.m,Moroccan Arabic,ary,TRUE,ar_all
+ban,Balinese,ban,FALSE,ban_all
+ban.m,Balinese,ban,TRUE,ban_all
+vo,Volapük,vo,FALSE,vo_all
+vo.m,Volapük,vo,TRUE,vo_all
+cv,Chuvash,cv,FALSE,cv_all
+cv.m,Chuvash,cv,TRUE,cv_all
+diq,Zazaki,diq,FALSE,diq_all
+diq.m,Zazaki,diq,TRUE,diq_all
+li,Limburgish,li,FALSE,li_all
+li.m,Limburgish,li,TRUE,li_all
+ht,Haitian Creole,ht,FALSE,ht_all
+ht.m,Haitian Creole,ht,TRUE,ht_all
+scn,Sicilian,scn,FALSE,scn_all
+scn.m,Sicilian,scn,TRUE,scn_all
+qu,Quechua,qu,FALSE,qu_all
+qu.m,Quechua,qu,TRUE,qu_all
+am,Amharic,am,FALSE,am_all
+am.m,Amharic,am,TRUE,am_all
+yo,Yoruba,yo,FALSE,yo_all
+yo.m,Yoruba,yo,TRUE,yo_all
+szl,Silesian,szl,FALSE,szl_all
+szl.m,Silesian,szl,TRUE,szl_all
+bo,Tibetan,bo,FALSE,bo_all
+bo.m,Tibetan,bo,TRUE,bo_all
+bug,Buginese,bug,FALSE,bug_all
+bug.m,Buginese,bug,TRUE,bug_all
+om,Oromo,om,FALSE,om_all
+om.m,Oromo,om,TRUE,om_all
+os,Ossetic,os,FALSE,os_all
+os.m,Ossetic,os,TRUE,os_all
+gv,Manx,gv,FALSE,gv_all
+gv.m,Manx,gv,TRUE,gv_all
+rw,Kinyarwanda,rw,FALSE,rw_all
+rw.m,Kinyarwanda,rw,TRUE,rw_all
+nso,Northern Sotho,nso,FALSE,nso_all
+nso.m,Northern Sotho,nso,TRUE,nso_all
+vls,West Flemish,vls,FALSE,vls_all
+vls.m,West Flemish,vls,TRUE,vls_all
+pms,Piedmontese,pms,FALSE,pms_all
+pms.m,Piedmontese,pms,TRUE,pms_all
+wa,Walloon,wa,FALSE,wa_all
+wa.m,Walloon,wa,TRUE,wa_all
+sd,Sindhi,sd,FALSE,sd_all
+sd.m,Sindhi,sd,TRUE,sd_all
+xh,Xhosa,xh,FALSE,xh_all
+xh.m,Xhosa,xh,TRUE,xh_all
+zu,Zulu,zu,FALSE,zu_all
+zu.m,Zulu,zu,TRUE,zu_all
