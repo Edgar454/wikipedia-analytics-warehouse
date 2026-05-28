@@ -19,5 +19,3 @@ SELECT
     page_type,
     CONCAT(wiki, '|', title, '|', CAST(datehour AS STRING)) AS pageview_id
 FROM {{ ref('int_pageviews_classified') }}
-WHERE wiki IS NOT NULL
-AND wiki != ''

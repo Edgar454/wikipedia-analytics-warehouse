@@ -81,40 +81,6 @@ models:
           Primary instance_of type associated with the entity.
           Selected from the instance_of array without semantic ordering guarantees.
 
-
-  - name: dim_entity_type
-    description: >
-      Dimension mapping Wikidata instance_of identifiers to human-readable types.
-      Includes classification flags used for filtering non-content or infrastructure entities.
-    columns:
-      - name: numeric_id
-        description: Wikidata identifier of the entity type.
-        tests:
-          - unique
-          - not_null
-
-      - name: type_label
-        description: Human-readable label of the entity type.
-
-      - name: is_structural
-        description: >
-          Indicates whether the type belongs to Wikimedia infrastructure
-          rather than real-world content entities.
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              quote: false
-
-      - name: is_leaf_like_type
-        description: >
-          Heuristic flag indicating whether the type appears as a terminal
-          node in the subclass hierarchy. Not strictly guaranteed.
-
-      - name: frequency
-        description: Occurrence count of this type in Wikidata instance_of relationships.
-
-
   - name: fact_pageviews
     description: >
       Core fact table at grain (wiki, title, datehour).
@@ -208,242 +174,273 @@ models:
       - name: en_label
         description: Entity label when available.
 
-  - name: mart_daily_global_trends
-    description: >
-      Daily global Wikipedia traffic trends across all languages and page types.
-      This mart provides the main temporal aggregation for high-level monitoring
-      of overall Wikipedia consumption patterns.
 
-      Used for KPI cards and trend visualizations (total views, active pages,
-      language activity, and content-type distribution).
+
+  - name: mart_semantic_attention_base
+    description: >
+      Core analytical cube derived from enriched Wikipedia pageviews.
+      Represents the primary semantic attention surface used by downstream marts.
+
+      Grain:
+      one row per
+      (datehour, analysis_key, page_type, wiki_group, language_name, is_mobile).
+
+      This mart aggressively aggregates the gold layer in order to:
+      - reduce BigQuery scan costs
+      - stabilize analytical dimensions
+      - provide a reusable semantic cube for downstream projections
+
+      The mart unifies:
+      - matched Wikidata entities
+      - unmatched article-level attention signals
+
+      through the analysis_key abstraction:
+      - matched entities use entity identifiers
+      - unmatched entries use wiki + title identifiers
+
+      Structural Wikimedia infrastructure entities are excluded to avoid
+      sparse analytical inflation caused by low-value non-content nodes.
+
+      This mart acts as the semantic backbone for:
+      - temporal trend analysis
+      - cross-language propagation analysis
+      - unmatched attention analysis
+      - Power BI serving models
 
     columns:
-      - name: year
-        tests: [not_null]
 
-      - name: month
-        tests: [not_null]
+      - name: analysis_key
+        description: >
+          Unified semantic identifier used across the analytical cube.
 
-      - name: day
-        tests: [not_null]
+          Format:
+          - E:<numeric_id> for matched Wikidata entities
+          - T:<wiki>:<title> for unmatched article-level entries
+
+        tests:
+          - not_null
 
       - name: total_views
-        description: Total number of pageview requests aggregated for the day.
-        tests:
-          - not_null
-
-      - name: total_pageviews
-        description: Number of pageview records aggregated at daily level.
-        tests:
-          - not_null
-
-      - name: unique_pages
-        description: Distinct Wikipedia pages visited during the day.
-        tests:
-          - not_null
-
-      - name: active_wikis
-        description: Number of Wikipedia language editions active during the day.
-        tests:
-          - not_null
-
-      - name: article_views
-        description: Views corresponding to article namespace pages.
-        tests:
-          - not_null
-
-      - name: non_article_views
-        description: Views corresponding to non-article pages (special, media, portals, etc.).
-        tests:
-          - not_null
-
-      - name: article_ratio
-        description: Ratio of article views over total views.
-        tests:
-          - not_null
-
-
-  - name: mart_language_daily
-    description: >
-      Daily traffic distribution by Wikipedia language group.
-      Enables analysis of cross-language consumption patterns,
-      mobile vs desktop behavior, and comparative activity levels.
-
-    columns:
-      - name: year
-        tests: [not_null]
-
-      - name: month
-        tests: [not_null]
-
-      - name: day
-        tests: [not_null]
-
-      - name: wiki_group
-        description: Language group combining desktop and mobile variants.
-        tests: [not_null]
-
-      - name: language_name
-        description: Human-readable language name.
-        tests: [not_null]
-
-      - name: total_views
-        tests: [not_null]
-
-      - name: pageviews
-        description: Number of pageview records for this language group.
-        tests: [not_null]
-
-      - name: unique_pages
-        description: Number of distinct pages visited per language group.
-        tests: [not_null]
-
-      - name: share_of_global_views
-        description: Share of global Wikipedia traffic contributed by this language group.
-        tests: [not_null]
-
-      - name: match_rate_weighted
-        description: Weighted proportion of views successfully matched to Wikidata entities.
-        tests: [not_null]
-
-      - name: is_mobile
-        description: Indicates whether the row represents mobile traffic aggregation.
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              quote: false
-
-      - name: mobile_views
-        description: Total views originating from mobile Wikipedia traffic.
-        tests: [not_null]
-
-
-  - name: mart_page_type_trends
-    description: >
-      Daily distribution of Wikipedia traffic by page type.
-      Captures how users interact with Wikipedia at a system level
-      (articles vs namespaces vs special pages).
-
-      Useful for understanding platform behavior, bot activity,
-      and navigation patterns.
-
-    columns:
-      - name: year
-        tests: [not_null]
-
-      - name: month
-        tests: [not_null]
-
-      - name: day
-        tests: [not_null]
-
-      - name: page_type
-        description: Classification of Wikipedia pages by namespace and function.
-        tests:
-          - not_null
-          - accepted_values:
-              values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
-
-      - name: total_views
-        description: Total views per page type per day.
-        tests: [not_null]
-
-      - name: pageviews
-        description: Number of pageview records contributing to this group.
-        tests: [not_null]
-
-      - name: share_of_daily_views
-        description: Share of total daily traffic represented by this page type.
-        tests: [not_null]
-
-
-  - name: mart_entity_daily
-    description: >
-      Daily entity-level Wikipedia consumption aggregated by Wikidata entity.
-      Enables analysis of most viewed entities, entity popularity trends,
-      and structural content consumption patterns.
-
-      This mart is the foundation for entity-centric dashboards.
-
-    columns:
-      - name: year
-        tests: [not_null]
-
-      - name: month
-        tests: [not_null]
-
-      - name: day
-        tests: [not_null]
-
-      - name: numeric_id
-        description: Wikidata numeric identifier of the entity.
-        tests:
-          - not_null
-
-      - name: en_label
-        description: Human-readable entity name.
-        tests: []
-
-      - name: type_label
-        description: Entity type classification label.
-        tests: []
-
-      - name: total_views
-        description: Total views for the entity on a given day.
-        tests:
-          - not_null
-
-      - name: pageviews
-        description: Number of pageview records contributing to entity aggregation.
+        description: >
+          Total number of pageviews aggregated at the mart grain.
         tests:
           - not_null
 
       - name: rolling_7d_views
-        description: Rolling 7-day view sum per entity.
-        tests:
-          - not_null
+        description: >
+          Rolling 7-day attention volume for the analysis_key.
 
-      - name: share_of_daily_views
-        description: Entity share of total daily traffic.
-        tests:
-          - not_null
+      - name: unique_pages
+        description: >
+          Number of distinct page titles contributing to the aggregated entity.
 
-      - name: is_structural
-        description: Indicates whether the entity type is Wikimedia infrastructure.
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-              quote: false
+      - name: active_wikis
+        description: >
+          Number of active Wikipedia editions contributing attention.
 
-  - name: mart_language_coverage_gaps
+      - name: share_of_global_views
+        description: >
+          Relative share of total Wikipedia attention at a given hour.
+
+      - name: share_within_language
+        description: >
+          Relative share of attention inside a specific language ecosystem.
+
+      - name: article_ratio
+        description: >
+          Ratio of article traffic compared to non-article traffic.
+
+      - name: match_rate_weighted
+        description: >
+          Weighted proportion of views successfully matched to Wikidata entities.
+
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "NOT is_matched OR page_type = 'article'"
+
+
+
+  - name: mart_trend_daily
     description: >
-      Debug mart that identifies Wikipedia language codes present in the
-      pageviews dataset but not properly mapped in the dim_languages dimension.
+      Temporal lifecycle mart analyzing how entity attention evolves over time.
 
-      This mart captures coverage gaps in language metadata enrichment:
-      rows appear when a wiki_code cannot be resolved to a known language
-      in the language seed/dimension table.
+      Grain:
+      one row per
+      (datehour, analysis_key, wiki_group, language_name, is_mobile).
 
-      Used for:
-      - detecting missing or outdated language mappings
-      - monitoring evolution of Wikipedia language editions
-      - validating completeness of language dimension coverage
+      This mart focuses on normalized lifecycle dynamics:
+      - growth
+      - decline
+      - peak retention
+      - momentum
+
+      Unlike language propagation marts, this model primarily emphasizes
+      entity-time dynamics rather than cross-language comparison.
+
+      Used to:
+      - identify trending entities
+      - compare lifecycle curves
+      - detect viral attention bursts
+      - analyze retention after peak visibility
 
     columns:
 
-      - name: wiki
-        description: Wikipedia language edition code (e.g. en, fr, ja, unknown)
+      - name: analysis_key
+        description: Unified semantic identifier.
         tests:
           - not_null
 
-      - name: pageviews
-        description: Number of pageview records for this unmapped wiki code
-        tests:
-          - not_null
+      - name: peak_views
+        description: >
+          Historical maximum attention observed for the entity.
+
+      - name: peak_retention
+        description: >
+          Normalized retention ratio:
+          current attention divided by historical peak attention.
+
+      - name: growth_rate
+        description: >
+          Hour-over-hour relative attention growth rate.
 
       - name: total_views
-        description: Total number of views for unmapped wiki codes
+        description: >
+          Observed attention volume at the current timestamp.
+
+
+  - name: mart_semantic_attention_unmatched
+    description: >
+      Analytical mart dedicated to unmatched article-level attention signals.
+
+      Represents topics receiving sustained human attention that are
+      not currently linked to structured Wikidata entities.
+
+      Grain:
+      one row per
+      (datehour, analysis_key, wiki_group, language_name, is_mobile).
+
+      This mart models the semantic gap between:
+      - observed collective curiosity
+      - structured knowledge graph representation
+
+      Used to:
+      - identify emerging topics
+      - detect semantic coverage gaps
+      - measure persistence of unmatched concepts
+      - analyze potential future entity absorption
+
+    columns:
+
+      - name: analysis_key
+        description: >
+          Surface-level semantic identifier using wiki + title encoding.
         tests:
           - not_null
+
+      - name: title
+        description: >
+          Article title extracted from the analysis_key structure.
+
+      - name: first_appearance
+        description: >
+          First observed timestamp of the unmatched signal within the analysis period.
+
+      - name: time_to_absorption
+        description: >
+          Elapsed time since the first appearance of the unmatched topic.
+
+      - name: entity_prominence
+        description: >
+          Cumulative attention mass accumulated by the unmatched topic.
+
+      - name: persistence_score
+        description: >
+          Rolling persistence indicator measuring sustained visibility.
+
+      - name: unmatched_velocity
+        description: >
+          Relative hour-over-hour attention growth for the unmatched topic.
+
+
+  - name: mart_semantic_attention_language_growth
+    description: >
+      Cross-language analytical mart measuring attention diffusion dynamics
+      across Wikipedia language ecosystems.
+
+      Grain:
+      one row per
+      (datehour, analysis_key, wiki_group).
+
+      This mart models:
+      - linguistic propagation
+      - cultural divergence
+      - localized attention intensity
+      - global agreement across language communities
+
+      Used to:
+      - identify globally synchronized entities
+      - detect culturally localized attention
+      - analyze multilingual propagation patterns
+      - measure attention asymmetry between language ecosystems
+
+    columns:
+
+      - name: concurrent_language_count
+        description: >
+          Number of language ecosystems simultaneously discussing the entity.
+
+      - name: growth_rate
+        description: >
+          Language-local hour-over-hour growth rate.
+
+      - name: rank_in_language
+        description: >
+          Relative popularity rank of the entity within a language ecosystem.
+
+      - name: relative_attention_in_language
+        description: >
+          Normalized attention intensity compared to the average entity
+          attention inside the same language ecosystem.
+
+
+  - name: mart_cross_language_propagation
+    description: >
+      Higher-level propagation mart derived from language growth signals.
+
+      Focuses on:
+      - diffusion stability
+      - propagation persistence
+      - cross-language agreement dynamics
+      - relative attention concentration
+
+      Grain:
+      one row per
+      (datehour, analysis_key, wiki_group).
+
+      Used to:
+      - evaluate propagation consistency across languages
+      - identify globally aligned attention events
+      - detect culturally polarized entities
+      - analyze multilingual diffusion stability
+
+    columns:
+
+      - name: rolling_avg_7d_growth_rate
+        description: >
+          Smoothed 7-day rolling average of language-local growth rates.
+
+      - name: language_total_views
+        description: >
+          Total attention volume observed within the language ecosystem.
+
+      - name: attention_share
+        description: >
+          Relative share of entity attention inside the language ecosystem.
+
+      - name: rank_dispersion
+        description: >
+          Cross-language standard deviation of entity ranking at a given timestamp.
+
+          High dispersion indicates strong differences in perceived importance
+          across language communities.

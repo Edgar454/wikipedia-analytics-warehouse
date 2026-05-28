@@ -1,5 +1,10 @@
 {{ config(materialized='view',  tags=['gold']) }}
 
+{# 
+NOTE: Many queries reuse it dowmstream so this model should be materialized as table but due to the sandbox limitations
+ this will stay as a view
+#}
+
 SELECT
     f.pageview_id,
     f.datehour,
@@ -18,20 +23,26 @@ SELECT
     d.day,
     d.hour,
     d.day_name,
-    d.is_weekend,
     d.date_id , 
 
     b.numeric_id,
-    e.en_label,
     e.first_instance_of_id,
-    t2.type_label AS parent_type_label,
+    e.entity_label AS entity_label,
+    entity_type.entity_label AS entity_type_label,
+    CASE 
+        WHEN e.is_structural IS TRUE THEN TRUE 
+        ELSE FALSE
+    END AS is_structural_entity,
+    CASE 
+        WHEN b.numeric_id IS NOT NULL THEN TRUE 
+        ELSE FALSE 
+    END AS is_matched , 
+    
+    CASE 
+        WHEN b.numeric_id IS NOT NULL THEN CONCAT('E:', b.numeric_id) 
+        ELSE CONCAT('T:', f.wiki, ':', f.title) 
+    END AS analysis_key
 
-    t1.type_label AS entity_type_label ,
-    t1.is_structural,
-    t1.is_leaf_like_type,
-    t1.frequency AS type_frequency,
-
-    CASE WHEN b.numeric_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_matched
 
 FROM {{ ref('fact_pageviews') }} f
 LEFT JOIN {{ ref('dim_languages') }} l 
@@ -43,7 +54,5 @@ LEFT JOIN {{ ref('bridge_entity_sitelinks') }} b
     AND f.title = b.title
 LEFT JOIN {{ ref('dim_entity') }} e 
     ON b.numeric_id = e.numeric_id
-LEFT JOIN {{ ref('dim_entity_type') }} t1 
-    ON e.numeric_id = t1.numeric_id
-LEFT JOIN {{ ref('dim_entity_type') }} t2 
-    ON e.first_instance_of_id = t2.numeric_id
+LEFT JOIN {{ ref('dim_entity') }} entity_type
+    ON e.first_instance_of_id = entity_type.numeric_id

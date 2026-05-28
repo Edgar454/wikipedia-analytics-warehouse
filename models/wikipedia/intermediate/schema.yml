@@ -44,21 +44,6 @@ models:
           Surrogate key identifying a unique pageview grain:
           (wiki, title, datehour)
 
-  - name: int_wikidata_instance_of
-    description: >
-      Flattened Wikidata instance_of relationships.
-      Each row represents a (entity → instance_of type) relationship.
-      Used as input for entity type aggregation and classification.
-    columns:
-      - name: en_wiki
-        description: English Wikipedia page title used as join key to pageviews
-        tests:
-          - not_null
-
-      - name: numeric_id
-        description: Wikidata numeric identifier of the instance_of type
-        tests:
-          - not_null
 
   - name: int_structural_entities
     description: >
@@ -106,3 +91,89 @@ models:
         description: URL-encoded title aligned with pageviews.title format
         tests:
           - not_null
+  - name: int_unmatched_surface_features
+    description: >
+      Intermediate feature engineering layer dedicated to unmatched
+      article-level attention signals.
+
+      This model enriches unmatched Wikipedia traffic with temporal and
+      behavioral descriptors before downstream aggregation into analytical marts.
+
+      The layer acts as a semantic staging surface between:
+      - raw unmatched pageview observations
+      - higher-level coverage gap analytics
+
+      Unlike final marts, this model is not intended for direct BI exposure.
+      Instead, it centralizes reusable feature computations related to
+      unmatched attention dynamics.
+
+      Used to:
+      - standardize unmatched feature computation
+      - reduce duplicated window calculations downstream
+      - stabilize semantic gap analysis pipelines
+      - support future entity absorption modeling
+
+      Features generated in this layer characterize:
+      - persistence
+      - emergence velocity
+      - cumulative prominence
+      - temporal lifespan
+
+    columns:
+
+      - name: analysis_key
+        description: >
+          Surface-level semantic identifier encoding wiki and title information
+          for unmatched entries.
+
+        tests:
+          - not_null
+
+      - name: title
+        description: >
+          Article title extracted from the unmatched analysis key.
+
+      - name: datehour
+        description: >
+          Hourly timestamp representing the observation grain.
+
+        tests:
+          - not_null
+
+      - name: total_views
+        description: >
+          Aggregated attention volume for the unmatched topic at the current hour.
+
+      - name: first_appearance
+        description: >
+          Earliest observed timestamp of the unmatched topic within the analysis window.
+
+      - name: entity_age_hours
+        description: >
+          Elapsed time in hours since the first observed appearance
+          of the unmatched topic.
+
+      - name: persistence_score
+        description: >
+          Rolling persistence indicator measuring sustained temporal visibility.
+
+      - name: unmatched_velocity
+        description: >
+          Relative hour-over-hour growth rate of unmatched attention.
+
+      - name: entity_prominence
+        description: >
+          Cumulative attention mass accumulated by the unmatched topic
+          across the observation period.
+
+      - name: wiki_group
+        description: >
+          Wikipedia language ecosystem associated with the unmatched topic.
+
+      - name: language_name
+        description: >
+          Human-readable language associated with the wiki ecosystem.
+
+      - name: is_mobile
+        description: >
+          Indicates whether the attention originated from mobile Wikipedia traffic.

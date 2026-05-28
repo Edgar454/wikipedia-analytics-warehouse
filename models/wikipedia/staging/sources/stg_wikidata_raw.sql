@@ -12,21 +12,7 @@ SELECT
     instance_of,
     subclass_of,
     sitelinks , 
-    type , 
-    gender,
-    date_of_birth,
-    date_of_death,
-    place_of_birth,
-    worked_at,
-    country,
-    country_of_citizenship,
-    educated_at,
-    occupation,
-    instrument,
-    genre,
-    industry,
-    coordinate_location,
-
+    type,
     CURRENT_TIMESTAMP() AS first_seen_in_pipeline
 
 FROM {{ source('wikipedia','wikidata') }}
