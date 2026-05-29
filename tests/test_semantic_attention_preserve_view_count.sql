@@ -3,7 +3,7 @@ WITH fact_total AS (
 SELECT
 SUM(views) AS total_views
 
-FROM {{ ref('fact_pageviews') }}
+FROM {{ ref('gold_pageviews_enriched') }}
 
 ),
 

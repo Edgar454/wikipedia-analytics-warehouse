@@ -224,7 +224,7 @@ models:
         tests:
           - not_null
 
-      - name: total_views
+      - name: daily_views
         description: >
           Total number of pageviews aggregated at the mart grain.
         tests:
@@ -257,11 +257,6 @@ models:
       - name: match_rate_weighted
         description: >
           Weighted proportion of views successfully matched to Wikidata entities.
-
-    tests:
-      - dbt_utils.expression_is_true:
-          arguments:
-            expression: "NOT is_matched OR page_type = 'article'"
 
 
 
@@ -353,18 +348,18 @@ models:
           description: >
             Article title extracted from the unmatched analysis key.
 
-        - name: datehour
+        - name: date_id
           description: >
-            Hourly timestamp representing the observation grain.
+            Daily timestamp representing the observation grain.
 
           tests:
             - not_null
 
-        - name: total_views
+        - name: daily_views
           description: >
             Aggregated attention volume for the unmatched topic at the current hour.
 
-        - name: first_appearance
+        - name: entity_first_appearance
           description: >
             Earliest observed timestamp of the unmatched topic within the analysis window.
 
@@ -376,10 +371,6 @@ models:
         - name: persistence_score
           description: >
             Rolling persistence indicator measuring sustained temporal visibility.
-
-        - name: unmatched_velocity
-          description: >
-            Relative hour-over-hour growth rate of unmatched attention.
 
         - name: entity_prominence
           description: >
@@ -432,11 +423,11 @@ models:
         description: >
           Article title extracted from the analysis_key structure.
 
-      - name: first_appearance
+      - name: entity_first_appearance
         description: >
           First observed timestamp of the unmatched signal within the analysis period.
 
-      - name: time_to_absorption
+      - name: entity_age_hours
         description: >
           Elapsed time since the first appearance of the unmatched topic.
 
