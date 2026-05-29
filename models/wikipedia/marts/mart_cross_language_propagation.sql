@@ -1,10 +1,10 @@
-{{ config(materialized='table' , tags=['marts']) }}
+{{ config(materialized='table' , tags=['marts', 'cross_language']) }}
 
 SELECT 
     date_id,
     analysis_key,
     entity_label,
-    parent_type_label , 
+    entity_type_label , 
     page_type,
     wiki_group,
     language_name,
@@ -22,13 +22,13 @@ SELECT
         RANGE BETWEEN 604800 PRECEDING AND CURRENT ROW
     ) AS rolling_avg_7d_growth_rate ,
 
-    SUM(total_views) OVER (
+    SUM(daily_views) OVER (
         PARTITION BY date_id, wiki_group
-    ) AS language_total_views,
+    ) AS language_daily_views,
 
     SAFE_DIVIDE(
-        total_views,
-        SUM(total_views) OVER (
+        daily_views,
+        SUM(daily_views) OVER (
             PARTITION BY date_id, wiki_group
         )
     ) AS attention_share , 

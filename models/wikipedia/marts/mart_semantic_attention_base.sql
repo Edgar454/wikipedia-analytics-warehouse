@@ -1,3 +1,5 @@
+{{ config(materialized='view' , tags=['marts','base']) }}
+
 -- CTE 1: single scan of gold, hourly grain
 WITH hourly AS (
     SELECT

@@ -26,8 +26,9 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
-              quote: false
+              arguments:
+                values: [true, false]
+                quote: false
       - name: wiki_group
         description: >
           Grouping key that combines desktop and mobile variants 
@@ -82,7 +83,8 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              values: [prefix, suffix]
+              arguments:
+                values: [prefix, suffix]
       - name: page_type
         description: >
           The page_type value assigned when this pattern matches.
@@ -90,8 +92,11 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              values: [wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
+              arguments:
+                values: [wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]    
       - name: description
         description: Human readable explanation of what this pattern covers
         tests:
           - not_null
+
+                          

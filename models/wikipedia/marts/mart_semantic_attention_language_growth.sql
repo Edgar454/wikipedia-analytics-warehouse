@@ -1,4 +1,4 @@
-{{ config(materialized='view' , tags=['marts']) }}
+{{ config(materialized='view' , tags=['marts','cross_language']) }}
 
 SELECT 
     date_id,
@@ -12,17 +12,17 @@ SELECT
     is_matched,
     is_structural_entity,
 
-    total_views ,
+    daily_views ,
     COUNT(DISTINCT wiki_group) OVER (PARTITION BY analysis_key, date_id) AS concurrent_language_count , 
 
     SAFE_DIVIDE(
-        total_views -
-        LAG(total_views) OVER (
+        daily_views -
+        LAG(daily_views) OVER (
             PARTITION BY analysis_key,wiki_group,language_name,is_mobile
             ORDER BY date_id
         ),
 
-        LAG(total_views) OVER (
+        LAG(daily_views) OVER (
             PARTITION BY analysis_key,wiki_group,language_name,is_mobile
             ORDER BY date_id
         )
@@ -30,13 +30,13 @@ SELECT
 
     DENSE_RANK() OVER (
         PARTITION BY date_id, wiki_group
-        ORDER BY total_views DESC
+        ORDER BY daily_views DESC
     ) AS rank_in_language ,
 
         
     SAFE_DIVIDE(
-        total_views,
-        AVG(total_views) OVER (PARTITION BY wiki_group, date_id)
+        daily_views,
+        AVG(daily_views) OVER (PARTITION BY wiki_group, date_id)
     ) AS relative_attention_in_language 
     
 FROM {{ ref('mart_semantic_attention_base') }}

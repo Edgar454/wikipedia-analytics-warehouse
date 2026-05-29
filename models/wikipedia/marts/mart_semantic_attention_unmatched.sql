@@ -1,4 +1,4 @@
-{{ config(materialized='table', tags=['marts']) }}
+{{ config(materialized='table', tags=['marts', 'unmatched']) }}
 
 SELECT
     date_id,
@@ -16,13 +16,13 @@ SELECT
     DATE_DIFF(
         date_id,
         entity_first_appearance,
-        HOUR
+        DAY
     ) AS entity_age_hours ,
 
     DATE_DIFF(
         date_id,
         first_entity_appearance_in_wiki_group,
-        HOUR
+        DAY
     ) AS entity_age_in_wiki_group_hours,
 
     entity_prominence,
@@ -33,4 +33,4 @@ SELECT
         prev_views
     ) AS unmatched_velocity
 
-FROM {{ ref('int_unmatched_surface_features') }}
+FROM {{ ref('mart_unmatched_surface_features') }}

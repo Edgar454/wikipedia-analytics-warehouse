@@ -1,4 +1,4 @@
-{{ config(materialized='view', tags=['mart' , 'intermediate']) }}
+{{ config(materialized='view', tags=['marts', 'unmatched']) }}
 
 SELECT
     date_id,
