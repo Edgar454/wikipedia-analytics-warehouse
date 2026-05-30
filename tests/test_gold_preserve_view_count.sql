@@ -1,3 +1,4 @@
+{{ config(tags=['reconciliation_tests']) }}
 WITH comparison AS (
 
     SELECT
@@ -25,4 +26,4 @@ final AS (
 
 SELECT *
 FROM final
-WHERE pct_diff > 0.001
+WHERE pct_diff > 0.0001

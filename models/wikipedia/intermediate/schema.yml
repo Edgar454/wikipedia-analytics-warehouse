@@ -91,4 +91,9 @@ models:
         description: URL-encoded title aligned with pageviews.title format
         tests:
           - not_null
-          
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - wiki_code 
+            - title
+            - numeric_id

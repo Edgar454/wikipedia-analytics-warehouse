@@ -1,0 +1,71 @@
+version: 2
+
+data_tests:
+  - name: test_gold_preserve_view_count
+    description: >
+      Validates that the enrichment process from fact_pageviews
+      to gold_pageviews_enriched preserves the total number of
+      pageviews within an acceptable tolerance threshold.
+      
+      A small variance is permitted because semantic reconciliation
+      relies on title-based matching between Wikipedia pageviews
+      and Wikidata sitelinks. Ambiguous titles may occasionally
+      resolve to multiple candidate entities, introducing limited
+      duplication. The allowed deviation is capped at 0.1%.
+
+    config:
+      tags:
+        - reconciliation_tests
+
+  - name: test_semantic_attention_preserve_view_count
+    description: >
+      Validates the conservation of attention between the enriched
+      semantic layer and the semantic attention mart.
+
+      Aggregation, bucketing, and long-tail compression operations
+      must not create or destroy pageviews. Total attention must
+      remain exactly equal across both layers.
+
+    config:
+      tags:
+        - conservation_tests
+
+  - name: test_structural_entities_are_matched
+    description: >
+      Ensures that every structural entity is associated with a
+      successfully matched Wikidata entity.
+
+      Structural entities are identified through ontology traversal
+      of Wikidata subclass and instance relationships and therefore
+      cannot originate from the unmatched layer.
+
+      Invariant:
+
+          is_structural_entity = TRUE
+          ⇒ is_matched = TRUE
+
+    config:
+      tags:
+        - semantic_tests
+        - ontology_tests
+
+  - name: test_matched_non_structural_entities_are_articles
+    description: >
+      Ensures that matched entities which are not classified as
+      structural correspond to encyclopedic article pages.
+
+      Namespace pages such as categories, portals, templates,
+      and other structural constructs must be classified as
+      structural entities. If a matched entity is non-structural,
+      it must represent an article.
+
+      Invariant:
+
+          is_structural_entity = FALSE
+          AND is_matched = TRUE
+          ⇒ page_type = 'article'
+
+    config:
+      tags:
+        - semantic_tests
+        - ontology_tests
