@@ -69,8 +69,16 @@ bucketed AS (
         language_name,
         is_mobile,
         page_type,
-        CASE WHEN analysis_key_bucket LIKE 'OTHER%' THEN NULL ELSE entity_label END AS entity_label,
-        CASE WHEN analysis_key_bucket LIKE 'OTHER%' THEN NULL ELSE entity_type_label END AS entity_type_label,
+        CASE 
+            WHEN analysis_key_bucket = 'OTHER_MATCHED' THEN 'other'
+            WHEN analysis_key_bucket = 'OTHER_UNMATCHED' THEN NULL
+            ELSE entity_label 
+        END AS entity_label,
+        CASE 
+            WHEN analysis_key_bucket = 'OTHER_MATCHED' THEN 'other'
+            WHEN analysis_key_bucket = 'OTHER_UNMATCHED' THEN NULL
+            ELSE entity_type_label
+        END AS entity_type_label,
         CASE
             WHEN analysis_key_bucket = 'OTHER_MATCHED' THEN TRUE
             WHEN analysis_key_bucket = 'OTHER_UNMATCHED' THEN FALSE

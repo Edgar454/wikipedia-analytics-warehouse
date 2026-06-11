@@ -15,18 +15,6 @@ SELECT
     daily_views ,
     COUNT(DISTINCT wiki_group) OVER (PARTITION BY analysis_key, date_id) AS concurrent_language_count , 
 
-    SAFE_DIVIDE(
-        daily_views -
-        LAG(daily_views) OVER (
-            PARTITION BY analysis_key,wiki_group,language_name,is_mobile
-            ORDER BY date_id
-        ),
-
-        LAG(daily_views) OVER (
-            PARTITION BY analysis_key,wiki_group,language_name,is_mobile
-            ORDER BY date_id
-        )
-    ) AS growth_rate ,
 
     DENSE_RANK() OVER (
         PARTITION BY date_id, wiki_group

@@ -23,7 +23,15 @@ SELECT
         ) THEN TRUE
         ELSE FALSE
     END AS is_structural,
-    instance_of[SAFE_OFFSET(0)].numeric_id AS first_instance_of_id,
+    COALESCE(
+        instance_of[SAFE_OFFSET(0)].numeric_id,
+        subclass_of[SAFE_OFFSET(0)].numeric_id
+    ) AS first_instance_of_id,
+    CASE
+        WHEN instance_of[SAFE_OFFSET(0)].numeric_id IS NOT NULL THEN 'instance_of'
+        WHEN subclass_of[SAFE_OFFSET(0)].numeric_id IS NOT NULL THEN 'subclass_of'
+        ELSE 'unclassified'
+    END AS classification_source,
     instance_of ,
     first_seen_in_pipeline
 

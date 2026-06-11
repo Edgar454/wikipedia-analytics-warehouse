@@ -1,4 +1,4 @@
-{{ config(materialized='table', tags=['marts', 'unmatched']) }}
+{{ config(materialized='view', tags=['marts', 'unmatched']) }}
 
 SELECT
     date_id,
@@ -10,18 +10,18 @@ SELECT
     is_mobile,
     daily_views,
 
-    entity_first_appearance,
-    first_entity_appearance_in_wiki_group,
+    days_since_first_appearance,
+    days_since_first_appearance_in_wiki_group,
 
     DATE_DIFF(
         date_id,
-        entity_first_appearance,
+        days_since_first_appearance,
         DAY
     ) AS entity_age_hours ,
 
     DATE_DIFF(
         date_id,
-        first_entity_appearance_in_wiki_group,
+        days_since_first_appearance_in_wiki_group,
         DAY
     ) AS entity_age_in_wiki_group_hours,
 

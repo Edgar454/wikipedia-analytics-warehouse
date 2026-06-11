@@ -10,8 +10,8 @@ SELECT
     is_mobile,
     daily_views,
 
-    MIN(date_id) OVER (PARTITION BY analysis_key) AS entity_first_appearance,
-    MIN(date_id) OVER (PARTITION BY analysis_key, wiki_group) AS first_entity_appearance_in_wiki_group,
+    MIN(date_id) OVER (PARTITION BY analysis_key) AS days_since_first_appearance,
+    MIN(date_id) OVER (PARTITION BY analysis_key, wiki_group) AS days_since_first_appearance_in_wiki_group,
 
     SUM(daily_views) OVER (PARTITION BY analysis_key,wiki_group,language_name,is_mobile) AS entity_prominence,
 

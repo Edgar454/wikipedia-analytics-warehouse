@@ -13,10 +13,10 @@ SELECT
     f.views,
     f.page_type,
 
-    COALESCE(l.language_name, 'unknown') AS language_name ,
+    COALESCE(l.language_name, 'other') AS language_name ,
     COALESCE(l.base_wiki, SPLIT(f.wiki, '.')[OFFSET(0)]) AS base_wiki,
     COALESCE(l.is_mobile, FALSE) AS is_mobile,
-    COALESCE(l.wiki_group, f.wiki) AS wiki_group,
+    COALESCE(l.wiki_group, 'other') AS wiki_group,
 
     d.year,
     d.month,
@@ -28,7 +28,7 @@ SELECT
     b.numeric_id,
     e.first_instance_of_id,
     e.entity_label AS entity_label,
-    entity_type.entity_label AS entity_type_label,
+    COALESCE(entity_type.entity_label, 'unclassified') AS entity_type_label,
     CASE 
         WHEN e.is_structural IS TRUE THEN TRUE 
         ELSE FALSE

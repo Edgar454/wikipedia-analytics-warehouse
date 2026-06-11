@@ -24,4 +24,7 @@ SELECT
     views,
     datehour
 FROM {{ source('wikipedia', 'pageviews_2026') }}
-WHERE datehour >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 10 DAY))
+WHERE datehour >= TIMESTAMP_SUB(
+    TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY),
+    INTERVAL 10 DAY
+) AND  datehour < TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY)  

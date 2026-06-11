@@ -37,7 +37,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
+              arguments:
+                values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
 
       - name: pageview_id
         description: >
@@ -93,7 +94,8 @@ models:
           - not_null
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - wiki_code 
-            - title
-            - numeric_id
+          arguments:
+            combination_of_columns:
+              - wiki_code 
+              - title
+              - numeric_id

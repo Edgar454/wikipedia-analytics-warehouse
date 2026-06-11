@@ -1,0 +1,5 @@
+version: 2
+analyses:
+  - name: threshold_sensitivity
+    description: >
+      Study used to select the OTHER bucket threshold.

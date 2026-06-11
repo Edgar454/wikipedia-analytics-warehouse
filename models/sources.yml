@@ -4,4 +4,17 @@ sources:
     schema: wikipedia
     tables:
       - name: pageviews_2026
+        config:
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+              # Wikipedia public dataset has variable ingestion lag
+
+            error_after:
+              count: 48
+              period: hour
+              
+          loaded_at_field: datehour
+
       - name: wikidata

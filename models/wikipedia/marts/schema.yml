@@ -118,7 +118,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
+                values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
 
 
   - name: gold_pageviews_enriched
@@ -149,7 +149,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: [article, namespace, wikiquote, wiktionary, mediawiki, donation, commons, portal]
+                values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
 
       - name: is_matched
         description: Indicates whether pageview was matched to a Wikidata entity.
@@ -169,14 +169,18 @@ models:
       - name: year
       - name: month
 
-      - name: type_label
+      - name: entity_type_label
         description: Entity type label when available.
+        tests:
+          - not_null
 
       - name: is_structural
         description: Indicates whether matched entity type is structural.
 
-      - name: en_label
+      - name: entity_label
         description: Entity label when available.
+        tests:
+          - not_null
 
 
 
