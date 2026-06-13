@@ -43,6 +43,9 @@ jobs:
 
       - name: dbt debug
         run: dbt debug
+      
+      - name: dbt seed
+        run: dbt seed
 
       - name: dbt run
         run: dbt run
