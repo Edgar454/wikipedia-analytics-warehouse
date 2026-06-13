@@ -311,7 +311,54 @@ models:
         description: >
           Observed attention volume at the current timestamp.
 
-  - name: mart_unmatched_surface_features
+  - name: mart_semantic_trends
+    description: >
+      Temporal lifecycle mart analyzing how entity attention evolves over time.
+
+      Grain:
+      one row per
+      (datehour, analysis_key, wiki_group, language_name, is_mobile).
+
+      This mart focuses on normalized lifecycle dynamics:
+      - growth
+      - decline
+      - peak retention
+      - momentum
+
+      Unlike language propagation marts, this model primarily emphasizes
+      entity-time dynamics rather than cross-language comparison.
+
+      Used to:
+      - identify trending entities
+      - compare lifecycle curves
+      - detect viral attention bursts
+      - analyze retention after peak visibility
+
+    columns:
+
+      - name: analysis_key
+        description: Unified semantic identifier.
+        tests:
+          - not_null
+
+      - name: peak_views
+        description: >
+          Historical maximum attention observed for the entity.
+
+      - name: peak_retention
+        description: >
+          Normalized retention ratio:
+          current attention divided by historical peak attention.
+
+      - name: growth_rate
+        description: >
+          Hour-over-hour relative attention growth rate.
+
+      - name: total_views
+        description: >
+          Observed attention volume at the current timestamp.
+
+  - name: mart_semantic_attention_growth
     description: >
         Intermediate feature engineering layer dedicated to unmatched
         article-level attention signals.
@@ -446,48 +493,6 @@ models:
       - name: unmatched_velocity
         description: >
           Relative hour-over-hour attention growth for the unmatched topic.
-
-
-  - name: mart_semantic_attention_language_growth
-    description: >
-      Cross-language analytical mart measuring attention diffusion dynamics
-      across Wikipedia language ecosystems.
-
-      Grain:
-      one row per
-      (datehour, analysis_key, wiki_group).
-
-      This mart models:
-      - linguistic propagation
-      - cultural divergence
-      - localized attention intensity
-      - global agreement across language communities
-
-      Used to:
-      - identify globally synchronized entities
-      - detect culturally localized attention
-      - analyze multilingual propagation patterns
-      - measure attention asymmetry between language ecosystems
-
-    columns:
-
-      - name: concurrent_language_count
-        description: >
-          Number of language ecosystems simultaneously discussing the entity.
-
-      - name: growth_rate
-        description: >
-          Language-local hour-over-hour growth rate.
-
-      - name: rank_in_language
-        description: >
-          Relative popularity rank of the entity within a language ecosystem.
-
-      - name: relative_attention_in_language
-        description: >
-          Normalized attention intensity compared to the average entity
-          attention inside the same language ecosystem.
-
 
   - name: mart_cross_language_propagation
     description: >
