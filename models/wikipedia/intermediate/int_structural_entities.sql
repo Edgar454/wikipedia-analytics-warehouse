@@ -19,5 +19,21 @@ WITH RECURSIVE structural_tree AS (
 
 ) 
 
-SELECT DISTINCT st.numeric_id
-FROM structural_tree st
+SELECT DISTINCT w.numeric_id
+FROM dbt_dev.stg_wikidata w
+CROSS JOIN UNNEST(w.instance_of) io
+JOIN structural_tree st
+    ON io.numeric_id = st.numeric_id
+
+UNION DISTINCT
+
+SELECT DISTINCT w.numeric_id
+FROM dbt_dev.stg_wikidata w
+CROSS JOIN UNNEST(w.subclass_of) sc
+JOIN structural_tree st
+    ON sc.numeric_id = st.numeric_id
+
+UNION DISTINCT
+
+SELECT numeric_id
+FROM structural_tree

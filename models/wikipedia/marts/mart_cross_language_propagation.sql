@@ -4,7 +4,6 @@ SELECT
     date_id,
     analysis_key,
     entity_label,
-    entity_type_label , 
     page_type,
     wiki_group,
     language_name,
@@ -13,20 +12,17 @@ SELECT
     is_structural_entity,
 
     daily_views ,
-    concurrent_language_count,
-    rank_in_language ,
-    relative_attention_in_language,
+    COUNT(DISTINCT wiki_group) OVER (PARTITION BY analysis_key, date_id) AS concurrent_language_count ,
 
+    ROUND(
+        SAFE_DIVIDE(
+            daily_views,
+            SUM(daily_views) OVER (
+                PARTITION BY date_id, wiki_group , is_mobile
+            )
+        ),
+        5
+    ) AS attention_share  
 
-    SAFE_DIVIDE(
-        daily_views,
-        SUM(daily_views) OVER (
-            PARTITION BY date_id, wiki_group , is_mobile
-        )
-    ) AS attention_share , 
-
-    STDDEV(rank_in_language) OVER (
-        PARTITION BY analysis_key, date_id , is_mobile
-    ) AS rank_dispersion
-
-FROM {{ ref('mart_semantic_attention_language_growth') }}
+FROM {{ ref('mart_semantic_attention_growth') }}
+WHERE is_matched = TRUE

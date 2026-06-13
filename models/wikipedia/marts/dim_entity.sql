@@ -17,10 +17,6 @@ SELECT
             SELECT numeric_id
             FROM {{ ref('int_structural_entities') }}
         ) THEN TRUE
-        WHEN instance_of[SAFE_OFFSET(0)].numeric_id IN (
-            SELECT numeric_id
-            FROM {{ ref('int_structural_entities') }}
-        ) THEN TRUE
         ELSE FALSE
     END AS is_structural,
     COALESCE(

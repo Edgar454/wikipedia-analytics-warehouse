@@ -37,18 +37,7 @@ daily AS (
     GROUP BY 1,2,3,4,5,6,7,8,9,10
 ),
 
--- CTE 3: entity peak (derived from hourly, no gold scan)
-entity_peak AS (
-    SELECT
-        date_id,
-        analysis_key,
-        ARRAY_AGG(datehour ORDER BY hourly_views DESC LIMIT 1)[OFFSET(0)] AS peak_hour,
-        MAX(hourly_views) AS peak_views
-    FROM hourly
-    GROUP BY 1, 2
-),
-
--- CTE 4: classify long tail
+-- CTE 3: classify long tail
 classified AS (
     SELECT
         *,
@@ -60,7 +49,7 @@ classified AS (
     FROM daily
 ),
 
--- CTE 5: collapse buckets
+-- CTE 4: collapse buckets
 bucketed AS (
     SELECT
         date_id,
@@ -90,20 +79,7 @@ bucketed AS (
     GROUP BY 1,2,3,4,5,6,7,8,9,10
 )
 
--- FINAL: join peaks — safe, grain matches
+-- FINAL
 SELECT
-    b.*,
-    p.peak_hour,
-    p.peak_views,
-    SAFE_DIVIDE(
-        b.daily_views,
-        SUM(b.daily_views) OVER (PARTITION BY b.date_id)
-    ) AS share_global,
-    SAFE_DIVIDE(
-        b.daily_views,
-        SUM(b.daily_views) OVER (PARTITION BY b.date_id, b.wiki_group)
-    ) AS share_wiki_group
+    b.*
 FROM bucketed b
-LEFT JOIN entity_peak p
-    ON b.date_id = p.date_id
-    AND b.analysis_key = p.analysis_key

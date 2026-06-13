@@ -3,34 +3,20 @@
 SELECT
     date_id,
     analysis_key,
-    title,
+    SPLIT(analysis_key, ':')[SAFE_OFFSET(2)] AS title,
     page_type,
     wiki_group,
     language_name,
     is_mobile,
-    daily_views,
+    daily_views ,
+    ROUND(
+        (ma_log_3d_views
+        - LAG(ma_log_3d_views, 3) OVER (
+            PARTITION BY analysis_key, wiki_group, language_name, is_mobile, page_type
+            ORDER BY UNIX_SECONDS(TIMESTAMP(date_id))
+        )) * ma_log_3d_views / 3 ,
+        5
+    ) AS smoothed_trend_score 
 
-    days_since_first_appearance,
-    days_since_first_appearance_in_wiki_group,
-
-    DATE_DIFF(
-        date_id,
-        days_since_first_appearance,
-        DAY
-    ) AS entity_age_hours ,
-
-    DATE_DIFF(
-        date_id,
-        days_since_first_appearance_in_wiki_group,
-        DAY
-    ) AS entity_age_in_wiki_group_hours,
-
-    entity_prominence,
-    persistence_score,
-
-    SAFE_DIVIDE(
-        daily_views - prev_views,
-        prev_views
-    ) AS unmatched_velocity
-
-FROM {{ ref('mart_unmatched_surface_features') }}
+FROM {{ ref('mart_semantic_attention_growth') }}
+WHERE is_matched = FALSE
