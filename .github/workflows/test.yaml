@@ -37,6 +37,9 @@ jobs:
         run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS
           ls -la $GOOGLE_APPLICATION_CREDENTIALS
+          
+      - name: Install dbt dependencies
+        run: dbt deps
 
       - name: dbt debug
         run: dbt debug
