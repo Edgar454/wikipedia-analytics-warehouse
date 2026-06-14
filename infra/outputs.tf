@@ -47,3 +47,34 @@ output "log_group_name" {
 output "log_group_arn" {
   value = module.cloudwatch.log_group_arn
 }
+
+#ecs cluster 
+output "cluster_id" {
+  value = module.ecs_cluster.cluster_id
+}
+
+output "cluster_arn" {
+  value = module.ecs_cluster.cluster_arn
+}
+
+output "cluster_name" {
+  value = module.ecs_cluster.cluster_name
+}
+
+#fargate task 
+output "task_definition_arn" {
+  value = module.fargate.task_definition_arn
+}
+
+# networking 
+output "vpc_id" {
+  value = module.network.vpc_id
+}
+
+output "subnets" {
+  value = module.network.subnets
+}
+
+output "security_group_id" {
+  value = module.network.security_group_id
+}

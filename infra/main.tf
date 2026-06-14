@@ -38,17 +38,43 @@ module "cloudwatch" {
   tags         = local.common_tags
 }
 
-module "ecs" {
-  source = "./ecs"
+module "ecs_cluster" {
+  source = "./ecs_cluster"
+  project_name = var.project_name
+  tags         = local.common_tags
+  
+}
 
-  ecr_repository_url = module.ecr.repository_url
-  log_group_name     = module.cloudwatch.log_group_name
-  secret_arn         = module.secrets.gcp_secret_arn
+module "fargate" {
+  source = "./fargate"
+
+  project_name = var.project_name
+  region = var.region
+  tags         = local.common_tags
+  ecs_execution_role_arn = module.iam.ecs_execution_role_arn
+  ecs_task_role_arn = module.iam.ecs_task_role_arn
+  ecr_image     =  "${module.ecr.repository_url}:latest"
+  gcp_secret_name = module.secrets.gcp_service_account_secret_name
+  log_group_name = module.cloudwatch.log_group_name
+ 
+}
+
+module "network" {
+  source = "./network"
+  project_name = var.project_name
+  region = var.region
+  tags         = local.common_tags
 }
 
 module "eventbridge" {
   source = "./eventbridge"
 
-  ecs_cluster_arn = module.ecs.cluster_arn
-  task_arn        = module.ecs.task_definition_arn
+  project_name = var.project_name
+  tags         = local.common_tags
+  ecs_cluster_arn = module.ecs_cluster.cluster_arn
+  task_definition_arn        = module.fargate.task_definition_arn
+  ecs_execution_role_arn = module.iam.ecs_execution_role_arn
+  ecs_task_role_arn = module.iam.ecs_task_role_arn
+  subnets   = module.network.subnets
+  security_group_id = module.network.security_group_id
 }

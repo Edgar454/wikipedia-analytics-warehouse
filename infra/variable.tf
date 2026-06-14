@@ -22,3 +22,8 @@ variable "gcp_service_account_json" {
 variable "github_repository_path" {
   type      = string
 }
+
+# ecr image
+variable "ecr_image" {
+  type      = string
+}
