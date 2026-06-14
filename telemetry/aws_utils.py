@@ -32,6 +32,11 @@ def ensure_log_group_and_stream(client):
 
 
 def send_logs(client, rows):
+    
+    if not rows:
+        print("No rows to send")
+        return
+
     sequence_token = None
 
     # get existing stream token if exists
@@ -44,6 +49,7 @@ def send_logs(client, rows):
         sequence_token = streams["logStreams"][0].get("uploadSequenceToken")
 
     events = []
+
 
     for r in rows:
         events.append({

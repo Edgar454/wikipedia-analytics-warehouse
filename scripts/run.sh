@@ -15,7 +15,7 @@ pushd dbt > /dev/null
   # run models
   dbt build \
     --profiles-dir . \
-    --target prod \
+    --target dev \
     --select tag:marts || DBT_EXIT_CODE=$?
 
 popd > /dev/null
