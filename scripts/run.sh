@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
+# Load GCP credentials + env vars
 eval "$(python telemetry/bootstrap.py)"
 
-dbt deps --profiles-dir dbt
+# Go to dbt project root
+pushd dbt > /dev/null
 
-DBT_EXIT_CODE=0
+  # install dependencies
+  dbt deps --profiles-dir .
 
-dbt build \
-  --profiles-dir dbt \
-  --target prod \
-  --select tag:marts || DBT_EXIT_CODE=$?
+  DBT_EXIT_CODE=0
 
+  # run models
+  dbt build \
+    --profiles-dir . \
+    --target prod \
+    --select tag:marts || DBT_EXIT_CODE=$?
+
+popd > /dev/null
+
+# collect metrics after dbt run
 python telemetry/collect_metrics.py
 
 exit $DBT_EXIT_CODE
