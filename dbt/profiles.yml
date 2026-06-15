@@ -10,3 +10,4 @@ wikipedia:
       keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
   target: dev
   
+  

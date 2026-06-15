@@ -97,6 +97,7 @@ jobs:
 
       - name: Setup GCP credentials
         env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
           echo "$GCP_SERVICE_ACCOUNT_KEY" > key.json
