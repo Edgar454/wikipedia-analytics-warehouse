@@ -39,6 +39,8 @@ jobs:
     if: needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     environment: terraform-apply
+    env:
+      TF_VAR_gcp_service_account_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
     outputs:
       ecr_url: ${{ steps.tf.outputs.ecr_url }}
@@ -60,6 +62,10 @@ jobs:
       - name: Terraform init
         working-directory: infra
         run: terraform init
+
+      - name: Terraform Plan
+        working-directory: infra
+        run: terraform plan
 
       - name: Terraform apply
         working-directory: infra
