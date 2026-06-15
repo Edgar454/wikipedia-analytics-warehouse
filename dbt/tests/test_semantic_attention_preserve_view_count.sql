@@ -1,3 +1,4 @@
+{{ config(tags=['unit_test']) }}
 WITH fact_total AS (
 
 SELECT

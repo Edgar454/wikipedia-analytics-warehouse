@@ -1,5 +1,5 @@
 -- tests/test_attention_share_sums_to_one.sql
-
+{{ config(tags=['unit_test']) }}
 WITH attention AS (
 
     SELECT

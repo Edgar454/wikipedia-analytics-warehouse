@@ -1,0 +1,166 @@
+name: Full CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      infra: ${{ steps.filter.outputs.infra }}
+      dbt: ${{ steps.filter.outputs.dbt }}
+      build: ${{ steps.filter.outputs.build }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            infra:
+              - "infra/**"
+            dbt:
+              - "dbt/**"
+              - "scripts/**"
+            build:
+              - "Dockerfile"
+              - "scripts/**"
+              - "telemetry/**"
+
+  terraform:
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    environment: terraform-apply
+
+    outputs:
+      ecr_url: ${{ steps.tf.outputs.ecr_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          aws-region: eu-west-1
+
+      - name: Terraform init
+        working-directory: infra
+        run: terraform init
+
+      - name: Terraform apply
+        working-directory: infra
+        run: terraform apply -auto-approve
+
+      - name: Export outputs
+        id: tf
+        working-directory: infra
+        run: |
+          terraform output -json > tf_outputs.json
+          echo "ecr_url=$(jq -r '.repository_url.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+
+  dbt-tests:
+    needs: changes
+    if: needs.changes.outputs.dbt == 'true'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: dbt
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-dbt-${{ hashFiles('dbt/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-dbt-
+
+      - name: Install dbt
+        run: pip install dbt-bigquery
+
+      - name: Setup GCP credentials
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          echo "$GCP_SERVICE_ACCOUNT_KEY" > key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/key.json" >> $GITHUB_ENV
+
+      - name: dbt deps
+        run: dbt deps
+
+      - name: dbt debug
+        run: dbt debug
+
+      - name: dbt seed
+        run: dbt seed
+
+      - name: dbt run
+        run: dbt run
+
+      - name: dbt test
+        run: dbt test --select unit_tests
+
+  build-image:
+    needs: [changes, terraform, dbt-tests]
+    runs-on: ubuntu-latest
+
+    if: |
+      always() &&
+      needs.changes.outputs.build == 'true' &&
+      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped') &&
+      (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          aws-region: eu-west-1
+
+      - name: Resolve ECR URL
+        id: ecr
+        run: |
+          if [ -n "${{ needs.terraform.outputs.ecr_url }}" ]; then
+            echo "url=${{ needs.terraform.outputs.ecr_url }}" >> $GITHUB_OUTPUT
+          else
+            URL=$(aws ecr describe-repositories --repository-names wikipedia-dbt \
+                  --query 'repositories[0].repositoryUri' --output text)
+            echo "url=$URL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: wikipedia-dbt:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Tag image
+        run: docker tag wikipedia-dbt:latest ${{ steps.ecr.outputs.url }}:latest
+
+      - name: Push image
+        run: docker push ${{ steps.ecr.outputs.url }}:latest

@@ -1,4 +1,4 @@
-{{ config(tags=['reconciliation_tests']) }}
+{{ config(tags=[ 'unit_test' ,'reconciliation_tests']) }}
 WITH comparison AS (
 
     SELECT
