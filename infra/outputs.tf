@@ -35,9 +35,7 @@ output "ecs_task_role_arn" {
   value = module.iam.ecs_task_role_arn
 }
 
-output "github_actions_role_arn" {
-  value = module.iam.github_actions_role_arn
-}
+
 
 #cloudwatch outputs
 output "log_group_name" {
@@ -77,4 +75,18 @@ output "subnets" {
 
 output "security_group_id" {
   value = module.network.security_group_id
+}
+
+# budget
+output "budget_name" {
+  value = module.budget.budget_name
+}
+
+#ci config
+output "ci_config" {
+  value = {
+    ecr_url = module.ecr.repository_url
+    bucket  = module.s3.s3_bucket_name
+    cluster = module.ecs_cluster.cluster_name
+  }
 }

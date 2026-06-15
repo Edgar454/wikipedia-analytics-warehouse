@@ -1,13 +1,13 @@
 resource "aws_ecr_repository" "dbt_runner" {
 
   name = "${var.project_name}-dbt-runner"
-
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
   }
-
+  
+  force_delete = true
   tags = var.tags
 }
 

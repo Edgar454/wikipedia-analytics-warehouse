@@ -9,5 +9,6 @@ ecr_image= "wikipedia-dbt:latest"
 #s3 variables
 bucket_name = "edgar-mevaa-wikipedia-dbt-docs"
 
-#iam variables
-github_repository_path="Edgar454/wikipedia-analytics-warehouse"
+
+#sns alert email
+alert_email= "mevaed4@gmail.com"

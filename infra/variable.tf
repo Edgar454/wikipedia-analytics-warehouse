@@ -18,12 +18,14 @@ variable "gcp_service_account_json" {
   sensitive = true
 }
 
-#iam config
-variable "github_repository_path" {
-  type      = string
-}
+
 
 # ecr image
 variable "ecr_image" {
   type      = string
+}
+
+# sns alert email
+variable "alert_email" {
+  type = string
 }

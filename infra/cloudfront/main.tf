@@ -71,7 +71,7 @@ resource "aws_s3_bucket_policy" "website_bucket_policy" {
 
         Action = "s3:GetObject"
 
-        Resource = "${aws_s3_bucket.website_bucket.arn}/*"
+        Resource = "${var.s3_bucket_arn}/*"
 
         Condition = {
           StringEquals = {

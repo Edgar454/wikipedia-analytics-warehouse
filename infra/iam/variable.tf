@@ -7,9 +7,6 @@ variable "tags" {
   default = {}
 }
 
-variable "github_oidc_assume_json" {
-  type      = string
-}
 
 variable "ecr_repository_arn" {
   type = string

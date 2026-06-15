@@ -18,7 +18,6 @@ module "iam" {
   
   project_name             = var.project_name
   tags                     = local.common_tags
-  github_oidc_assume_json   = data.aws_iam_policy_document.github_oidc_assume.json
   ecr_repository_arn       = module.ecr.repository_arn
   gcp_service_account_secret_arn = module.secrets.gcp_service_account_secret_arn
 }
@@ -77,4 +76,21 @@ module "eventbridge" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   subnets   = module.network.subnets
   security_group_id = module.network.security_group_id
+}
+
+module "sns" {
+  source = "./sns"
+  
+  project_name = var.project_name
+  tags         = local.common_tags
+  alert_email = var.alert_email
+}
+
+module "budget" {
+  source = "./budget"
+
+  project_name = var.project_name
+  monthly_budget = 10
+  sns_topic_arn = module.sns.topic_arn
+
 }
