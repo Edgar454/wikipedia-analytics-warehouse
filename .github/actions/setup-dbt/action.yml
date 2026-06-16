@@ -1,0 +1,27 @@
+name: Setup dbt BigQuery
+description: Install Python, cache pip, install dbt-bigquery
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Cache pip
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-dbt-${{ hashFiles('dbt/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-dbt-
+
+    - name: Install dbt
+      shell: bash
+      run: pip install dbt-bigquery
+
+    - name: dbt deps
+      shell: bash
+      working-directory: dbt
+      run: dbt deps

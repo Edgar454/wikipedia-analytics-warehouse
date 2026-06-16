@@ -7,6 +7,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  pages: write
 
 jobs:
   changes:
@@ -91,21 +92,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-dbt-${{ hashFiles('dbt/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-dbt-
-
-      - name: Install dbt
-        run: pip install dbt-bigquery
+      - name: Setup dbt
+        uses: ./.github/actions/setup-dbt
 
       - name: Setup GCP credentials
         env:
@@ -115,9 +103,6 @@ jobs:
           printf '%s' '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${{ github.workspace }}/key.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key.json" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_ENV
-
-      - name: dbt deps
-        run: dbt deps
 
       - name: dbt debug
         run: dbt debug
@@ -170,11 +155,39 @@ jobs:
           context: .
           push: false
           tags: wikipedia-dbt:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Tag image
         run: docker tag wikipedia-dbt:latest ${{ steps.ecr.outputs.url }}:latest
 
       - name: Push image
         run: docker push ${{ steps.ecr.outputs.url }}:latest
+
+  deploy-docs:
+    needs: dbt-tests
+    if: |
+      needs.dbt-tests.result == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dbt
+        uses: ./.github/actions/setup-dbt
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: dbt docs generate
+        run: dbt docs generate --no-compile
+      
+      - name: Upload docs artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dbt/target
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
