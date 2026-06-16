@@ -1,6 +1,7 @@
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
+
 def get_bq_client(service_account_info):
     credentials = service_account.Credentials.from_service_account_info(
         service_account_info,
@@ -21,6 +22,9 @@ def test_query(client):
 
     for row in result:
         print("BigQuery test result:", row.test)
+
+
+
 
 def run_metrics_query(client, project_id, user_email):
     query = """
@@ -44,7 +48,7 @@ def run_metrics_query(client, project_id, user_email):
     FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
 
     WHERE user_email = @user_email
-      AND creation_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+      AND creation_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)
 
     ORDER BY creation_time DESC
     """
@@ -73,3 +77,4 @@ def run_metrics_query(client, project_id, user_email):
         })
 
     return rows
+

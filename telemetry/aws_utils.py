@@ -1,6 +1,7 @@
 import boto3
 import json
 import time
+import re
 
 LOG_GROUP = "/dbt/metrics"
 LOG_STREAM = "dbt-runner"
@@ -12,8 +13,11 @@ def get_secret():
     response = client.get_secret_value(SecretId=SECRET_NAME)
     return json.loads(response["SecretString"])
 
-def get_cloudwatch_client():
+def get_cloudwatch_logs_client():
     return boto3.client("logs")
+
+def get_cloudwatch_metrics_client():
+    return boto3.client("cloudwatch")
 
 
 def ensure_log_group_and_stream(client):
@@ -30,6 +34,29 @@ def ensure_log_group_and_stream(client):
     except client.exceptions.ResourceAlreadyExistsException:
         pass
 
+def extract_node_id(query):
+    match = re.search(r"/\*\s*(\{.*?\})\s*\*/", query, re.DOTALL)
+
+    if not match:
+        return None
+
+    try:
+        metadata = json.loads(match.group(1))
+        return metadata.get("node_id")
+    except Exception:
+        return None
+
+def extract_model_name(node_id):
+    if not node_id:
+        return None
+
+    parts = node_id.split(".")
+
+    for part in parts:
+        if part.startswith("mart_"):
+            return part
+
+    return None
 
 def send_logs(client, rows):
     
@@ -67,3 +94,65 @@ def send_logs(client, rows):
         kwargs["sequenceToken"] = sequence_token
 
     client.put_log_events(**kwargs)
+
+def send_metrics(client, rows):
+    metric_data = []
+
+    for row in rows:
+
+        node_id = extract_node_id(row["query"])
+        model_name = extract_model_name(node_id)
+
+        dimensions = []
+
+        if model_name:
+            dimensions.append({
+                "Name": "Model",
+                "Value": model_name
+            })
+
+        if node_id:
+            dimensions.append({
+                "Name": "NodeId",
+                "Value": node_id
+            })
+
+        dimensions.append({
+            "Name": "Status",
+            "Value": row["status"]
+        })
+
+        metric_data.extend([
+            {
+                "MetricName": "GBScanned",
+                "Value": row["gb_billed"],
+                "Unit": "Gigabytes",
+                "Dimensions": dimensions
+            },
+            {
+                "MetricName": "DurationSeconds",
+                "Value": row["duration_seconds"],
+                "Unit": "Seconds",
+                "Dimensions": dimensions
+            },
+            {
+                "MetricName": "QueryCount",
+                "Value": 1,
+                "Unit": "Count",
+                "Dimensions": dimensions
+            }
+        ])
+
+        if row["status"] == "FAILURE":
+            metric_data.append({
+                "MetricName": "FailedQueries",
+                "Value": 1,
+                "Unit": "Count",
+                "Dimensions": dimensions
+            })
+
+    for i in range(0, len(metric_data), 1000):
+        client.put_metric_data(
+            Namespace="WikipediaAnalysis",
+            MetricData=metric_data[i:i + 1000]
+        )
