@@ -94,15 +94,9 @@ jobs:
 
       - name: Setup dbt
         uses: ./.github/actions/setup-dbt
-
-      - name: Setup GCP credentials
-        env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-        run: |
-          printf '%s' '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${{ github.workspace }}/key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key.json" >> $GITHUB_ENV
-          echo "GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_ENV
+        with:
+          gcp_service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: dbt debug
         run: dbt debug
@@ -179,6 +173,9 @@ jobs:
 
       - name: Setup dbt
         uses: ./.github/actions/setup-dbt
+        with:
+          gcp_service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,5 +1,14 @@
+# .github/actions/setup-dbt/action.yml
 name: Setup dbt BigQuery
-description: Install Python, cache pip, install dbt-bigquery
+description: Install Python, cache pip, install dbt-bigquery, setup GCP credentials
+
+inputs:
+  gcp_service_account_key:
+    description: GCP service account JSON
+    required: true
+  gcp_project_id:
+    description: GCP project ID
+    required: true
 
 runs:
   using: composite
@@ -13,13 +22,20 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-dbt-${{ hashFiles('dbt/requirements*.txt') }}
+        key: ${{ runner.os }}-pip-dbt-${{ hashFiles('dbt/pip-requirements') }}
         restore-keys: |
           ${{ runner.os }}-pip-dbt-
 
     - name: Install dbt
       shell: bash
-      run: pip install dbt-bigquery
+      run: pip install -r dbt/pip-requirements
+
+    - name: Setup GCP credentials
+      shell: bash
+      run: |
+        printf '%s' '${{ inputs.gcp_service_account_key }}' > ${{ github.workspace }}/key.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key.json" >> $GITHUB_ENV
+        echo "GCP_PROJECT_ID=${{ inputs.gcp_project_id }}" >> $GITHUB_ENV
 
     - name: dbt deps
       shell: bash
