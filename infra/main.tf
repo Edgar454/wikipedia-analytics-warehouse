@@ -22,12 +22,6 @@ module "iam" {
   gcp_service_account_secret_arn = module.secrets.gcp_service_account_secret_arn
 }
 
-module "s3" {
-  source = "./s3"
-  
-  bucket_name             = var.bucket_name
-  tags                     = local.common_tags
-}
 
 module "cloudwatch" {
 

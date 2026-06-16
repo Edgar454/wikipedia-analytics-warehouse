@@ -21,11 +21,6 @@ output "gcp_service_account_secret_name" {
   value = module.secrets.gcp_service_account_secret_name
 }
 
-#s3 outputs
-output "s3_bucket_name" {
-  value = module.s3.s3_bucket_name
-}
-
 #iam outputs
 output "ecs_execution_role_arn" {
   value = module.iam.ecs_execution_role_arn
@@ -86,7 +81,6 @@ output "budget_name" {
 output "ci_config" {
   value = {
     ecr_url = module.ecr.repository_url
-    bucket  = module.s3.s3_bucket_name
     cluster = module.ecs_cluster.cluster_name
   }
 }
