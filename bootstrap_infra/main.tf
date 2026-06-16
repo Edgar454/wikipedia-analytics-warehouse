@@ -5,7 +5,7 @@ resource "aws_iam_role" "github_bootstrap_role" {
 
 resource "aws_iam_policy" "terraform_bootstrap" {
 
-  name = "terraform-bootstrap"
+  name = "github-terraform-bootstrap"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -14,6 +14,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
       Effect = "Allow"
 
       Action = [
+
         "iam:*",
 
         "ecs:*",
@@ -26,24 +27,15 @@ resource "aws_iam_policy" "terraform_bootstrap" {
 
         "sns:*",
 
-        "secretsmanager:*",
-
         "budgets:*",
+
+        "secretsmanager:*",
 
         "s3:*",
 
         "cloudfront:*",
 
-        "ec2:Describe*",
-
-        "ec2:CreateSecurityGroup",
-        "ec2:DeleteSecurityGroup",
-
-        "ec2:AuthorizeSecurityGroupIngress",
-        "ec2:AuthorizeSecurityGroupEgress",
-
-        "ec2:RevokeSecurityGroupIngress",
-        "ec2:RevokeSecurityGroupEgress",
+        "ec2:*",
 
         "tag:*"
       ]
