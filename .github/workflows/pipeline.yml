@@ -32,6 +32,7 @@ jobs:
             build:
               - "Dockerfile"
               - "scripts/**"
+              - "dbt/**"
               - "telemetry/**"
 
   terraform:
@@ -137,10 +138,8 @@ jobs:
     if: |
       always() &&
       needs.changes.outputs.build == 'true' &&
-      needs.terraform.result != 'failure' &&
-      needs.terraform.result != 'cancelled' &&
-      needs.dbt-tests.result != 'failure' &&
-      needs.dbt-tests.result != 'cancelled'
+      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped') &&
+      (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped')
 
     steps:
       - uses: actions/checkout@v4
