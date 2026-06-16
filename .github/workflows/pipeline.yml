@@ -141,7 +141,7 @@ jobs:
           if [ -n "${{ needs.terraform.outputs.ecr_url }}" ]; then
             echo "url=${{ needs.terraform.outputs.ecr_url }}" >> $GITHUB_OUTPUT
           else
-            URL=$(aws ecr describe-repositories --repository-names wikipedia-dbt \
+            URL=$(aws ecr describe-repositories --repository-names wikipedia-analysis-dbt-runner \
                   --query 'repositories[0].repositoryUri' --output text)
             echo "url=$URL" >> $GITHUB_OUTPUT
           fi
@@ -167,6 +167,9 @@ jobs:
     if: |
       needs.dbt-tests.result == 'success'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dbt
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
