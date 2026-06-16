@@ -128,7 +128,7 @@ jobs:
         run: dbt run
 
       - name: dbt test
-        run: dbt test --select unit_tests
+        run: dbt test --select tag:unit_tests
 
   build-image:
     needs: [changes, terraform, dbt-tests]
@@ -137,8 +137,10 @@ jobs:
     if: |
       always() &&
       needs.changes.outputs.build == 'true' &&
-      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped') &&
-      (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped')
+      needs.terraform.result != 'failure' &&
+      needs.terraform.result != 'cancelled' &&
+      needs.dbt-tests.result != 'failure' &&
+      needs.dbt-tests.result != 'cancelled'
 
     steps:
       - uses: actions/checkout@v4
