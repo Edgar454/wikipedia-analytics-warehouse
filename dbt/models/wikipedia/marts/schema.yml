@@ -182,40 +182,52 @@ models:
         tests:
           - not_null
 
-
-
   - name: mart_semantic_attention_base
     description: >
       Core analytical cube derived from enriched Wikipedia pageviews.
-      Represents the primary semantic attention surface used by downstream marts.
+      Represents the primary semantic attention surface used by all downstream marts.
 
       Grain:
       one row per
-      (datehour, analysis_key, page_type, wiki_group, language_name, is_mobile).
+      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile).
 
-      This mart aggressively aggregates the gold layer in order to:
-      - reduce BigQuery scan costs
-      - stabilize analytical dimensions
-      - provide a reusable semantic cube for downstream projections
+      This mart performs three successive transformations:
 
-      The mart unifies:
-      - matched Wikidata entities
-      - unmatched article-level attention signals
+      1. Hourly to daily aggregation:
+      Gold layer is scanned exactly once at hourly grain, then collapsed
+      to daily grain. This single-scan pattern minimises BigQuery scan costs
+      across the full view chain from raw pageviews to gold.
 
-      through the analysis_key abstraction:
-      - matched entities use entity identifiers
-      - unmatched entries use wiki + title identifiers
+      2. Long-tail bucketing:
+      Entities receiving fewer than 1000 daily views within a given
+      (date_id, analysis_key) partition are collapsed into two anonymous buckets:
+      - OTHER_MATCHED: low-traffic matched Wikidata entities
+      - OTHER_UNMATCHED: low-traffic unmatched article-level entries
+      This bucketing anonymises approximately 62% of total views while
+      preserving mass conservation, reducing Power BI dataset cardinality
+      and improving query performance on downstream serving models.
 
-      Structural Wikimedia infrastructure entities are excluded to avoid
-      sparse analytical inflation caused by low-value non-content nodes.
+      3. Dimension nullification for unmatched buckets:
+      OTHER_UNMATCHED rows have entity_label and entity_type_label set to NULL
+      to prevent unmatched long-tail noise from polluting matched entity dimensions.
+      OTHER_MATCHED rows receive a synthetic 'other' label to preserve
+      aggregability within the matched population.
 
-      This mart acts as the semantic backbone for:
-      - temporal trend analysis
-      - cross-language propagation analysis
-      - unmatched attention analysis
-      - Power BI serving models
+      The analysis_key abstraction unifies:
+      - matched Wikidata entities: E:<numeric_id>
+      - unmatched article-level entries: T:<wiki>:<title>
+
+      Acts as the single materialized checkpoint in the mart layer.
+      All downstream marts are views over this table, inheriting its
+      bucketing and grain without additional materialization cost.
 
     columns:
+      - name: date_id
+        description: >
+          Calendar date of the aggregated attention signal.
+          Derived from DATE(datehour) in the gold layer.
+        tests:
+          - not_null
 
       - name: analysis_key
         description: >
@@ -224,313 +236,324 @@ models:
           Format:
           - E:<numeric_id> for matched Wikidata entities
           - T:<wiki>:<title> for unmatched article-level entries
+          - OTHER_MATCHED for bucketed low-traffic matched entities
+          - OTHER_UNMATCHED for bucketed low-traffic unmatched entries
+        tests:
+          - not_null
 
+      - name: wiki_group
+        description: >
+          Wikipedia language edition group contributing to this row.
+        tests:
+          - not_null
+
+      - name: language_name
+        description: >
+          Human-readable language name associated with wiki_group.
+        tests:
+          - not_null
+
+      - name: is_mobile
+        description: >
+          Whether this row represents mobile traffic (TRUE) or desktop (FALSE).
+        tests:
+          - not_null
+
+      - name: page_type
+        description: >
+          Wikimedia page namespace type (e.g. article, commons, namespace).
+        tests:
+          - not_null
+
+      - name: entity_label
+        description: >
+          Human-readable entity label from Wikidata.
+          Set to 'other' for OTHER_MATCHED bucket rows.
+          NULL for OTHER_UNMATCHED bucket rows.
+          NULL for unmatched non-bucketed rows where no Wikidata label exists.
+
+      - name: entity_type_label
+        description: >
+          Wikidata entity type classification (e.g. human, film, taxon).
+          Set to 'other' for OTHER_MATCHED bucket rows.
+          NULL for OTHER_UNMATCHED bucket rows.
+
+      - name: is_matched
+        description: >
+          Whether this row was successfully resolved to a Wikidata entity.
+          TRUE for matched and OTHER_MATCHED rows.
+          FALSE for unmatched and OTHER_UNMATCHED rows.
+        tests:
+          - not_null
+
+      - name: is_structural_entity
+        description: >
+          Whether this entity represents Wikimedia structural infrastructure
+          rather than content (e.g. portals, project pages).
+          Always FALSE for bucketed rows regardless of original value.
         tests:
           - not_null
 
       - name: daily_views
         description: >
           Total number of pageviews aggregated at the mart grain.
+          Sum of all hourly views within the (date_id, analysis_key,
+          wiki_group, language_name, is_mobile, page_type) partition.
+          For bucketed rows, represents the collapsed sum of all
+          long-tail entities within that bucket.
         tests:
           - not_null
-
-      - name: rolling_7d_views
-        description: >
-          Rolling 7-day attention volume for the analysis_key.
-
-      - name: unique_pages
-        description: >
-          Number of distinct page titles contributing to the aggregated entity.
-
-      - name: active_wikis
-        description: >
-          Number of active Wikipedia editions contributing attention.
-
-      - name: share_of_global_views
-        description: >
-          Relative share of total Wikipedia attention at a given hour.
-
-      - name: share_within_language
-        description: >
-          Relative share of attention inside a specific language ecosystem.
-
-      - name: article_ratio
-        description: >
-          Ratio of article traffic compared to non-article traffic.
-
-      - name: match_rate_weighted
-        description: >
-          Weighted proportion of views successfully matched to Wikidata entities.
-
-
-
-  - name: mart_trends_daily
-    description: >
-      Temporal lifecycle mart analyzing how entity attention evolves over time.
-
-      Grain:
-      one row per
-      (datehour, analysis_key, wiki_group, language_name, is_mobile).
-
-      This mart focuses on normalized lifecycle dynamics:
-      - growth
-      - decline
-      - peak retention
-      - momentum
-
-      Unlike language propagation marts, this model primarily emphasizes
-      entity-time dynamics rather than cross-language comparison.
-
-      Used to:
-      - identify trending entities
-      - compare lifecycle curves
-      - detect viral attention bursts
-      - analyze retention after peak visibility
-
-    columns:
-
-      - name: analysis_key
-        description: Unified semantic identifier.
-        tests:
-          - not_null
-
-      - name: peak_views
-        description: >
-          Historical maximum attention observed for the entity.
-
-      - name: peak_retention
-        description: >
-          Normalized retention ratio:
-          current attention divided by historical peak attention.
-
-      - name: growth_rate
-        description: >
-          Hour-over-hour relative attention growth rate.
-
-      - name: total_views
-        description: >
-          Observed attention volume at the current timestamp.
-
-  - name: mart_semantic_trends
-    description: >
-      Temporal lifecycle mart analyzing how entity attention evolves over time.
-
-      Grain:
-      one row per
-      (datehour, analysis_key, wiki_group, language_name, is_mobile).
-
-      This mart focuses on normalized lifecycle dynamics:
-      - growth
-      - decline
-      - peak retention
-      - momentum
-
-      Unlike language propagation marts, this model primarily emphasizes
-      entity-time dynamics rather than cross-language comparison.
-
-      Used to:
-      - identify trending entities
-      - compare lifecycle curves
-      - detect viral attention bursts
-      - analyze retention after peak visibility
-
-    columns:
-
-      - name: analysis_key
-        description: Unified semantic identifier.
-        tests:
-          - not_null
-
-      - name: peak_views
-        description: >
-          Historical maximum attention observed for the entity.
-
-      - name: peak_retention
-        description: >
-          Normalized retention ratio:
-          current attention divided by historical peak attention.
-
-      - name: growth_rate
-        description: >
-          Hour-over-hour relative attention growth rate.
-
-      - name: total_views
-        description: >
-          Observed attention volume at the current timestamp.
 
   - name: mart_semantic_attention_growth
     description: >
-        Intermediate feature engineering layer dedicated to unmatched
-        article-level attention signals.
-
-        This model enriches unmatched Wikipedia traffic with temporal and
-        behavioral descriptors before downstream aggregation into analytical marts.
-
-        The layer acts as a semantic staging surface between:
-        - raw unmatched pageview observations
-        - higher-level coverage gap analytics
-
-        Unlike final marts, this model is not intended for direct BI exposure.
-        Instead, it centralizes reusable feature computations related to
-        unmatched attention dynamics.
-
-        Used to:
-        - standardize unmatched feature computation
-        - reduce duplicated window calculations downstream
-        - stabilize semantic gap analysis pipelines
-        - support future entity absorption modeling
-
-        Features generated in this layer characterize:
-        - persistence
-        - emergence velocity
-        - cumulative prominence
-        - temporal lifespan
-
-    columns:
-        - name: analysis_key
-          description: >
-            Surface-level semantic identifier encoding wiki and title information
-            for unmatched entries.
-
-          tests:
-            - not_null
-
-        - name: title
-          description: >
-            Article title extracted from the unmatched analysis key.
-
-        - name: date_id
-          description: >
-            Daily timestamp representing the observation grain.
-
-          tests:
-            - not_null
-
-        - name: daily_views
-          description: >
-            Aggregated attention volume for the unmatched topic at the current hour.
-
-        - name: entity_first_appearance
-          description: >
-            Earliest observed timestamp of the unmatched topic within the analysis window.
-
-        - name: entity_age_hours
-          description: >
-            Elapsed time in hours since the first observed appearance
-            of the unmatched topic.
-
-        - name: persistence_score
-          description: >
-            Rolling persistence indicator measuring sustained temporal visibility.
-
-        - name: entity_prominence
-          description: >
-            Cumulative attention mass accumulated by the unmatched topic
-            across the observation period.
-
-        - name: wiki_group
-          description: >
-            Wikipedia language ecosystem associated with the unmatched topic.
-
-        - name: language_name
-          description: >
-            Human-readable language associated with the wiki ecosystem.
-
-        - name: is_mobile
-          description: >
-            Indicates whether the attention originated from mobile Wikipedia traffic.
-
-
-  - name: mart_semantic_attention_unmatched
-    description: >
-      Analytical mart dedicated to unmatched article-level attention signals.
-
-      Represents topics receiving sustained human attention that are
-      not currently linked to structured Wikidata entities.
+      Temporal enrichment layer built on top of mart_semantic_attention_base.
+      Computes rolling statistics and derived signals used by all downstream trend,
+      anomaly, and cross-language marts.
 
       Grain:
       one row per
-      (datehour, analysis_key, wiki_group, language_name, is_mobile).
+      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile).
 
-      This mart models the semantic gap between:
-      - observed collective curiosity
-      - structured knowledge graph representation
+      This mart introduces:
+      - 3-day rolling averages (raw and log-smoothed) for trend estimation
+      - 3-day rolling standard deviation for volatility measurement
+      - day-over-day growth rate and attention delta
+      - peak retention relative to entity historical maximum
+      - previous 3-day window statistics (excluding current day) for self-relative
+        anomaly detection baselines
 
-      Used to:
-      - identify emerging topics
-      - detect semantic coverage gaps
-      - measure persistence of unmatched concepts
-      - analyze potential future entity absorption
+      All window functions use UNIX_SECONDS ordering to support
+      RANGE-based frame semantics in BigQuery.
+
+      Acts as the single enrichment source for:
+      - mart_trends_daily (matched trend signals)
+      - mart_unmatched_surface_features (unmatched trend signals)
+      - mart_cross_language_propagation (attention share and breadth)
 
     columns:
-
       - name: analysis_key
         description: >
-          Surface-level semantic identifier using wiki + title encoding.
+          Unified semantic identifier inherited from mart_semantic_attention_base.
+          E:<numeric_id> for matched entities, T:<wiki>:<title> for unmatched.
+        tests:
+          - not_null
+
+      - name: daily_views
+        description: >
+          Total pageviews for this grain, inherited from mart_semantic_attention_base.
+        tests:
+          - not_null
+
+      - name: prev_views
+        description: >
+          Daily views from the immediately preceding day for the same partition.
+          NULL for the first observed day of an entity.
+
+      - name: peak_retention
+        description: >
+          Ratio of current daily views to the historical maximum daily views
+          for this analysis_key. Measures how close to peak attention
+          an entity currently is.
+
+      - name: growth_rate
+        description: >
+          Day-over-day relative change in daily views.
+          Computed as (daily_views - prev_views) / prev_views.
+          NULL when prev_views is zero or NULL (SAFE_DIVIDE).
+
+      - name: attention_delta
+        description: >
+          Absolute day-over-day change in daily views.
+          Signed: positive means growth, negative means decline.
+
+      - name: ma_3d_views
+        description: >
+          3-day rolling average of daily views including current day.
+          Window defined as 259200 seconds (72 hours) preceding current row.
+          Used as the smoothed level estimate for trend scoring.
+
+      - name: ma_previous_3d_views
+        description: >
+          3-day rolling average of daily views excluding current day.
+          Window defined as 259200 seconds preceding and ending 1 second
+          before current row. Used as the baseline for z-score computation
+          to avoid current observation contaminating its own baseline.
+
+      - name: ma_log_3d_views
+        description: >
+          3-day rolling average of LN(1 + daily_views).
+          Log transformation compresses scale differences across entities
+          ranging from tens to millions of daily views, enabling
+          comparable slope estimates regardless of entity size.
+
+      - name: std_3d_views
+        description: >
+          3-day rolling standard deviation of daily views including current day.
+          Used as the volatility estimate for CV and anomaly detection.
+
+      - name: std_previous_3d_views
+        description: >
+          3-day rolling standard deviation of daily views excluding current day.
+          Paired with ma_previous_3d_views as the denominator for z-score
+          computation to ensure temporal integrity of the anomaly baseline.
+
+  - name: mart_trends_daily
+    description: >
+      Matched entity trend signals derived from mart_semantic_attention_growth.
+      Exposes momentum, smoothed trend scores, volatility, and anomaly signals
+      for all successfully matched Wikidata entities.
+
+      Grain:
+      one row per
+      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      restricted to is_matched = TRUE.
+
+      This mart computes three complementary analytical signals:
+
+      Trend signal:
+      smoothed_trend_score_3d measures the slope of the log-smoothed MA
+      over a 7-day lag, normalized by current MA level. Captures sustained
+      directional movement in attention, robust to single-day bursts.
+
+      Momentum signal:
+      momentum_score = growth_rate * SQRT(daily_views). Rewards entities
+      with both high relative change and significant absolute scale.
+      Used for large spike detection rather than sustained trend detection.
+
+      Anomaly signal:
+      z_score_3d_views measures how many standard deviations today's views
+      deviate from the entity's own prior 3-day baseline. Self-relative:
+      an entity with naturally high volatility requires a proportionally
+      larger deviation to register the same z-score as a stable entity.
+
+      Contains unrounded metrics and additional signals (cv_3d_views, volatility_slope_3d,
+      smoothed_daily_trend_score_3d)  retained for diagnostic purposes
+      and  not exposed to Power BI.
+
+    columns:
+      - name: analysis_key
+        description: >
+          Matched entity identifier in E:<numeric_id> format.
+        tests:
+          - not_null
+
+      - name: daily_views
+        description: >
+          Total pageviews for this grain.
+        tests:
+          - not_null
+
+      - name: momentum_score
+        description: >
+          Scale-weighted burst detector. growth_rate * SQRT(daily_views).
+          Rewards large absolute attention shifts on already-significant entities.
+          High values indicate a recent spike rather than sustained trend growth.
+
+      - name: smoothed_daily_trend_score_3d
+        description: >
+          Daily slope of the log-smoothed MA. Measures day-over-day directional
+          change in the smoothed attention signal. Sensitive to short-term
+          directional shifts.
+
+      - name: z_score_3d_views
+        description: >
+          Self-relative anomaly score. Number of standard deviations today's
+          views deviate from this entity's own prior 3-day mean and variance.
+          Cross-entity comparisons are valid only directionally, not in magnitude,
+          as each entity is normalized against its own baseline.
+
+  - name: mart_unmatched_surface_features
+    description: >
+      Trend signals for unmatched article-level attention.
+      Surfaces Wikipedia pages that could not be resolved to Wikidata entities
+      but exhibit significant or trending attention patterns.
+
+      Grain:
+      one row per
+      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      restricted to is_matched = FALSE.
+
+      The smoothed_trend_score applies the same log-MA slope methodology
+      as matched trend marts, enabling consistent comparison of trend
+      strength across matched and unmatched populations.
+
+      The title field is extracted from the T:<wiki>:<title> analysis_key
+      format to support human-readable identification of unmatched pages
+      without requiring a join to any entity dimension.
+
+      Primary use case: identify unmatched pages with high or growing attention
+      as candidates for Wikidata entity creation or model improvement.
+
+    columns:
+      - name: analysis_key
+        description: >
+          Unmatched page identifier in T:<wiki>:<title> format.
         tests:
           - not_null
 
       - name: title
         description: >
-          Article title extracted from the analysis_key structure.
+          Wikipedia page title extracted from analysis_key via SPLIT on ':'.
+          Human-readable identifier for the unmatched page.
 
-      - name: entity_first_appearance
+      - name: daily_views
         description: >
-          First observed timestamp of the unmatched signal within the analysis period.
+          Total pageviews for this grain.
+        tests:
+          - not_null
 
-      - name: entity_age_hours
+      - name: smoothed_trend_score
         description: >
-          Elapsed time since the first appearance of the unmatched topic.
-
-      - name: entity_prominence
-        description: >
-          Cumulative attention mass accumulated by the unmatched topic.
-
-      - name: persistence_score
-        description: >
-          Rolling persistence indicator measuring sustained visibility.
-
-      - name: unmatched_velocity
-        description: >
-          Relative hour-over-hour attention growth for the unmatched topic.
+          Log-MA slope over a 3-day lag, weighted by current MA level.
+          Computed as (ma_log_3d_views - LAG(ma_log_3d_views, 3)) * ma_log_3d_views / 3.
+          Positive values indicate growing unmatched attention.
+          Methodologically consistent with matched trend scoring.
 
   - name: mart_cross_language_propagation
     description: >
-      Higher-level propagation mart derived from language growth signals.
-
-      Focuses on:
-      - diffusion stability
-      - propagation persistence
-      - cross-language agreement dynamics
-      - relative attention concentration
+      Cross-language attention distribution for matched Wikidata entities.
+      Measures how attention for a given entity is distributed across
+      Wikipedia language communities on a given day.
 
       Grain:
       one row per
-      (datehour, analysis_key, wiki_group).
+      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      restricted to is_matched = TRUE.
 
-      Used to:
-      - evaluate propagation consistency across languages
-      - identify globally aligned attention events
-      - detect culturally polarized entities
-      - analyze multilingual diffusion stability
+      Introduces two complementary breadth metrics:
+
+      concurrent_language_count:
+      number of distinct wiki_groups simultaneously covering this entity
+      on a given date. Measures breadth of cross-community reach.
+
+      attention_share:
+      fraction of total daily views within a (date, wiki_group, is_mobile)
+      partition attributable to this entity. Measures depth of attention
+      within each community.
 
     columns:
-
-      - name: rolling_avg_7d_growth_rate
+      - name: analysis_key
         description: >
-          Smoothed 7-day rolling average of language-local growth rates.
+          Matched entity identifier in E:<numeric_id> format.
+        tests:
+          - not_null
 
-      - name: language_total_views
+      - name: daily_views
         description: >
-          Total attention volume observed within the language ecosystem.
+          Total pageviews for this grain.
+        tests:
+          - not_null
+
+      - name: concurrent_language_count
+        description: >
+          Number of distinct wiki_groups covering this analysis_key
+          on a given date_id. Computed via COUNT(DISTINCT wiki_group)
+          over the (analysis_key, date_id) partition.
+          Proxy for cross-community breadth of attention.
 
       - name: attention_share
         description: >
-          Relative share of entity attention inside the language ecosystem.
-
-      - name: rank_dispersion
-        description: >
-          Cross-language standard deviation of entity ranking at a given timestamp.
-
-          High dispersion indicates strong differences in perceived importance
-          across language communities.
+          Fraction of total daily views within the (date_id, wiki_group, is_mobile)
+          partition attributable to this entity.
+          Computed as daily_views / SUM(daily_views) OVER (PARTITION BY date_id, wiki_group, is_mobile).
+          Measures relative depth of attention within a language community.
