@@ -84,3 +84,23 @@ resource "aws_iam_role_policy_attachment" "attach_logs" {
   policy_arn = aws_iam_policy.cloudwatch_logs.arn
 }
 
+resource "aws_iam_policy" "secrets_access" {
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Action = [
+        "secretsmanager:GetSecretValue"
+      ]
+
+      Resource = var.gcp_service_account_secret_arn
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_secrets_access" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.secrets_access.arn
+}

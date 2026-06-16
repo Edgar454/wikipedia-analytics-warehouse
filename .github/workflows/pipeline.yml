@@ -104,7 +104,8 @@ jobs:
       - name: dbt seed
         run: dbt seed
 
-
+      - name: dbt run
+        run: dbt run --select tag:test
 
       - name: dbt test
         run: dbt test --select tag:unit_tests
