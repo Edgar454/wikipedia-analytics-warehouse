@@ -462,7 +462,7 @@ models:
           Cross-entity comparisons are valid only directionally, not in magnitude,
           as each entity is normalized against its own baseline.
 
-  - name: mart_unmatched_surface_features
+  - name: mart_semantic_attention_unmatched
     description: >
       Trend signals for unmatched article-level attention.
       Surfaces Wikipedia pages that could not be resolved to Wikidata entities
