@@ -95,16 +95,23 @@ def send_logs(client, rows):
     client.put_log_events(**kwargs)
 
 def send_metrics(client, rows):
+
+    if not rows:
+        print("No metrics to publish")
+        return
+
     metric_data = []
-    last_run_time = max(r["creation_time"] for r in rows) if rows else datetime.now(timezone.utc)
+
     run_id = datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S")
 
     global_dimensions = [
-            {
-                "Name": "RunId",
-                "Value": run_id
-            }
+        {
+            "Name": "RunId",
+            "Value": run_id
+        }
     ]
+
+    valid_rows = []
 
     for row in rows:
 
@@ -113,6 +120,8 @@ def send_metrics(client, rows):
 
         if not node_id or not asset_name:
             continue
+
+        valid_rows.append(row)
 
         query_dimensions = [
             {
@@ -153,7 +162,6 @@ def send_metrics(client, rows):
                 "Unit": "Count",
                 "Dimensions": dimensions
             }
-
         ])
 
         if row["status"] == "FAILURE":
@@ -165,43 +173,47 @@ def send_metrics(client, rows):
                 "Dimensions": dimensions
             })
 
-    if not metric_data:
-        print("No dbt metrics to publish")
-        return
+    # publish query-level metrics
 
     for i in range(0, len(metric_data), 1000):
         client.put_metric_data(
             Namespace="WikipediaAnalysis",
             MetricData=metric_data[i:i + 1000]
         )
-    
+
     has_failures = any(
-        m["MetricName"] == "FailedQueries" 
-        for m in metric_data
+        row["status"] == "FAILURE"
+        for row in valid_rows
+    )
+
+    run_duration = sum(
+        row["duration_seconds"]
+        for row in valid_rows
     )
 
     client.put_metric_data(
         Namespace="WikipediaAnalysis",
         MetricData=[
             {
-                "MetricName": "SecondsSinceLastRun",
-                "Value": (datetime.now(timezone.utc) - last_run_time).total_seconds() if not has_failures else None,
+                "MetricName": "RunDurationSeconds",
+                "Timestamp": datetime.now(timezone.utc),
+                "Value": run_duration,
                 "Unit": "Seconds",
                 "Dimensions": global_dimensions
             },
             {
                 "MetricName": "RunSuccess",
+                "Timestamp": datetime.now(timezone.utc),
                 "Value": 0 if has_failures else 1,
                 "Unit": "Count",
                 "Dimensions": global_dimensions
             },
             {
                 "MetricName": "RunTotal",
+                "Timestamp": datetime.now(timezone.utc),
                 "Value": 1,
                 "Unit": "Count",
                 "Dimensions": global_dimensions
             }
         ]
     )
-
-    print(f"Published {len(metric_data)} CloudWatch metrics")
