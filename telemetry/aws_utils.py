@@ -74,6 +74,7 @@ def send_logs(client, rows):
 
 
     for r in rows:
+        r["creation_time"] = str(r["creation_time"])
         events.append({
             "timestamp": int(time.time() * 1000),
             "message": json.dumps(r)
