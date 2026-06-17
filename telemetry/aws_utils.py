@@ -217,3 +217,4 @@ def send_metrics(client, rows):
             }
         ]
     )
+    
