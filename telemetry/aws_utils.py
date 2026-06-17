@@ -96,6 +96,7 @@ def send_logs(client, rows):
 
 def send_metrics(client, rows):
     metric_data = []
+    last_run_time = max(r["creation_time"] for r in rows) if rows else datetime.now(timezone.utc)
     run_id = datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S")
 
     for row in rows:
@@ -148,6 +149,7 @@ def send_metrics(client, rows):
                 "Unit": "Count",
                 "Dimensions": dimensions
             }
+
         ])
 
         if row["status"] == "FAILURE":
@@ -168,5 +170,34 @@ def send_metrics(client, rows):
             Namespace="WikipediaAnalysis",
             MetricData=metric_data[i:i + 1000]
         )
+    
+    has_failures = any(
+        m["MetricName"] == "FailedQueries" 
+        for m in metric_data
+    )
+
+    client.put_metric_data(
+        Namespace="WikipediaAnalysis",
+        MetricData=[
+            {
+                "MetricName": "LastSuccessfulRun",
+                "Value": last_run_time if not has_failures else None,
+                "Unit": "Count",
+                "Dimensions": []
+            },
+            {
+                "MetricName": "RunSuccess",
+                "Value": 0 if has_failures else 1,
+                "Unit": "Count",
+                "Dimensions": []
+            },
+            {
+                "MetricName": "RunTotal",
+                "Value": 1,
+                "Unit": "Count",
+                "Dimensions": []
+            }
+        ]
+    )
 
     print(f"Published {len(metric_data)} CloudWatch metrics")
