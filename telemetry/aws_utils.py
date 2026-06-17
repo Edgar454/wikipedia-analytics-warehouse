@@ -2,7 +2,9 @@ import boto3
 import json
 import time
 import uuid
-import re
+import re   
+from datetime import datetime, timezone
+
 
 LOG_GROUP = "/dbt/metrics"
 LOG_STREAM = "dbt-runner"
@@ -94,7 +96,7 @@ def send_logs(client, rows):
 
 def send_metrics(client, rows):
     metric_data = []
-    run_id = f'run-{uuid.uuid4()}'
+    run_id = datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S")
 
     for row in rows:
 

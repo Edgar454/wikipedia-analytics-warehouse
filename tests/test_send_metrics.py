@@ -89,6 +89,15 @@ def test_same_run_id_across_all_metrics(cw_client, base_row):
     }
     assert len(run_ids) == 1  # all metrics share exactly one RunId
 
+def test_run_id_format(cw_client, base_row):
+    send_metrics(cw_client, [base_row])
+    metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
+    run_id = next(
+        d["Value"] for d in metric_data[0]["Dimensions"] 
+        if d["Name"] == "RunId"
+    )
+    assert run_id.startswith("run-")
+    assert len(run_id) == len("run-20260617-020134")
 
 def test_correct_metric_values(cw_client, base_row):
     send_metrics(cw_client, [base_row])
