@@ -52,8 +52,16 @@ def test_ignores_non_dbt_queries(cw_client, query):
     }]
 
     send_metrics(cw_client, rows)
+    metric_data = get_all_metric_data(cw_client)
 
-    cw_client.put_metric_data.assert_not_called()
+    assert {
+        m["MetricName"]
+        for m in metric_data
+    } == {
+        "RunDurationSeconds",
+        "RunSuccess",
+        "RunTotal"
+    }
 
 
 def test_null_query_does_not_raise(cw_client):
@@ -68,7 +76,9 @@ def test_null_query_does_not_raise(cw_client):
 
     send_metrics(cw_client, rows)
 
-    cw_client.put_metric_data.assert_not_called()
+    
+    metric_data = get_all_metric_data(cw_client)
+    assert len(metric_data) == 3
 
 
 def test_ignores_empty_row_list(cw_client):
