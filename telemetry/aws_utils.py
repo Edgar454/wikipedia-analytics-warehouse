@@ -35,31 +35,26 @@ def ensure_log_group_and_stream(client):
         pass
 
 def extract_node_id(query):
+    if not query:
+        return None
     match = re.search(r"/\*\s*(\{.*?\})\s*\*/", query, re.DOTALL)
-
     if not match:
         return None
-
     try:
         metadata = json.loads(match.group(1))
         return metadata.get("node_id")
     except Exception:
         return None
 
-def extract_model_name(node_id):
+def extract_asset_name(node_id):
     if not node_id:
         return None
-
     parts = node_id.split(".")
-
-    for part in parts:
-        if part.startswith("mart_"):
-            return part
-
-    return None
+    if len(parts) < 3:
+        return None
+    return parts[-1][:255]
 
 def send_logs(client, rows):
-    
     if not rows:
         print("No rows to send")
         return
@@ -101,42 +96,45 @@ def send_metrics(client, rows):
     for row in rows:
 
         node_id = extract_node_id(row["query"])
-        model_name = extract_model_name(node_id)
+        asset_name = extract_asset_name(node_id)
 
-        dimensions = []
+        if not node_id or not asset_name:
+            continue
 
-        if model_name:
-            dimensions.append({
-                "Name": "Model",
-                "Value": model_name
-            })
 
-        if node_id:
-            dimensions.append({
-                "Name": "NodeId",
-                "Value": node_id
-            })
-
-        dimensions.append({
-            "Name": "Status",
-            "Value": row["status"]
-        })
+        dimensions = [
+            {
+                "Name": "Asset",
+                "Value": asset_name
+            },
+            {
+                "Name": "NodeType",
+                "Value": node_id.split(".")[0]
+            },
+            {
+                "Name": "Status",
+                "Value": row["status"]
+            }
+        ]
 
         metric_data.extend([
             {
                 "MetricName": "GBScanned",
+                "Timestamp": row["creation_time"],
                 "Value": row["gb_billed"],
                 "Unit": "Gigabytes",
                 "Dimensions": dimensions
             },
             {
                 "MetricName": "DurationSeconds",
+                "Timestamp": row["creation_time"],
                 "Value": row["duration_seconds"],
                 "Unit": "Seconds",
                 "Dimensions": dimensions
             },
             {
                 "MetricName": "QueryCount",
+                "Timestamp": row["creation_time"],
                 "Value": 1,
                 "Unit": "Count",
                 "Dimensions": dimensions
@@ -146,13 +144,20 @@ def send_metrics(client, rows):
         if row["status"] == "FAILURE":
             metric_data.append({
                 "MetricName": "FailedQueries",
+                "Timestamp": row["creation_time"],
                 "Value": 1,
                 "Unit": "Count",
                 "Dimensions": dimensions
             })
+
+    if not metric_data:
+        print("No dbt metrics to publish")
+        return
 
     for i in range(0, len(metric_data), 1000):
         client.put_metric_data(
             Namespace="WikipediaAnalysis",
             MetricData=metric_data[i:i + 1000]
         )
+
+    print(f"Published {len(metric_data)} CloudWatch metrics")

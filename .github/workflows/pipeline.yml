@@ -16,6 +16,7 @@ jobs:
       infra: ${{ steps.filter.outputs.infra }}
       dbt: ${{ steps.filter.outputs.dbt }}
       build: ${{ steps.filter.outputs.build }}
+      telemetry: ${{ steps.filter.outputs.telemetry }}
 
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +36,9 @@ jobs:
               - "scripts/**"
               - "dbt/**"
               - "telemetry/**"
+            telemetry:
+              - "telemetry/**"
+              - "tests/**"
 
   terraform:
     needs: changes
@@ -79,6 +83,33 @@ jobs:
         run: |
           terraform output -json > tf_outputs.json
           echo "ecr_url=$(jq -r '.repository_url.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+  
+  unit_tests:
+    needs: changes
+    if: needs.changes.outputs.telemetry == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-pytest-${{ hashFiles('tests/requirements-test.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-pytest-
+
+      - name: Install dependencies
+        run: pip install -r tests/requirements-test.txt
+
+      - name: Run pytest
+        run: pytest tests/
 
   dbt-tests:
     needs: changes
@@ -111,14 +142,15 @@ jobs:
         run: dbt test --select tag:unit_tests
 
   build-image:
-    needs: [changes, terraform, dbt-tests]
+    needs: [changes, terraform, dbt-tests, unit_tests]
     runs-on: ubuntu-latest
 
     if: |
       always() &&
       needs.changes.outputs.build == 'true' &&
       (needs.terraform.result == 'success' || needs.terraform.result == 'skipped') &&
-      (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped')
+      (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped') &&
+      (needs.unit_tests.result == 'success' || needs.unit_tests.result == 'skipped')
 
     steps:
       - uses: actions/checkout@v4
