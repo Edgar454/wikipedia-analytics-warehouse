@@ -184,9 +184,9 @@ def send_metrics(client, rows):
         Namespace="WikipediaAnalysis",
         MetricData=[
             {
-                "MetricName": "SuccessfulRunTime",
-                "Value": last_run_time if not has_failures else None,
-                "Unit": None,
+                "MetricName": "SecondsSinceLastRun ",
+                "Value": (datetime.now(timezone.utc) - last_run_time).total_seconds() if not has_failures else None,
+                "Unit": "Seconds",
                 "Dimensions": global_dimensions
             },
             {

@@ -52,7 +52,7 @@ def test_publishes_six_base_metrics_on_success(cw_client, base_row):
 
     metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
     assert set(m["MetricName"] for m in metric_data) == {
-        "GBScanned", "DurationSeconds", "QueryCount", "FailedQueries", "SuccessfulRunTime", "RunSuccess"
+        "GBScanned", "DurationSeconds", "QueryCount", "SecondsSinceLastRun", "RunSuccess","RunTotal"
     }
     assert len(metric_data) == 6
 
@@ -114,8 +114,8 @@ def test_correct_metric_values(cw_client, base_row):
     assert by_name["QueryCount"]["Unit"] == "Count"
     assert by_name["FailedQueries"]["Value"] == 0
     assert by_name["FailedQueries"]["Unit"] == "Count"
-    assert isinstance(by_name["SuccessfulRunTime"]["Value"], (datetime, type(None)))
-    assert by_name["SuccessfulRunTime"]["Unit"] == None
+    assert isinstance(by_name["SecondsSinceLastRun "]["Value"], (float, type(None)))
+    assert by_name["SecondsSinceLastRun "]["Unit"] == "Seconds"
     assert by_name["RunSuccess"]["Value"] == 1
     assert by_name["RunSuccess"]["Unit"] == "Count"
     assert by_name["RunTotal"]["Value"] == 1
