@@ -1,6 +1,7 @@
 import boto3
 import json
 import time
+import uuid
 import re
 
 LOG_GROUP = "/dbt/metrics"
@@ -93,6 +94,7 @@ def send_logs(client, rows):
 
 def send_metrics(client, rows):
     metric_data = []
+    run_id = f'run-{uuid.uuid4()}'
 
     for row in rows:
 
@@ -104,6 +106,10 @@ def send_metrics(client, rows):
 
 
         dimensions = [
+            {
+                "Name": "RunId",
+                "Value": run_id
+            },
             {
                 "Name": "Asset",
                 "Value": asset_name

@@ -79,6 +79,16 @@ def test_correct_dimensions(cw_client, base_row):
     assert dimensions["NodeType"] == "model"
     assert dimensions["Status"] == "SUCCESS"
 
+def test_same_run_id_across_all_metrics(cw_client, base_row):
+    rows = [base_row.copy() for _ in range(3)]
+    send_metrics(cw_client, rows)
+    metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
+    run_ids = {
+        next(d["Value"] for d in m["Dimensions"] if d["Name"] == "RunId")
+        for m in metric_data
+    }
+    assert len(run_ids) == 1  # all metrics share exactly one RunId
+
 
 def test_correct_metric_values(cw_client, base_row):
     send_metrics(cw_client, [base_row])
@@ -125,3 +135,4 @@ def test_skips_invalid_rows_publishes_valid(cw_client, base_row):
     cw_client.put_metric_data.assert_called_once()
     metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
     assert len(metric_data) == 3
+
