@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime , timezone
 from unittest.mock import Mock
 from telemetry.aws_utils import send_metrics
 
@@ -15,7 +16,7 @@ def base_row():
         "gb_billed": 1.5,
         "duration_seconds": 42,
         "status": "SUCCESS",
-        "creation_time": "2026-06-01T00:00:00Z"
+        "creation_time": datetime(2026, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
     }
 
 
@@ -33,7 +34,7 @@ def test_ignores_non_dbt_queries(cw_client, query):
         "gb_billed": 1.5,
         "duration_seconds": 10,
         "status": "SUCCESS",
-        "creation_time": "2026-06-01T00:00:00Z"
+        "creation_time": datetime(2026, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
     }]
     send_metrics(cw_client, rows)
     cw_client.put_metric_data.assert_not_called()
@@ -46,23 +47,23 @@ def test_ignores_empty_row_list(cw_client):
 
 # ── happy path ───────────────────────────────────────────────────────────────
 
-def test_publishes_three_base_metrics_on_success(cw_client, base_row):
+def test_publishes_six_base_metrics_on_success(cw_client, base_row):
     send_metrics(cw_client, [base_row])
 
     metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
     assert set(m["MetricName"] for m in metric_data) == {
-        "GBScanned", "DurationSeconds", "QueryCount"
+        "GBScanned", "DurationSeconds", "QueryCount", "FailedQueries", "SuccessfulRunTime", "RunSuccess"
     }
-    assert len(metric_data) == 3
+    assert len(metric_data) == 6
 
 
-def test_publishes_four_metrics_on_failure(cw_client, base_row):
+def test_publishes_seven_metrics_on_failure(cw_client, base_row):
     base_row["status"] = "FAILURE"
     send_metrics(cw_client, [base_row])
 
     metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
     assert "FailedQueries" in [m["MetricName"] for m in metric_data]
-    assert len(metric_data) == 4
+    assert len(metric_data) == 7
 
 
 def test_correct_namespace(cw_client, base_row):
@@ -73,7 +74,8 @@ def test_correct_namespace(cw_client, base_row):
 def test_correct_dimensions(cw_client, base_row):
     send_metrics(cw_client, [base_row])
     metric_data = cw_client.put_metric_data.call_args.kwargs["MetricData"]
-    dimensions = {d["Name"]: d["Value"] for d in metric_data[0]["Dimensions"]}
+    queries_metrics = [m for m in metric_data if m["MetricName"] in {"GBScanned", "DurationSeconds", "QueryCount"}]
+    dimensions = {d["Name"]: d["Value"] for d in queries_metrics[0]["Dimensions"]}
 
     assert dimensions["Asset"] == "mart_semantic_attention_base"
     assert dimensions["NodeType"] == "model"
@@ -110,6 +112,14 @@ def test_correct_metric_values(cw_client, base_row):
     assert by_name["DurationSeconds"]["Unit"] == "Seconds"
     assert by_name["QueryCount"]["Value"] == 1
     assert by_name["QueryCount"]["Unit"] == "Count"
+    assert by_name["FailedQueries"]["Value"] == 0
+    assert by_name["FailedQueries"]["Unit"] == "Count"
+    assert isinstance(by_name["SuccessfulRunTime"]["Value"], (datetime, type(None)))
+    assert by_name["SuccessfulRunTime"]["Unit"] == None
+    assert by_name["RunSuccess"]["Value"] == 1
+    assert by_name["RunSuccess"]["Unit"] == "Count"
+    assert by_name["RunTotal"]["Value"] == 1
+    assert by_name["RunTotal"]["Unit"] == "Count"
 
 
 # ── batching ─────────────────────────────────────────────────────────────────
@@ -136,7 +146,7 @@ def test_skips_invalid_rows_publishes_valid(cw_client, base_row):
             "gb_billed": 0,
             "duration_seconds": 0,
             "status": "SUCCESS",
-            "creation_time": "2026-06-01T00:00:00Z"
+            "creation_time": datetime(2026, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
         },
         base_row,
     ]

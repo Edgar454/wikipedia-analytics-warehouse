@@ -99,6 +99,13 @@ def send_metrics(client, rows):
     last_run_time = max(r["creation_time"] for r in rows) if rows else datetime.now(timezone.utc)
     run_id = datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S")
 
+    global_dimensions = [
+            {
+                "Name": "RunId",
+                "Value": run_id
+            }
+    ]
+
     for row in rows:
 
         node_id = extract_node_id(row["query"])
@@ -107,12 +114,7 @@ def send_metrics(client, rows):
         if not node_id or not asset_name:
             continue
 
-
-        dimensions = [
-            {
-                "Name": "RunId",
-                "Value": run_id
-            },
+        query_dimensions = [
             {
                 "Name": "Asset",
                 "Value": asset_name
@@ -126,6 +128,8 @@ def send_metrics(client, rows):
                 "Value": row["status"]
             }
         ]
+
+        dimensions = global_dimensions + query_dimensions
 
         metric_data.extend([
             {
@@ -180,22 +184,22 @@ def send_metrics(client, rows):
         Namespace="WikipediaAnalysis",
         MetricData=[
             {
-                "MetricName": "LastSuccessfulRun",
+                "MetricName": "SuccessfulRunTime",
                 "Value": last_run_time if not has_failures else None,
-                "Unit": "Count",
-                "Dimensions": []
+                "Unit": None,
+                "Dimensions": global_dimensions
             },
             {
                 "MetricName": "RunSuccess",
                 "Value": 0 if has_failures else 1,
                 "Unit": "Count",
-                "Dimensions": []
+                "Dimensions": global_dimensions
             },
             {
                 "MetricName": "RunTotal",
                 "Value": 1,
                 "Unit": "Count",
-                "Dimensions": []
+                "Dimensions": global_dimensions
             }
         ]
     )
