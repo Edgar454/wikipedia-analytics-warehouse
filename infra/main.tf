@@ -29,6 +29,7 @@ module "cloudwatch" {
 
   project_name = var.project_name
   tags         = local.common_tags
+  sns_topic_arn = module.sns.topic_arn
 }
 
 module "ecs_cluster" {

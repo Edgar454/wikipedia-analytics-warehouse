@@ -1,0 +1,337 @@
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 18,
+            "y": 0,
+            "width": 6,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned)  FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId)", "label": "GBScanned", "id": "q1", "region": "eu-west-1", "stat": "Sum", "period": 86400 } ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "eu-west-1",
+                "stat": "Sum",
+                "period": 86400,
+                "title": "Big Query GB scanned "
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId)", "label": "GBScanned", "id": "gb_scanned", "region": "eu-west-1", "period": 86400 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Query GBscanned by Run",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Billing", "EstimatedCharges", "Currency", "USD", { "region": "us-east-1", "id": "m1" } ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "eu-west-1",
+                "stat": "Maximum",
+                "period": 86400,
+                "title": "AWS Estimated Cost",
+                "yAxis": {
+                    "left": {
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 0,
+            "width": 6,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId)", "label": "GBScanned", "id": "total_gb", "region": "eu-west-1", "stat": "Sum", "period": 86400, "visible": false } ],
+                    [ { "expression": "total_gb /1024", "label": "Total Terrabytes Scanned", "id": "tb_billed", "visible": false, "region": "eu-west-1" } ],
+                    [ { "expression": "IF(tb_billed- 1>0, tb_billed-1, 0)", "label": "Total Terrabytes Billed", "id": "tb_effectively_billed", "visible": false, "region": "eu-west-1" } ],
+                    [ { "expression": "tb_effectively_billed * 6.25", "label": "Bigquery Estimated Cost", "id": "estimated_cost", "region": "eu-west-1" } ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "eu-west-1",
+                "stat": "Sum",
+                "period": 86400,
+                "title": "Big Query Estimated Cost"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 8,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(DurationSeconds) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId)", "label": "total_duration", "id": "e2", "period": 86400 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Job duration by Run",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 14,
+            "width": 8,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId) GROUP BY Asset", "label": "Total Gb Scanned by Model", "id": "gb_per_model", "visible": false, "region": "eu-west-1", "period": 86400 } ],
+                    [ { "expression": "gb_per_model / 1024 * 6.25", "label": "", "id": "cost_per_model", "region": "eu-west-1", "period": 86400 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Estimated Cost by model",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId)", "label": "Total Gb Scanned", "id": "gb_scanned", "visible": false, "region": "eu-west-1", "period": 86400 } ],
+                    [ { "expression": "gb_scanned / 1024 * 6.25", "label": "cost", "id": "cost", "region": "eu-west-1", "period": 86400 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Estimated Cost by Run",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 8,
+            "y": 14,
+            "width": 8,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId) GROUP BY Asset", "label": "Total Gb Scanned by Model", "id": "gb_per_model", "visible": false, "region": "eu-west-1", "period": 86400 } ],
+                    [ { "expression": "gb_per_model / 1024 * 6.25", "label": "", "id": "cost_per_model", "region": "eu-west-1", "period": 86400 } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery GB Scanned by model",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 16,
+            "y": 14,
+            "width": 8,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(DurationSeconds) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId) GROUP BY Asset", "label": "JobDuration", "id": "e1", "period": 86400, "region": "eu-west-1" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Job duration by model",
+                "period": 86400,
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "showUnits": true
+                    }
+                },
+                "setPeriodToTimeRange": true
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 3,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(GBScanned) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status) WHERE Status = 'SUCCESS'", "label": "GBScanned", "id": "total_gb", "region": "eu-west-1", "stat": "Sum", "period": 86400, "visible": false } ],
+                    [ { "expression": "total_gb /1024", "label": "Total Terrabytes Scanned", "id": "tb_billed", "visible": false, "region": "eu-west-1" } ],
+                    [ { "expression": "IF(tb_billed- 1>0, tb_billed-1, 0)", "label": "Total Terrabytes Billed", "id": "tb_effectively_billed", "visible": false, "region": "eu-west-1" } ],
+                    [ { "expression": "tb_effectively_billed * 6.25", "label": "Bigquery Estimated Cost", "id": "bigquery_estimated_cost", "region": "eu-west-1", "visible": false } ],
+                    [ "AWS/Billing", "EstimatedCharges", "Currency", "USD", { "stat": "Maximum", "region": "us-east-1", "id": "aws_estimated_charges", "visible": false } ],
+                    [ { "expression": "aws_estimated_charges + bigquery_estimated_cost", "label": "TotalCharges", "id": "total_charges" } ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "eu-west-1",
+                "stat": "Sum",
+                "period": 86400,
+                "title": "Total Estimated Cost"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 3,
+            "width": 12,
+            "height": 5,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Billing", "EstimatedCharges", "ServiceName", "AmazonCloudWatch", "Currency", "USD", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AmazonECR", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AmazonECS", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AmazonS3", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AmazonSNS", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AmazonVPC", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AWSDataTransfer", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AWSGlue", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "awskms", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AWSMarketplace", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AWSQueueService", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ],
+                    [ "...", "AWSSecretsManager", ".", ".", { "period": 21600, "stat": "Maximum", "region": "us-east-1" } ]
+                ],
+                "region": "eu-west-1",
+                "title": "AWS EstimatedCharges by Service"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 3,
+            "width": 12,
+            "height": 5,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Billing", "EstimatedCharges", "ServiceName", "AmazonCloudWatch", "Currency", "USD", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AmazonECR", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AmazonECS", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AmazonS3", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AmazonSNS", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AmazonVPC", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AWSDataTransfer", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AWSGlue", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "awskms", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AWSMarketplace", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AWSQueueService", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ "...", "AWSSecretsManager", ".", ".", { "region": "us-east-1", "visible": false } ],
+                    [ ".", ".", "Currency", "USD", { "region": "us-east-1" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "AWS EstimatedCharges ",
+                "period": 21600,
+                "stat": "Maximum"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 20,
+            "width": 11,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "m2*100/m1", "label": "SuccessRate", "id": "e1" } ],
+                    [ "WikipediaAnalysis", "RunTotal", "RunId", "run-20260618-020113", { "region": "eu-west-1", "id": "m1", "visible": false } ],
+                    [ ".", "RunSuccess", ".", ".", { "region": "eu-west-1", "id": "m2", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Success Rate Over Time",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 11,
+            "y": 20,
+            "width": 13,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(QueryCount) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,RunId,Status) WHERE Status = 'Success' GROUP BY Asset", "label": "", "id": "q1", "visible": false } ],
+                    [ { "expression": "q1/m1", "label": "SuccessRate", "id": "e1" } ],
+                    [ "WikipediaAnalysis", "QueryCount", "Status", "FAILURE", "NodeType", "model", "Asset", "mart_semantic_attention_base", "RunId", "run-20260618-020113", { "id": "m1", "visible": false } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Success Rate Over Time By Model",
+                "period": 86400,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 18,
+            "y": 8,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SELECT SUM(QueryCount) FROM SCHEMA(WikipediaAnalysis, Asset,NodeType,Status,RunId) GROUP BY RunId", "label": "QueryCountByRunId", "id": "e1", "visible": false, "period": 86400 } ],
+                    [ { "expression": "SUM(e1)", "label": "TotalQueryCount", "id": "e2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-1",
+                "title": "Bigquery Query Count by Run",
+                "period": 300,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "log",
+            "x": 0,
+            "y": 26,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE \"arn:aws:logs:eu-west-1:234334047980:log-group:/ecs/wikipedia-analysis\" |\nparse @message \"ERROR=0\"  as ok\n| filter ispresent(ok)\n| fields @timestamp, @message, \"SUCCESS\" as result\n| sort @timestamp desc\n\n",
+                "region": "eu-west-1",
+                "stacked": false,
+                "view": "table",
+                "title": "Groupe de journaux: arn:aws:logs:eu-west-1:234334047980:log-group:/ecs/wikipedia-analysis"
+            }
+        }
+    ]
+}
