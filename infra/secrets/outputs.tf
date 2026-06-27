@@ -16,7 +16,7 @@ output "powerbi_credentials_arn" {
 
 output "powerbi_credentials" {
   value =  try(
-    aws_secretsmanager_secret.powerbi_credentials.name,
+    aws_secretsmanager_secret.powerbi_credentials[0].name,
     null
   )
 }
