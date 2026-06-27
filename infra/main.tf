@@ -22,7 +22,7 @@ module "iam" {
   ecr_repository_arn       = module.ecr.repository_arn
   secret_arns              = compact([
     module.secrets.gcp_service_account_secret_arn,
-    module.secrets.powerbi_credentials_secret_arn,
+    module.secrets.powerbi_credentials_arn,
   ])
 
 }
