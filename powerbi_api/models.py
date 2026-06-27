@@ -6,3 +6,4 @@ class Credentials(BaseModel):
     CLIENT_SECRET:str
     WORKSPACE_NAME:str
     DATASET_NAME:str
+

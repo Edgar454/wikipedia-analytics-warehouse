@@ -36,10 +36,10 @@ jobs:
               - "scripts/**"
               - "dbt/**"
               - "telemetry/**"
-              - "powerbi_api"
+              - "powerbi_api/**"
             telemetry:
               - "telemetry/**"
-              - "powerbi_api"
+              - "powerbi_api/**"
               - "tests/**"
 
   terraform:
