@@ -10,3 +10,8 @@ variable "gcp_service_account_json" {
   type      = string
   sensitive = true
 }
+
+variable "powerbi_credentials_json" {
+  type      = string
+  sensitive = true
+}

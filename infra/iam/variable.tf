@@ -12,6 +12,6 @@ variable "ecr_repository_arn" {
   type = string
 }
 
-variable "gcp_service_account_secret_arn" {
-  type = string
+variable "secret_arns" {
+  type = list(string)
 }

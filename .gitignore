@@ -11,3 +11,4 @@ dashboards/
 *.tfstate.backup
 .terraform.
 key.json
+seed_code/*

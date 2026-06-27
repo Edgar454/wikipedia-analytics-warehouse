@@ -40,10 +40,50 @@ models:
               arguments:
                 values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
 
-      - name: pageview_id
+
+  - name: int_pageviews_canonical_titles
+    description: >
+      Rewrites localized namespace prefixes in pageview titles to their
+      canonical (English) form, using the classification already produced
+      by int_pageviews_classified. Performs no joins and no reclassification
+      — a pure, deterministic string rewrite. page_type is passed through
+      unchanged. Exists solely to make namespace titles comparable across
+      languages (e.g. "Spécial:Recherche" and "Especial:Buscar" both become
+      "Special:Recherche"/"Special:Buscar").
+    columns:
+      - name: wiki
+        description: Wikipedia language community code (e.g. en, fr.m, ja)
+        tests:
+          - not_null
+
+      - name: title
         description: >
-          Surrogate key identifying a unique pageview grain:
-          (wiki, title, datehour)
+          Page title with namespace prefix rewritten to canonical form when
+          page_type = namespace (e.g. "Fichier:X.jpg" -> "File:X.jpg").
+          Titles for every other page_type are passed through unchanged
+          from int_pageviews_classified.
+        tests:
+          - not_null
+
+      - name: views
+        description: Number of HTTP requests to the page in a given hour
+        tests:
+          - not_null
+
+      - name: datehour
+        description: Hour-level timestamp partition of the pageview event
+        tests:
+          - not_null
+
+      - name: page_type
+        description: >
+          Page classification, passed through unchanged from
+          int_pageviews_classified. Not re-derived in this model.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [article, namespace, wikiquote, wiktionary, mediawiki, wikisource, wikibooks, wikiversity, wikivoyage, wikinews, donation, commons, wikispecies, portal]
 
 
   - name: int_structural_entities

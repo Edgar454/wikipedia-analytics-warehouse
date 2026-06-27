@@ -36,8 +36,10 @@ jobs:
               - "scripts/**"
               - "dbt/**"
               - "telemetry/**"
+              - "powerbi_api"
             telemetry:
               - "telemetry/**"
+              - "powerbi_api"
               - "tests/**"
 
   terraform:
@@ -47,6 +49,7 @@ jobs:
     environment: terraform-apply
     env:
       TF_VAR_gcp_service_account_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      TF_VAR_powerbi_credentials_json: ${{ secrets.POWER_BI_CREDENTIALS }}
 
     outputs:
       ecr_url: ${{ steps.tf.outputs.ecr_url }}

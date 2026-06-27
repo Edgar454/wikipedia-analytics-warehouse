@@ -5,7 +5,6 @@ SELECT
     analysis_key,
     entity_label,
     entity_type_label,
-    wiki_group,
     language_name,
     is_mobile,
     page_type,

@@ -17,6 +17,22 @@ data_tests:
       tags:
         - reconciliation_tests
 
+  - name: test_classified_preserve_view_count
+    description: >
+      Validates that the namespace classification step from stg_pageviews
+      to int_pageviews_classified preserves the total number of pageviews
+      exactly, with zero tolerance.
+
+      Classification is applied via a LEFT JOIN against dim_namespaces.
+      Any deviation indicates the join produced duplicate matches,
+      not an acceptable real-world ambiguity.
+
+    config:
+      tags:
+        - unit_test
+        - reconciliation_tests
+        
+
   - name: test_semantic_attention_preserve_view_count
     description: >
       Validates the conservation of attention between the enriched

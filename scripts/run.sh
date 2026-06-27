@@ -16,11 +16,14 @@ pushd dbt > /dev/null
   dbt run \
     --profiles-dir . \
     --target dev \
-    --select tag:marts || DBT_EXIT_CODE=$?
+    --select tag:mart || DBT_EXIT_CODE=$?
 
 popd > /dev/null
 
 # collect metrics after dbt run
 python telemetry/collect_metrics.py
+
+# refresh power bi dashboard
+python powerbi_api/refresh_dashboard
 
 exit $DBT_EXIT_CODE

@@ -18,4 +18,4 @@ SELECT
     datehour,
     page_type,
     CONCAT(wiki, '|', title, '|', CAST(datehour AS STRING)) AS pageview_id
-FROM {{ ref('int_pageviews_classified') }}
+FROM {{ ref('int_pageviews_canonical_titles') }}

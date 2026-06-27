@@ -1,335 +1,747 @@
-wiki_code,language_name,base_wiki,is_mobile,wiki_group
-en,English,en,FALSE,en_all
-en.m,English,en,TRUE,en_all
-fr,French,fr,FALSE,fr_all
-fr.m,French,fr,TRUE,fr_all
-de,German,de,FALSE,de_all
-de.m,German,de,TRUE,de_all
-es,Spanish,es,FALSE,es_all
-es.m,Spanish,es,TRUE,es_all
-ja,Japanese,ja,FALSE,ja_all
-ja.m,Japanese,ja,TRUE,ja_all
-ar,Arabic,ar,FALSE,ar_all
-ar.m,Arabic,ar,TRUE,ar_all
-zh,Chinese,zh,FALSE,zh_all
-ru,Russian,ru,FALSE,ru_all
-ru.m,Russian,ru,TRUE,ru_all
-pt,Portuguese,pt,FALSE,pt_all
-pt.m,Portuguese,pt,TRUE,pt_all
-it,Italian,it,FALSE,it_all
-it.m,Italian,it,TRUE,it_all
-pl,Polish,pl,FALSE,pl_all
-pl.m,Polish,pl,TRUE,pl_all
-nl,Dutch,nl,FALSE,nl_all
-nl.m,Dutch,nl,TRUE,nl_all
-sv,Swedish,sv,FALSE,sv_all
-sv.m,Swedish,sv,TRUE,sv_all
-uk,Ukrainian,uk,FALSE,uk_all
-uk.m,Ukrainian,uk,TRUE,uk_all
-no,Norwegian,no,FALSE,no_all
-no.m,Norwegian,no,TRUE,no_all
-fi,Finnish,fi,FALSE,fi_all
-fi.m,Finnish,fi,TRUE,fi_all
-cs,Czech,cs,FALSE,cs_all
-cs.m,Czech,cs,TRUE,cs_all
-hu,Hungarian,hu,FALSE,hu_all
-hu.m,Hungarian,hu,TRUE,hu_all
-ko,Korean,ko,FALSE,ko_all
-ko.m,Korean,ko,TRUE,ko_all
-tr,Turkish,tr,FALSE,tr_all
-tr.m,Turkish,tr,TRUE,tr_all
-vi,Vietnamese,vi,FALSE,vi_all
-vi.m,Vietnamese,vi,TRUE,vi_all
-ro,Romanian,ro,FALSE,ro_all
-ro.m,Romanian,ro,TRUE,ro_all
-id,Indonesian,id,FALSE,id_all
-id.m,Indonesian,id,TRUE,id_all
-he,Hebrew,he,FALSE,he_all
-he.m,Hebrew,he,TRUE,he_all
-ca,Catalan,ca,FALSE,ca_all
-ca.m,Catalan,ca,TRUE,ca_all
-fa,Persian,fa,FALSE,fa_all
-fa.m,Persian,fa,TRUE,fa_all
-ms,Malay,ms,FALSE,ms_all
-ms.m,Malay,ms,TRUE,ms_all
-sr,Serbian,sr,FALSE,sr_all
-sr.m,Serbian,sr,TRUE,sr_all
-da,Danish,da,FALSE,da_all
-da.m,Danish,da,TRUE,da_all
-bg,Bulgarian,bg,FALSE,bg_all
-bg.m,Bulgarian,bg,TRUE,bg_all
-sk,Slovak,sk,FALSE,sk_all
-sk.m,Slovak,sk,TRUE,sk_all
-hr,Croatian,hr,FALSE,hr_all
-hr.m,Croatian,hr,TRUE,hr_all
-lt,Lithuanian,lt,FALSE,lt_all
-lt.m,Lithuanian,lt,TRUE,lt_all
-sl,Slovenian,sl,FALSE,sl_all
-sl.m,Slovenian,sl,TRUE,sl_all
-et,Estonian,et,FALSE,et_all
-et.m,Estonian,et,TRUE,et_all
-gl,Galician,gl,FALSE,gl_all
-gl.m,Galician,gl,TRUE,gl_all
-eu,Basque,eu,FALSE,eu_all
-eu.m,Basque,eu,TRUE,eu_all
-th,Thai,th,FALSE,th_all
-th.m,Thai,th,TRUE,th_all
-lv,Latvian,lv,FALSE,lv_all
-lv.m,Latvian,lv,TRUE,lv_all
-simple,Simple English,simple,FALSE,en_all
-simple.m,Simple English,simple,TRUE,en_all
-sh,Serbo-Croatian,sh,FALSE,sh_all
-sh.m,Serbo-Croatian,sh,TRUE,sh_all
-nn,Norwegian Nynorsk,nn,FALSE,no_all
-nn.m,Norwegian Nynorsk,nn,TRUE,no_all
-sq,Albanian,sq,FALSE,sq_all
-sq.m,Albanian,sq,TRUE,sq_all
-hy,Armenian,hy,FALSE,hy_all
-hy.m,Armenian,hy,TRUE,hy_all
-ur,Urdu,ur,FALSE,ur_all
-ur.m,Urdu,ur,TRUE,ur_all
-ta,Tamil,ta,FALSE,ta_all
-ta.m,Tamil,ta,TRUE,ta_all
-mk,Macedonian,mk,FALSE,mk_all
-mk.m,Macedonian,mk,TRUE,mk_all
-eo,Esperanto,eo,FALSE,eo_all
-eo.m,Esperanto,eo,TRUE,eo_all
-be,Belarusian,be,FALSE,be_all
-be.m,Belarusian,be,TRUE,be_all
-ka,Georgian,ka,FALSE,ka_all
-ka.m,Georgian,ka,TRUE,ka_all
-af,Afrikaans,af,FALSE,af_all
-af.m,Afrikaans,af,TRUE,af_all
-bs,Bosnian,bs,FALSE,bs_all
-bs.m,Bosnian,bs,TRUE,bs_all
-ml,Malayalam,ml,FALSE,ml_all
-ml.m,Malayalam,ml,TRUE,ml_all
-az,Azerbaijani,az,FALSE,az_all
-az.m,Azerbaijani,az,TRUE,az_all
-bn,Bengali,bn,FALSE,bn_all
-bn.m,Bengali,bn,TRUE,bn_all
-mr,Marathi,mr,FALSE,mr_all
-mr.m,Marathi,mr,TRUE,mr_all
-cy,Welsh,cy,FALSE,cy_all
-cy.m,Welsh,cy,TRUE,cy_all
-pa,Punjabi,pa,FALSE,pa_all
-pa.m,Punjabi,pa,TRUE,pa_all
-oc,Occitan,oc,FALSE,oc_all
-oc.m,Occitan,oc,TRUE,oc_all
-is,Icelandic,is,FALSE,is_all
-is.m,Icelandic,is,TRUE,is_all
-el,Greek,el,FALSE,el_all
-el.m,Greek,el,TRUE,el_all
-la,Latin,la,FALSE,la_all
-la.m,Latin,la,TRUE,la_all
-ast,Asturian,ast,FALSE,ast_all
-ast.m,Asturian,ast,TRUE,ast_all
-sc,Sardinian,sc,FALSE,sc_all
-sc.m,Sardinian,sc,TRUE,sc_all
-ga,Irish,ga,FALSE,ga_all
-ga.m,Irish,ga,TRUE,ga_all
-zh.m,Chinese,zh,TRUE,zh_all
-wuu,Wu Chinese,wuu,FALSE,zh_all
-wuu.m,Wu Chinese,wuu,TRUE,zh_all
-zh_yue,Cantonese,zh_yue,FALSE,zh_all
-zh_yue.m,Cantonese,zh_yue,TRUE,zh_all
-zh_min_nan,Min Nan Chinese,zh_min_nan,FALSE,zh_all
-zh_min_nan.m,Min Nan Chinese,zh_min_nan,TRUE,zh_all
-war,Waray,war,FALSE,war_all
-war.m,Waray,war,TRUE,war_all
-sco,Scots,sco,FALSE,sco_all
-sco.m,Scots,sco,TRUE,sco_all
-be_x_old,Belarusian (Taraškievica),be_x_old,FALSE,be_all
-be_x_old.m,Belarusian (Taraškievica),be_x_old,TRUE,be_all
-arz,Egyptian Arabic,arz,FALSE,ar_all
-arz.m,Egyptian Arabic,arz,TRUE,ar_all
-azb,South Azerbaijani,azb,FALSE,az_all
-azb.m,South Azerbaijani,azb,TRUE,az_all
-bar,Bavarian,bar,FALSE,de_all
-bar.m,Bavarian,bar,TRUE,de_all
-ba,Bashkir,ba,FALSE,ba_all
-ba.m,Bashkir,ba,TRUE,ba_all
-fo,Faroese,fo,FALSE,fo_all
-fo.m,Faroese,fo,TRUE,fo_all
-fy,Western Frisian,fy,FALSE,fy_all
-fy.m,Western Frisian,fy,TRUE,fy_all
-hif,Fiji Hindi,hif,FALSE,hif_all
-hif.m,Fiji Hindi,hif,TRUE,hif_all
-ia,Interlingua,ia,FALSE,ia_all
-ia.m,Interlingua,ia,TRUE,ia_all
-ie,Interlingue,ie,FALSE,ie_all
-ie.m,Interlingue,ie,TRUE,ie_all
-io,Ido,io,FALSE,io_all
-io.m,Ido,io,TRUE,io_all
-jv,Javanese,jv,FALSE,jv_all
-jv.m,Javanese,jv,TRUE,jv_all
-ks,Kashmiri,ks,FALSE,ks_all
-ks.m,Kashmiri,ks,TRUE,ks_all
-kw,Cornish,kw,FALSE,kw_all
-kw.m,Cornish,kw,TRUE,kw_all
-ky,Kyrgyz,ky,FALSE,ky_all
-ky.m,Kyrgyz,ky,TRUE,ky_all
-lfn,Lingua Franca Nova,lfn,FALSE,lfn_all
-lfn.m,Lingua Franca Nova,lfn,TRUE,lfn_all
-mg,Malagasy,mg,FALSE,mg_all
-mg.m,Malagasy,mg,TRUE,mg_all
-mrj,Hill Mari,mrj,FALSE,mrj_all
-mrj.m,Hill Mari,mrj,TRUE,mrj_all
-mzn,Mazanderani,mzn,FALSE,mzn_all
-mzn.m,Mazanderani,mzn,TRUE,mzn_all
-pam,Kapampangan,pam,FALSE,pam_all
-pam.m,Kapampangan,pam,TRUE,pam_all
-pnb,Western Punjabi,pnb,FALSE,pnb_all
-pnb.m,Western Punjabi,pnb,TRUE,pnb_all
-vep,Veps,vep,FALSE,vep_all
-vep.m,Veps,vep,TRUE,vep_all
-hi,Hindi,hi,FALSE,hi_all
-hi.m,Hindi,hi,TRUE,hi_all
-ceb,Cebuano,ceb,FALSE,ceb_all
-ceb.m,Cebuano,ceb,TRUE,ceb_all
-kk,Kazakh,kk,FALSE,kk_all
-kk.m,Kazakh,kk,TRUE,kk_all
-ha,Hausa,ha,FALSE,ha_all
-ha.m,Hausa,ha,TRUE,ha_all
-uz,Uzbek,uz,FALSE,uz_all
-uz.m,Uzbek,uz,TRUE,uz_all
-te,Telugu,te,FALSE,te_all
-te.m,Telugu,te,TRUE,te_all
-my,Burmese,my,FALSE,my_all
-my.m,Burmese,my,TRUE,my_all
-mn,Mongolian,mn,FALSE,mn_all
-mn.m,Mongolian,mn,TRUE,mn_all
-sw,Swahili,sw,FALSE,sw_all
-sw.m,Swahili,sw,TRUE,sw_all
-tl,Tagalog,tl,FALSE,tl_all
-tl.m,Tagalog,tl,TRUE,tl_all
-km,Khmer,km,FALSE,km_all
-km.m,Khmer,km,TRUE,km_all
-si,Sinhala,si,FALSE,si_all
-si.m,Sinhala,si,TRUE,si_all
-ne,Nepali,ne,FALSE,ne_all
-ne.m,Nepali,ne,TRUE,ne_all
-gu,Gujarati,gu,FALSE,gu_all
-gu.m,Gujarati,gu,TRUE,gu_all
-ku,Kurdish,ku,FALSE,ku_all
-ku.m,Kurdish,ku,TRUE,ku_all
-zh-yue,Cantonese,zh-yue,FALSE,zh_all
-zh-yue.m,Cantonese,zh-yue,TRUE,zh_all
-an,Aragonese,an,FALSE,an_all
-an.m,Aragonese,an,TRUE,an_all
-zh-min-nan,Min Nan Chinese,zh-min-nan,FALSE,zh_all
-zh-min-nan.m,Min Nan Chinese,zh-min-nan,TRUE,zh_all
-bcl,Central Bikol,bcl,FALSE,bcl_all
-bcl.m,Central Bikol,bcl,TRUE,bcl_all
-tt,Tatar,tt,FALSE,tt_all
-tt.m,Tatar,tt,TRUE,tt_all
-ce,Chechen,ce,FALSE,ce_all
-ce.m,Chechen,ce,TRUE,ce_all
-hak,Hakka Chinese,hak,FALSE,zh_all
-hak.m,Hakka Chinese,hak,TRUE,zh_all
-kn,Kannada,kn,FALSE,kn_all
-kn.m,Kannada,kn,TRUE,kn_all
-new,Newari,new,FALSE,new_all
-zh-classical,Classical Chinese,zh-classical,FALSE,zh_all
-zh-classical.m,Classical Chinese,zh-classical,TRUE,zh_all
-dv,Dhivehi,dv,FALSE,dv_all
-dv.m,Dhivehi,dv,TRUE,dv_all
-so,Somali,so,FALSE,so_all
-so.m,Somali,so,TRUE,so_all
-ff,Fula,ff,FALSE,ff_all
-ff.m,Fula,ff,TRUE,ff_all
-cdo,Min Dong Chinese,cdo,FALSE,zh_all
-cdo.m,Min Dong Chinese,cdo,TRUE,zh_all
-ig,Igbo,ig,FALSE,ig_all
-ig.m,Igbo,ig,TRUE,ig_all
-lmo,Lombard,lmo,FALSE,lmo_all
-lmo.m,Lombard,lmo,TRUE,lmo_all
-lb,Luxembourgish,lb,FALSE,lb_all
-lb.m,Luxembourgish,lb,TRUE,lb_all
-min,Minangkabau,min,FALSE,min_all
-min.m,Minangkabau,min,TRUE,min_all
-sn,Shona,sn,FALSE,sn_all
-sn.m,Shona,sn,TRUE,sn_all
-als,Alemannic,als,FALSE,de_all
-als.m,Alemannic,als,TRUE,de_all
-tg,Tajik,tg,FALSE,tg_all
-tg.m,Tajik,tg,TRUE,tg_all
-as,Assamese,as,FALSE,as_all
-as.m,Assamese,as,TRUE,as_all
-gcr,Guianan Creole,gcr,FALSE,gcr_all
-gcr.m,Guianan Creole,gcr,TRUE,gcr_all
-nds,Low German,nds,FALSE,de_all
-nds.m,Low German,nds,TRUE,de_all
-sat,Santali,sat,FALSE,sat_all
-sat.m,Santali,sat,TRUE,sat_all
-dag,Dagbani,dag,FALSE,dag_all
-dag.m,Dagbani,dag,TRUE,dag_all
-be-tarask,Belarusian Taraškievica,be-tarask,FALSE,be_all
-be-tarask.m,Belarusian Taraškievica,be-tarask,TRUE,be_all
-ang,Old English,ang,FALSE,ang_all
-ang.m,Old English,ang,TRUE,ang_all
-ckb,Central Kurdish,ckb,FALSE,ckb_all
-ckb.m,Central Kurdish,ckb,TRUE,ckb_all
-shi,Tachelhit,shi,FALSE,shi_all
-br,Breton,br,FALSE,br_all
-br.m,Breton,br,TRUE,br_all
-su,Sundanese,su,FALSE,su_all
-su.m,Sundanese,su,TRUE,su_all
-frr,North Frisian,frr,FALSE,frr_all
-frr.m,North Frisian,frr,TRUE,frr_all
-gan,Gan Chinese,gan,FALSE,zh_all
-gan.m,Gan Chinese,gan,TRUE,zh_all
-vec,Venetian,vec,FALSE,vec_all
-vec.m,Venetian,vec,TRUE,vec_all
-ps,Pashto,ps,FALSE,ps_all
-ps.m,Pashto,ps,TRUE,ps_all
-ary,Moroccan Arabic,ary,FALSE,ar_all
-ary.m,Moroccan Arabic,ary,TRUE,ar_all
-ban,Balinese,ban,FALSE,ban_all
-ban.m,Balinese,ban,TRUE,ban_all
-vo,Volapük,vo,FALSE,vo_all
-vo.m,Volapük,vo,TRUE,vo_all
-cv,Chuvash,cv,FALSE,cv_all
-cv.m,Chuvash,cv,TRUE,cv_all
-diq,Zazaki,diq,FALSE,diq_all
-diq.m,Zazaki,diq,TRUE,diq_all
-li,Limburgish,li,FALSE,li_all
-li.m,Limburgish,li,TRUE,li_all
-ht,Haitian Creole,ht,FALSE,ht_all
-ht.m,Haitian Creole,ht,TRUE,ht_all
-scn,Sicilian,scn,FALSE,scn_all
-scn.m,Sicilian,scn,TRUE,scn_all
-qu,Quechua,qu,FALSE,qu_all
-qu.m,Quechua,qu,TRUE,qu_all
-am,Amharic,am,FALSE,am_all
-am.m,Amharic,am,TRUE,am_all
-yo,Yoruba,yo,FALSE,yo_all
-yo.m,Yoruba,yo,TRUE,yo_all
-szl,Silesian,szl,FALSE,szl_all
-szl.m,Silesian,szl,TRUE,szl_all
-bo,Tibetan,bo,FALSE,bo_all
-bo.m,Tibetan,bo,TRUE,bo_all
-bug,Buginese,bug,FALSE,bug_all
-bug.m,Buginese,bug,TRUE,bug_all
-om,Oromo,om,FALSE,om_all
-om.m,Oromo,om,TRUE,om_all
-os,Ossetic,os,FALSE,os_all
-os.m,Ossetic,os,TRUE,os_all
-gv,Manx,gv,FALSE,gv_all
-gv.m,Manx,gv,TRUE,gv_all
-rw,Kinyarwanda,rw,FALSE,rw_all
-rw.m,Kinyarwanda,rw,TRUE,rw_all
-nso,Northern Sotho,nso,FALSE,nso_all
-nso.m,Northern Sotho,nso,TRUE,nso_all
-vls,West Flemish,vls,FALSE,vls_all
-vls.m,West Flemish,vls,TRUE,vls_all
-pms,Piedmontese,pms,FALSE,pms_all
-pms.m,Piedmontese,pms,TRUE,pms_all
-wa,Walloon,wa,FALSE,wa_all
-wa.m,Walloon,wa,TRUE,wa_all
-sd,Sindhi,sd,FALSE,sd_all
-sd.m,Sindhi,sd,TRUE,sd_all
-xh,Xhosa,xh,FALSE,xh_all
-xh.m,Xhosa,xh,TRUE,xh_all
-zu,Zulu,zu,FALSE,zu_all
-zu.m,Zulu,zu,TRUE,zu_all
+wiki_code,language_name,is_mobile
+aa,Afar,False
+ab,Abkhazian,False
+ace,Acehnese,False
+ady,Adyghe,False
+af,Afrikaans,False
+ak,Akan,False
+als,Alemannic,False
+alt,Southern Altai,False
+am,Amharic,False
+ami,Amis,False
+an,Aragonese,False
+ang,Old English,False
+ann,Obolo,False
+anp,Angika,False
+ar,Arabic,False
+arc,Aramaic,False
+ary,Moroccan Arabic,False
+arz,Egyptian Arabic,False
+as,Assamese,False
+ast,Asturian,False
+atj,Atikamekw,False
+av,Avaric,False
+avk,Kotava,False
+awa,Awadhi,False
+ay,Aymara,False
+az,Azerbaijani,False
+azb,South Azerbaijani,False
+ba,Bashkir,False
+ban,Balinese,False
+bar,Bavarian,False
+bat-smg,Samogitian,False
+bbc,Batak Toba,False
+bcl,Central Bikol,False
+bdr,West Coast Bajau,False
+be,Belarusian,False
+be-tarask,Belarusian (Taraškievica orthography),False
+be-x-old,Belarusian (Taraškievica orthography),False
+bew,Betawi,False
+bg,Bulgarian,False
+bh,Bhojpuri,False
+bi,Bislama,False
+bjn,Banjar,False
+blk,Pa'O,False
+bm,Bambara,False
+bn,Bangla,False
+bo,Tibetan,False
+bpy,Bishnupriya,False
+br,Breton,False
+bs,Bosnian,False
+btm,Batak Mandailing,False
+bug,Buginese,False
+bxr,Russia Buriat,False
+ca,Catalan,False
+cbk-zam,Chavacano,False
+cdo,Mindong,False
+ce,Chechen,False
+ceb,Cebuano,False
+ch,Chamorro,False
+cho,Choctaw,False
+chr,Cherokee,False
+chy,Cheyenne,False
+ckb,Central Kurdish,False
+co,Corsican,False
+cr,Cree,False
+crh,Crimean Tatar,False
+cs,Czech,False
+csb,Kashubian,False
+cu,Church Slavic,False
+cv,Chuvash,False
+cy,Welsh,False
+da,Danish,False
+dag,Dagbani,False
+de,German,False
+dga,Southern Dagaare,False
+din,Dinka,False
+diq,Dimli,False
+dsb,Lower Sorbian,False
+dtp,Central Dusun,False
+dty,Doteli,False
+dv,Divehi,False
+dz,Dzongkha,False
+ee,Ewe,False
+el,Greek,False
+eml,Emiliano-Romagnolo,False
+en,English,False
+eo,Esperanto,False
+es,Spanish,False
+et,Estonian,False
+eu,Basque,False
+ext,Extremaduran,False
+fa,Persian,False
+fat,Fanti,False
+ff,Fula,False
+fi,Finnish,False
+fiu-vro,Võro,False
+fj,Fijian,False
+fo,Faroese,False
+fon,Fon,False
+fr,French,False
+frp,Arpitan,False
+frr,Northern Frisian,False
+fur,Friulian,False
+fy,Western Frisian,False
+ga,Irish,False
+gag,Gagauz,False
+gan,Gan,False
+gcr,Guianan Creole,False
+gd,Scottish Gaelic,False
+gl,Galician,False
+glk,Gilaki,False
+gn,Guarani,False
+gom,Goan Konkani,False
+gor,Gorontalo,False
+got,Gothic,False
+gpe,Ghanaian Pidgin,False
+gsw,Alemannic,False
+gu,Gujarati,False
+guc,Wayuu,False
+gur,Frafra,False
+guw,Gun,False
+gv,Manx,False
+ha,Hausa,False
+hak,Hakka Chinese,False
+haw,Hawaiian,False
+he,Hebrew,False
+hi,Hindi,False
+hif,Fiji Hindi,False
+ho,Hiri Motu,False
+hr,Croatian,False
+hsb,Upper Sorbian,False
+ht,Haitian Creole,False
+hu,Hungarian,False
+hy,Armenian,False
+hyw,Western Armenian,False
+hz,Herero,False
+ia,Interlingua,False
+iba,Iban,False
+id,Indonesian,False
+ie,Interlingue,False
+ig,Igbo,False
+igl,Igala,False
+ii,Sichuan Yi,False
+ik,Inupiaq,False
+ilo,Iloko,False
+inh,Ingush,False
+io,Ido,False
+is,Icelandic,False
+isv,medžuslovjansky,False
+it,Italian,False
+iu,Inuktitut,False
+ja,Japanese,False
+jam,Jamaican Creole English,False
+jbo,Lojban,False
+jv,Javanese,False
+ka,Georgian,False
+kaa,Kara-Kalpak,False
+kab,Kabyle,False
+kai,Karekare,False
+kaj,Jju,False
+kbd,Kabardian,False
+kbp,Kabiye,False
+kcg,Tyap,False
+kg,Kongo,False
+kge,Komering,False
+ki,Kikuyu,False
+kj,Kuanyama,False
+kk,Kazakh,False
+kl,Kalaallisut,False
+km,Khmer,False
+kn,Kannada,False
+knc,Central Kanuri,False
+ko,Korean,False
+koi,Komi-Permyak,False
+kr,Kanuri,False
+krc,Karachay-Balkar,False
+ks,Kashmiri,False
+ksh,Colognian,False
+ku,Kurdish,False
+kus,Kusaal,False
+kv,Komi,False
+kw,Cornish,False
+ky,Kyrgyz,False
+la,Latin,False
+lad,Ladino,False
+lb,Luxembourgish,False
+lbe,Lak,False
+lez,Lezghian,False
+lfn,Lingua Franca Nova,False
+lg,Ganda,False
+li,Limburgish,False
+lij,Ligurian,False
+lld,Ladin,False
+lmo,Lombard,False
+ln,Lingala,False
+lo,Lao,False
+lrc,Northern Luri,False
+lt,Lithuanian,False
+ltg,Latgalian,False
+lv,Latvian,False
+lzh,Literary Chinese,False
+mad,Madurese,False
+mag,Magahi,False
+mai,Maithili,False
+map-bms,Banyumasan,False
+mdf,Moksha,False
+mg,Malagasy,False
+mh,Marshallese,False
+mhr,Eastern Mari,False
+mi,Māori,False
+min,Minangkabau,False
+mk,Macedonian,False
+ml,Malayalam,False
+mn,Mongolian,False
+mni,Manipuri,False
+mnw,Mon,False
+mo,Moldovan,False
+mos,Mossi,False
+mr,Marathi,False
+mrj,Western Mari,False
+ms,Malay,False
+mt,Maltese,False
+mus,Muscogee,False
+mwl,Mirandese,False
+my,Burmese,False
+myv,Erzya,False
+mzn,Mazanderani,False
+na,Nauru,False
+nah,Nahuatl,False
+nan,Minnan,False
+nap,Neapolitan,False
+nds,Low German,False
+nds-nl,Low Saxon,False
+ne,Nepali,False
+new,Newari,False
+ng,Ndonga,False
+nia,Nias,False
+nl,Dutch,False
+nn,Norwegian Nynorsk,False
+no,Norwegian,False
+nov,Novial,False
+nqo,N’Ko,False
+nr,South Ndebele,False
+nrm,Norman,False
+nso,Northern Sotho,False
+nup,Nupe,False
+nv,Navajo,False
+ny,Nyanja,False
+oc,Occitan,False
+olo,Livvi-Karelian,False
+om,Oromo,False
+or,Odia,False
+os,Ossetic,False
+pa,Punjabi,False
+pag,Pangasinan,False
+pam,Pampanga,False
+pap,Papiamento,False
+pcd,Picard,False
+pcm,Nigerian Pidgin,False
+pdc,Pennsylvania German,False
+pfl,Palatine German,False
+pi,Pali,False
+pih,Pitcairn-Norfolk,False
+pl,Polish,False
+pms,Piedmontese,False
+pnb,Western Punjabi,False
+pnt,Pontic,False
+ppl,Nawat,False
+ps,Pashto,False
+pt,Portuguese,False
+pwn,Paiwan,False
+qu,Quechua,False
+rki,Arakanese,False
+rm,Romansh,False
+rmy,Vlax Romani,False
+rn,Rundi,False
+ro,Romanian,False
+roa-rup,Aromanian,False
+roa-tara,Tarantino,False
+rsk,Pannonian Rusyn,False
+ru,Russian,False
+rue,Rusyn,False
+rup,Aromanian,False
+rw,Kinyarwanda,False
+sa,Sanskrit,False
+sah,Yakut,False
+sat,Santali,False
+sc,Sardinian,False
+scn,Sicilian,False
+sco,Scots,False
+sd,Sindhi,False
+se,Northern Sami,False
+sg,Sango,False
+sgs,Samogitian,False
+sh,Serbo-Croatian,False
+shi,Tachelhit,False
+shn,Shan,False
+shy,Shawiya,False
+si,Sinhala,False
+simple,Simple English,False
+sk,Slovak,False
+skr,Saraiki,False
+sl,Slovenian,False
+sm,Samoan,False
+smn,Inari Sami,False
+sn,Shona,False
+so,Somali,False
+sq,Albanian,False
+sr,Serbian,False
+srn,Sranan Tongo,False
+ss,Swati,False
+st,Southern Sotho,False
+stq,Saterland Frisian,False
+su,Sundanese,False
+sv,Swedish,False
+sw,Swahili,False
+syl,Sylheti,False
+szl,Silesian,False
+szy,Sakizaya,False
+ta,Tamil,False
+tay,Atayal,False
+tcy,Tulu,False
+tdd,Tai Nuea,False
+te,Telugu,False
+tet,Tetum,False
+tg,Tajik,False
+th,Thai,False
+ti,Tigrinya,False
+tig,Tigre,False
+tk,Turkmen,False
+tl,Tagalog,False
+tly,Talysh,False
+tn,Tswana,False
+to,Tongan,False
+tok,Toki Pona,False
+tpi,Tok Pisin,False
+tr,Turkish,False
+trv,Taroko,False
+ts,Tsonga,False
+tt,Tatar,False
+tum,Tumbuka,False
+tw,Twi,False
+ty,Tahitian,False
+tyv,Tuvinian,False
+udm,Udmurt,False
+ug,Uyghur,False
+uk,Ukrainian,False
+ur,Urdu,False
+uz,Uzbek,False
+ve,Venda,False
+vec,Venetian,False
+vep,Veps,False
+vi,Vietnamese,False
+vls,West Flemish,False
+vo,Volapük,False
+vro,Võro,False
+wa,Walloon,False
+war,Waray,False
+wo,Wolof,False
+wuu,Wu,False
+xal,Kalmyk,False
+xh,Xhosa,False
+xmf,Mingrelian,False
+yi,Yiddish,False
+yo,Yoruba,False
+yue,Cantonese,False
+za,Zhuang,False
+zea,Zeelandic,False
+zgh,Standard Moroccan Tamazight,False
+zh,Chinese,False
+zh-classical,Literary Chinese,False
+zh-min-nan,Minnan,False
+zh-yue,Cantonese,False
+zu,Zulu,False
+aa.m,Afar,True
+ab.m,Abkhazian,True
+ace.m,Acehnese,True
+ady.m,Adyghe,True
+af.m,Afrikaans,True
+ak.m,Akan,True
+als.m,Alemannic,True
+alt.m,Southern Altai,True
+am.m,Amharic,True
+ami.m,Amis,True
+an.m,Aragonese,True
+ang.m,Old English,True
+ann.m,Obolo,True
+anp.m,Angika,True
+ar.m,Arabic,True
+arc.m,Aramaic,True
+ary.m,Moroccan Arabic,True
+arz.m,Egyptian Arabic,True
+as.m,Assamese,True
+ast.m,Asturian,True
+atj.m,Atikamekw,True
+av.m,Avaric,True
+avk.m,Kotava,True
+awa.m,Awadhi,True
+ay.m,Aymara,True
+az.m,Azerbaijani,True
+azb.m,South Azerbaijani,True
+ba.m,Bashkir,True
+ban.m,Balinese,True
+bar.m,Bavarian,True
+bat-smg.m,Samogitian,True
+bbc.m,Batak Toba,True
+bcl.m,Central Bikol,True
+bdr.m,West Coast Bajau,True
+be.m,Belarusian,True
+be-tarask.m,Belarusian (Taraškievica orthography),True
+be-x-old.m,Belarusian (Taraškievica orthography),True
+bew.m,Betawi,True
+bg.m,Bulgarian,True
+bh.m,Bhojpuri,True
+bi.m,Bislama,True
+bjn.m,Banjar,True
+blk.m,Pa'O,True
+bm.m,Bambara,True
+bn.m,Bangla,True
+bo.m,Tibetan,True
+bpy.m,Bishnupriya,True
+br.m,Breton,True
+bs.m,Bosnian,True
+btm.m,Batak Mandailing,True
+bug.m,Buginese,True
+bxr.m,Russia Buriat,True
+ca.m,Catalan,True
+cbk-zam.m,Chavacano,True
+cdo.m,Mindong,True
+ce.m,Chechen,True
+ceb.m,Cebuano,True
+ch.m,Chamorro,True
+cho.m,Choctaw,True
+chr.m,Cherokee,True
+chy.m,Cheyenne,True
+ckb.m,Central Kurdish,True
+co.m,Corsican,True
+cr.m,Cree,True
+crh.m,Crimean Tatar,True
+cs.m,Czech,True
+csb.m,Kashubian,True
+cu.m,Church Slavic,True
+cv.m,Chuvash,True
+cy.m,Welsh,True
+da.m,Danish,True
+dag.m,Dagbani,True
+de.m,German,True
+dga.m,Southern Dagaare,True
+din.m,Dinka,True
+diq.m,Dimli,True
+dsb.m,Lower Sorbian,True
+dtp.m,Central Dusun,True
+dty.m,Doteli,True
+dv.m,Divehi,True
+dz.m,Dzongkha,True
+ee.m,Ewe,True
+el.m,Greek,True
+eml.m,Emiliano-Romagnolo,True
+en.m,English,True
+eo.m,Esperanto,True
+es.m,Spanish,True
+et.m,Estonian,True
+eu.m,Basque,True
+ext.m,Extremaduran,True
+fa.m,Persian,True
+fat.m,Fanti,True
+ff.m,Fula,True
+fi.m,Finnish,True
+fiu-vro.m,Võro,True
+fj.m,Fijian,True
+fo.m,Faroese,True
+fon.m,Fon,True
+fr.m,French,True
+frp.m,Arpitan,True
+frr.m,Northern Frisian,True
+fur.m,Friulian,True
+fy.m,Western Frisian,True
+ga.m,Irish,True
+gag.m,Gagauz,True
+gan.m,Gan,True
+gcr.m,Guianan Creole,True
+gd.m,Scottish Gaelic,True
+gl.m,Galician,True
+glk.m,Gilaki,True
+gn.m,Guarani,True
+gom.m,Goan Konkani,True
+gor.m,Gorontalo,True
+got.m,Gothic,True
+gpe.m,Ghanaian Pidgin,True
+gsw.m,Alemannic,True
+gu.m,Gujarati,True
+guc.m,Wayuu,True
+gur.m,Frafra,True
+guw.m,Gun,True
+gv.m,Manx,True
+ha.m,Hausa,True
+hak.m,Hakka Chinese,True
+haw.m,Hawaiian,True
+he.m,Hebrew,True
+hi.m,Hindi,True
+hif.m,Fiji Hindi,True
+ho.m,Hiri Motu,True
+hr.m,Croatian,True
+hsb.m,Upper Sorbian,True
+ht.m,Haitian Creole,True
+hu.m,Hungarian,True
+hy.m,Armenian,True
+hyw.m,Western Armenian,True
+hz.m,Herero,True
+ia.m,Interlingua,True
+iba.m,Iban,True
+id.m,Indonesian,True
+ie.m,Interlingue,True
+ig.m,Igbo,True
+igl.m,Igala,True
+ii.m,Sichuan Yi,True
+ik.m,Inupiaq,True
+ilo.m,Iloko,True
+inh.m,Ingush,True
+io.m,Ido,True
+is.m,Icelandic,True
+isv.m,medžuslovjansky,True
+it.m,Italian,True
+iu.m,Inuktitut,True
+ja.m,Japanese,True
+jam.m,Jamaican Creole English,True
+jbo.m,Lojban,True
+jv.m,Javanese,True
+ka.m,Georgian,True
+kaa.m,Kara-Kalpak,True
+kab.m,Kabyle,True
+kai.m,Karekare,True
+kaj.m,Jju,True
+kbd.m,Kabardian,True
+kbp.m,Kabiye,True
+kcg.m,Tyap,True
+kg.m,Kongo,True
+kge.m,Komering,True
+ki.m,Kikuyu,True
+kj.m,Kuanyama,True
+kk.m,Kazakh,True
+kl.m,Kalaallisut,True
+km.m,Khmer,True
+kn.m,Kannada,True
+knc.m,Central Kanuri,True
+ko.m,Korean,True
+koi.m,Komi-Permyak,True
+kr.m,Kanuri,True
+krc.m,Karachay-Balkar,True
+ks.m,Kashmiri,True
+ksh.m,Colognian,True
+ku.m,Kurdish,True
+kus.m,Kusaal,True
+kv.m,Komi,True
+kw.m,Cornish,True
+ky.m,Kyrgyz,True
+la.m,Latin,True
+lad.m,Ladino,True
+lb.m,Luxembourgish,True
+lbe.m,Lak,True
+lez.m,Lezghian,True
+lfn.m,Lingua Franca Nova,True
+lg.m,Ganda,True
+li.m,Limburgish,True
+lij.m,Ligurian,True
+lld.m,Ladin,True
+lmo.m,Lombard,True
+ln.m,Lingala,True
+lo.m,Lao,True
+lrc.m,Northern Luri,True
+lt.m,Lithuanian,True
+ltg.m,Latgalian,True
+lv.m,Latvian,True
+lzh.m,Literary Chinese,True
+mad.m,Madurese,True
+mag.m,Magahi,True
+mai.m,Maithili,True
+map-bms.m,Banyumasan,True
+mdf.m,Moksha,True
+mg.m,Malagasy,True
+mh.m,Marshallese,True
+mhr.m,Eastern Mari,True
+mi.m,Māori,True
+min.m,Minangkabau,True
+mk.m,Macedonian,True
+ml.m,Malayalam,True
+mn.m,Mongolian,True
+mni.m,Manipuri,True
+mnw.m,Mon,True
+mo.m,Moldovan,True
+mos.m,Mossi,True
+mr.m,Marathi,True
+mrj.m,Western Mari,True
+ms.m,Malay,True
+mt.m,Maltese,True
+mus.m,Muscogee,True
+mwl.m,Mirandese,True
+my.m,Burmese,True
+myv.m,Erzya,True
+mzn.m,Mazanderani,True
+na.m,Nauru,True
+nah.m,Nahuatl,True
+nan.m,Minnan,True
+nap.m,Neapolitan,True
+nds.m,Low German,True
+nds-nl.m,Low Saxon,True
+ne.m,Nepali,True
+new.m,Newari,True
+ng.m,Ndonga,True
+nia.m,Nias,True
+nl.m,Dutch,True
+nn.m,Norwegian Nynorsk,True
+no.m,Norwegian,True
+nov.m,Novial,True
+nqo.m,N’Ko,True
+nr.m,South Ndebele,True
+nrm.m,Norman,True
+nso.m,Northern Sotho,True
+nup.m,Nupe,True
+nv.m,Navajo,True
+ny.m,Nyanja,True
+oc.m,Occitan,True
+olo.m,Livvi-Karelian,True
+om.m,Oromo,True
+or.m,Odia,True
+os.m,Ossetic,True
+pa.m,Punjabi,True
+pag.m,Pangasinan,True
+pam.m,Pampanga,True
+pap.m,Papiamento,True
+pcd.m,Picard,True
+pcm.m,Nigerian Pidgin,True
+pdc.m,Pennsylvania German,True
+pfl.m,Palatine German,True
+pi.m,Pali,True
+pih.m,Pitcairn-Norfolk,True
+pl.m,Polish,True
+pms.m,Piedmontese,True
+pnb.m,Western Punjabi,True
+pnt.m,Pontic,True
+ppl.m,Nawat,True
+ps.m,Pashto,True
+pt.m,Portuguese,True
+pwn.m,Paiwan,True
+qu.m,Quechua,True
+rki.m,Arakanese,True
+rm.m,Romansh,True
+rmy.m,Vlax Romani,True
+rn.m,Rundi,True
+ro.m,Romanian,True
+roa-rup.m,Aromanian,True
+roa-tara.m,Tarantino,True
+rsk.m,Pannonian Rusyn,True
+ru.m,Russian,True
+rue.m,Rusyn,True
+rup.m,Aromanian,True
+rw.m,Kinyarwanda,True
+sa.m,Sanskrit,True
+sah.m,Yakut,True
+sat.m,Santali,True
+sc.m,Sardinian,True
+scn.m,Sicilian,True
+sco.m,Scots,True
+sd.m,Sindhi,True
+se.m,Northern Sami,True
+sg.m,Sango,True
+sgs.m,Samogitian,True
+sh.m,Serbo-Croatian,True
+shi.m,Tachelhit,True
+shn.m,Shan,True
+shy.m,Shawiya,True
+si.m,Sinhala,True
+simple.m,Simple English,True
+sk.m,Slovak,True
+skr.m,Saraiki,True
+sl.m,Slovenian,True
+sm.m,Samoan,True
+smn.m,Inari Sami,True
+sn.m,Shona,True
+so.m,Somali,True
+sq.m,Albanian,True
+sr.m,Serbian,True
+srn.m,Sranan Tongo,True
+ss.m,Swati,True
+st.m,Southern Sotho,True
+stq.m,Saterland Frisian,True
+su.m,Sundanese,True
+sv.m,Swedish,True
+sw.m,Swahili,True
+syl.m,Sylheti,True
+szl.m,Silesian,True
+szy.m,Sakizaya,True
+ta.m,Tamil,True
+tay.m,Atayal,True
+tcy.m,Tulu,True
+tdd.m,Tai Nuea,True
+te.m,Telugu,True
+tet.m,Tetum,True
+tg.m,Tajik,True
+th.m,Thai,True
+ti.m,Tigrinya,True
+tig.m,Tigre,True
+tk.m,Turkmen,True
+tl.m,Tagalog,True
+tly.m,Talysh,True
+tn.m,Tswana,True
+to.m,Tongan,True
+tok.m,Toki Pona,True
+tpi.m,Tok Pisin,True
+tr.m,Turkish,True
+trv.m,Taroko,True
+ts.m,Tsonga,True
+tt.m,Tatar,True
+tum.m,Tumbuka,True
+tw.m,Twi,True
+ty.m,Tahitian,True
+tyv.m,Tuvinian,True
+udm.m,Udmurt,True
+ug.m,Uyghur,True
+uk.m,Ukrainian,True
+ur.m,Urdu,True
+uz.m,Uzbek,True
+ve.m,Venda,True
+vec.m,Venetian,True
+vep.m,Veps,True
+vi.m,Vietnamese,True
+vls.m,West Flemish,True
+vo.m,Volapük,True
+vro.m,Võro,True
+wa.m,Walloon,True
+war.m,Waray,True
+wo.m,Wolof,True
+wuu.m,Wu,True
+xal.m,Kalmyk,True
+xh.m,Xhosa,True
+xmf.m,Mingrelian,True
+yi.m,Yiddish,True
+yo.m,Yoruba,True
+yue.m,Cantonese,True
+za.m,Zhuang,True
+zea.m,Zeelandic,True
+zgh.m,Standard Moroccan Tamazight,True
+zh.m,Chinese,True
+zh-classical.m,Literary Chinese,True
+zh-min-nan.m,Minnan,True
+zh-yue.m,Cantonese,True
+zu.m,Zulu,True

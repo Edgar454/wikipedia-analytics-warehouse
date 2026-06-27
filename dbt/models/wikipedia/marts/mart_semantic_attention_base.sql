@@ -6,7 +6,6 @@ WITH hourly AS (
         DATE(datehour) AS date_id,
         datehour,
         analysis_key,
-        wiki_group,
         language_name,
         is_mobile,
         page_type,
@@ -24,7 +23,6 @@ daily AS (
     SELECT
         date_id,
         analysis_key,
-        wiki_group,
         language_name,
         is_mobile,
         page_type,
@@ -54,7 +52,6 @@ bucketed AS (
     SELECT
         date_id,
         analysis_key_bucket AS analysis_key,
-        wiki_group,
         language_name,
         is_mobile,
         page_type,

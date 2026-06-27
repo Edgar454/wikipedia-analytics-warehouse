@@ -18,6 +18,11 @@ variable "gcp_service_account_json" {
   sensitive = true
 }
 
+variable "powerbi_credentials_json" {
+  type      = string
+  default   = null
+  sensitive = true
+}
 
 
 # ecr image

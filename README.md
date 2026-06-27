@@ -1,292 +1,407 @@
-# Wikipedia Analytics Warehouse  
-## Turning 21.9B messy pageviews into a semantic global attention system
+# Wikipedia Attention Observatory
 
-Wikipedia generates one of the largest open behavioral datasets on the internet: 21.9 billion hourly pageviews across 300+ languages.
+![dbt](https://img.shields.io/badge/dbt-Core-orange?style=flat-square)
+![BigQuery](https://img.shields.io/badge/Warehouse-BigQuery-blue?style=flat-square)
+![AWS](https://img.shields.io/badge/Orchestration-AWS_Fargate-orange?style=flat-square)
+![Terraform](https://img.shields.io/badge/IaC-Terraform-purple?style=flat-square)
+![Power BI](https://img.shields.io/badge/Visualization-Power_BI-yellow?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-But there’s a fundamental problem:
+A semantic analytics platform that transforms raw Wikimedia pageviews into an entity-centric attention dataset for studying how collective attention evolves across languages, communities, and time.
 
-Pageviews are not connected to stable entities, and most of the traffic cannot be reliably interpreted at scale.
+Built with **dbt**, **BigQuery**, **Power BI**, **AWS Fargate**, **Terraform**, and **GitHub Actions**.
 
-This makes it extremely hard to answer questions like:
-
-- What is the world paying attention to right now?
-- How does information propagate across languages?
-- Which topics are rising globally vs locally?
-- What knowledge is missing from structured datasets like Wikidata?
-
----
-
-# What this project does
-
-This project builds a semantic analytics warehouse on top of raw Wikipedia traffic, transforming noisy pageviews into structured analytical signals.
-
-It:
-
-- Reconstructs entity meaning using Wikidata sitelinks
-- Resolves multilingual ambiguity across 300+ language wikis
-- Separates semantic signal from navigation noise
-- Builds analytical marts for trends, propagation, and demand gaps
-- Preserves uncertainty instead of discarding it
-
-Result: a global attention graph derived from raw human information behavior.
+> Wikipedia publishes pageviews for transparency.
+>
+> This project turns them into an analytical dataset.
 
 ---
 
-# Why this is hard
+## Dashboard Preview
 
-Most analytics systems assume:
-
-clean keys, stable dimensions, structured entities
-
-Wikipedia provides none of that.
-
-Instead:
-
-- 21.9B raw behavioral events
-- No canonical entity key in pageviews
-- Strong multilingual fragmentation
-- Partial coverage in Wikidata (~85% ceiling)
-- Ambiguity between what was viewed and what it refers to
-
-So the real problem is not scale.
-
-It is:
-
-reconstructing meaning from unstructured global attention flow
+![Dashboard Overview](assets/dashboard_1.png)
 
 ---
 
-# Key insight
+## Live
 
-Instead of forcing clean joins, this warehouse:
+| Resource              | Link                   |
+| --------------------- | ---------------------- |
+| 📊 Power BI Dashboard | YOUR_POWER_BI_LINK     |
+| 📖 dbt Documentation  | https://edgar454.github.io/wikipedia-analytics-warehouse/ |
 
-- treats unmatched traffic as signal, not noise
-- explicitly models uncertainty (matched / unmatched / structural / namespace)
-- separates semantic resolution from aggregation
-- preserves raw grain for reinterpretation
+---
 
-Missing data becomes a first-class analytical signal.
+# Why This Project?
+
+Wikipedia records billions of pageviews every day.
+
+The problem is that pageviews are published at the **page level**, not the **concept level**.
+
+| Page        | Wiki              |
+| ----------- | ----------------- |
+| Germany     | English Wikipedia |
+| Allemagne   | French Wikipedia  |
+| Deutschland | German Wikipedia  |
+| ألمانيا     | Arabic Wikipedia  |
+
+Different pages.
+
+Same concept.
+
+Wikimedia publishes pageviews for transparency rather than analysis. Each observation contains only:
+
+* Timestamp
+* Wiki edition
+* Page title
+* View count
+
+There is no semantic identity, no cross-language mapping, and no way to aggregate attention around the same concept.
+
+This project introduces that semantic layer by resolving pages into Wikidata entities and building an analytical model capable of answering a simple question:
+
+> What are people paying attention to?
+
+---
+
+# What It Measures
+
+This project measures **attention**, not importance.
+
+A topic can dominate attention for a few days without being historically significant.
+
+For example:
+
+> Claude Lemieux is not more important than Donald Trump.
+>
+> But on the day he died, more people searched for him.
+
+The objective is therefore not to measure relevance, quality, or impact.
+
+The objective is to measure where collective attention is directed.
 
 ---
 
 # Architecture Overview
 
-## End-to-end lineage
+![Infrastructure Diagram](assets/infrastructure_diagram.png)
 
-![Lineage Graph](assets/lineage_graph.PNG)
+The platform combines:
 
-Pipeline flow:
-
-- staging → cleaning & normalization
-- intermediate → semantic reconstruction
-- gold → 
-- marts → analytical outputs
-
----
-
-## Semantic data model
-
-![Semantic Schema](assets/star_schema.png)
-
-Core structure:
-
-- Pageviews → attention signals
-- Wikidata → semantic anchors
-- Sitelinks → multilingual resolution layer
-
-Unlike a classic star schema:
-
-this model prioritizes semantic correctness over query simplicity
+* BigQuery for analytical processing
+* dbt for semantic modeling
+* AWS Fargate for orchestration
+* Terraform for infrastructure provisioning
+* GitHub Actions for CI/CD
+* CloudWatch for observability
+* Power BI for visualization
 
 ---
 
-# Stack
+# Data Model
 
-| Tool | Role |
-|------|------|
-| BigQuery (Sandbox) | 21.9B-row distributed compute |
-| dbt 1.11 | Transformation + semantic modeling |
-| Airflow | Orchestration (designed, not deployed) |
-| Power BI | Analytical consumption layer |
+The final analytical grain is:
 
----
+```text
+Entity × Day × Language × Medium
+```
 
-# Core Design Decisions
+where:
 
-## Multilingual entity resolution via sitelinks
+* **Entity** represents the semantic concept
+* **Day** represents the observation period
+* **Language** represents the Wikipedia community
+* **Medium** distinguishes desktop and mobile traffic
 
-Direct joins like:
+Additional attributes such as entity type, parent entity, structural classification, and reconciliation status are modeled as properties of the entity dimension.
 
-pageviews.title = wikidata.en_title
+## Semantic Model
 
-fail outside English Wikipedia.
+![Snowflake Schema](assets/star_schema.png)
 
-So the system builds a sitelink-based multilingual bridge.
+## dbt Lineage
 
-### Impact
-
-Japanese: 2.3% → 93.3%
-Chinese: 3.8% → 71.5%
-Russian: 7.9% → 83.6%
-
-This is the main unlock for global analytics.
+![dbt Lineage](assets/dbt_lineage.png)
 
 ---
 
-## Uncertainty is preserved, not deleted
+# Dashboards
 
-Instead of filtering unmatched data:
-
-- matched
-- unmatched
-- structural
-- namespace
-- portal
-
-are explicitly modeled.
-
-Why this matters:
-
-- unmatched traffic often represents emerging topics
-- local phenomena missing from Wikidata
-- early signals of real-world events
-
-Unknown becomes analytical signal, not failure.
+The project is organized around four analytical questions.
 
 ---
 
-## Grain-first modeling
+## 1. What Are People Paying Attention To?
 
-Core grain:
+The foundational dashboard.
 
-wiki + title + datehour
+Before studying how attention shifts or spreads, it is useful to observe attention directly.
 
-Everything is built around preserving:
+Features:
 
-- additive correctness
-- no double counting
-- consistent aggregation logic
+* Most viewed entities
+* Most viewed entity types
+* Attention by language community
+* Mobile versus desktop usage
+* Attention evolution over time
 
-Grain is the true schema of the system.
-
----
-
-## Snowflake over star schema
-
-A pure star schema would require repeated heavy joins to Wikidata.
-
-Instead:
-
-- semantic bridge tables centralize resolution
-- marts consume pre-resolved entities
-- BI layer stays lightweight
+![Dashboard 1](assets/dashboard_1.png)
 
 ---
 
-# Transformation Pipeline
+## 2. How Is Attention Shifting?
 
-SOURCES
-- pageviews_2026
-- wikidata
+Popularity tells us what is large.
 
-STAGING
-- raw ingestion
-- normalization
+This dashboard tells us what is changing.
 
-INTERMEDIATE
-- classification
-- entity resolution
-- sitelink bridge
+The objective is to identify:
 
-DIMENSIONS
-- date, entity, language
+* Emerging entities
+* Declining entities
+* Sustained growth
+* Bursts of attention
+* Unexpected anomalies
 
-FACTS
-- pageviews fact table
+The trend score combines:
 
-GOLD
-- pageviews enriched with data from other dimensions for downstream analysis
+* Log-transformed views
+* Moving-average smoothing
+* Local slope estimation
+* Attention weighting
 
-MARTS
-- trends_daily
-- cross_language_propagation
-- unmatched_demand_signals
-- language_growth
+to reward sustained movement while reducing sensitivity to short-lived spikes.
+
+![Dashboard 2](assets/dashboard_2.png)
 
 ---
 
-# Analytical Capabilities
+## 3. How Is Attention Distributed Across Communities?
 
-| Mart | Question |
-|------|----------|
-| trends_daily | global attention |
-| cross_language_propagation | diffusion across languages |
-| unmatched_demand_signals | missing knowledge graph coverage |
-| language_growth | attention acceleration |
+Wikipedia is not a single audience.
 
----
+It is a collection of hundreds of language communities with distinct interests, cultures, and patterns of attention.
 
-# Performance & Cost Engineering
+This dashboard explores:
 
-Built under BigQuery Sandbox constraints:
+* Community attention distribution
+* Global stars
+* Local stars
+* Coverage versus attention analysis
+* Cross-language attention patterns
 
-- 1TB/month query limit
-- 10GB storage limit
-- no incremental writes
-- no DML operations
-
-Optimization strategy:
-
-- aggregation-first design
-- partition filtering
-- reusable semantic layers
-- scan minimization
-
-Final results:
-
-Full pipeline: ~93 GB scan
-Marts only: ~1–2 GB
-Estimated production: <25 GB
+![Dashboard 3](assets/dashboard_3.png)
 
 ---
 
-# Testing Strategy
+## 4. What Part of Attention Is Not Captured?
 
-85 dbt tests ensure correctness:
+Not every pageview can be resolved to a Wikidata entity.
 
-- measure conservation
-- grain consistency
-- no duplication
-- classification stability
+Unmatched traffic can represent:
 
----
+* Wikimedia infrastructure pages
+* Missing Wikidata sitelinks
+* Emerging concepts not yet represented in the graph
 
-# Engineering Lessons
+Rather than treating unmatched traffic as noise, this dashboard explores its structure and highlights potential modeling opportunities.
 
-OLTP thinking breaks at OLAP scale.
-
-A fact table is not a dataset — it is a projection of a multidimensional observation space.
-
-Constraints shape architecture.
-
-Tests are executable documentation.
+![Dashboard 4](assets/dashboard_4.png)
 
 ---
 
-# Limitations
+# Infrastructure
 
-Temporal mismatch between Wikidata snapshot and historical pageviews.
+The platform was designed around four principles:
 
-Notability gap in Wikidata coverage.
+* Low operational cost
+* Reliability
+* Reproducibility
+* Observability
 
-Sandbox constraints (no DML, no incremental loads).
+Most computation occurs inside BigQuery.
+
+As a result, orchestration remains intentionally lightweight and inexpensive.
 
 ---
 
-# Design Philosophy
+## Reproducibility
 
-- grain defines correctness
-- uncertainty is modeled, not removed
-- semantic layers are reusable assets
-- cost is a first-class constraint
-- analytical truth > structural elegance
+The platform can be redeployed on a new AWS account with minimal manual intervention.
+
+A small bootstrap Terraform project creates:
+
+* Remote Terraform state storage
+* GitHub OpenID Connect trust relationship
+* Deployment IAM role
+
+Once bootstrapped, the entire platform can be deployed automatically through GitHub Actions.
+
+Required GitHub secrets:
+
+* `AWS_GITHUB_ROLE_ARN`
+* `GCP_SERVICE_ACCOUNT_KEY`
+
+The GCP service account requires:
+
+* BigQuery Data Editor
+* BigQuery User
+* BigQuery Job User
+* Resource Viewer
+
+No long-lived AWS credentials are stored in GitHub.
+
+---
+
+## CI/CD Pipeline
+
+![CI Pipeline](assets/github_actions_pipeline.png)
+
+The deployment workflow includes:
+
+* Infrastructure validation and deployment
+* dbt validation and testing
+* Python unit testing
+* Container publishing
+* Documentation deployment
+
+Path-based change detection ensures that only impacted components are executed.
+
+Examples:
+
+* Infrastructure changes trigger Terraform workflows
+* dbt changes trigger dbt validation
+* Telemetry changes trigger Python tests
+* Documentation changes avoid unnecessary infrastructure work
+
+---
+
+## AWS Infrastructure
+
+![AWS Infrastructure](assets/architecture_diagram.png)
+
+Infrastructure is provisioned through Terraform and deployed through GitHub Actions using OpenID Connect (OIDC).
+
+The execution layer runs on AWS Fargate.
+
+Because BigQuery performs nearly all analytical processing, the execution container requires very little compute capacity.
+
+Typical execution cost is approximately:
+
+```text
+~$0.05 per scheduled run
+```
+
+In practice, AWS Secrets Manager costs more than running the scheduled task itself.
+
+---
+
+## Observability
+
+![CloudWatch Dashboard](assets/cloudwatch_dashboard.PNG)
+
+Operational metadata is extracted directly from BigQuery INFORMATION_SCHEMA views after every execution.
+
+The telemetry layer collects:
+
+* Query duration
+* Data scanned
+* Execution status
+* Model-level execution metrics
+* Pipeline-level metrics
+
+dbt metadata embedded within BigQuery query comments is used to attribute costs and execution statistics to individual dbt assets.
+
+Metrics are published to CloudWatch and visualized through custom dashboards.
+
+This makes it possible to answer questions such as:
+
+* Which models scan the most data?
+* Which models are becoming more expensive?
+* How long does each transformation take?
+* How successful are scheduled runs over time?
+
+without directly accessing BigQuery.
+
+---
+
+# Repository Structure
+
+```text
+.
+├── bootstrap_infra/     # Terraform bootstrap resources (state backend + OIDC role)
+├── infra/               # Main infrastructure definitions
+├── dbt/                 # Models, tests, macros, seeds and documentation
+├── telemetry/           # BigQuery → CloudWatch observability pipeline
+├── tests/               # Python unit tests
+├── assets/              # Diagrams, screenshots and visual assets
+├── .github/             # GitHub Actions workflows and reusable actions
+├── scripts/             # Utility scripts and operational tooling
+├── docs/                # Project documentation
+├── Dockerfile           # Execution container definition
+└── conftest.py          # Pytest configuration
+```
+
+---
+
+# Documentation
+
+| Document                              | Description                                       |
+| ------------------------------------- | ------------------------------------------------- |
+| [engineering.md](docs/engineering.md) | Data modeling, reconciliation and semantic design |
+| [dashboard.md](docs/dashboard.md)     | Dashboard design and metric definitions           |
+| [infra.md](docs/infra.md)             | Infrastructure and deployment architecture        |
+| [dbt Docs](https://edgar454.github.io/wikipedia-analytics-warehouse/)    | Generated lineage graph and model documentation   |
+
+---
+
+# Key Capabilities
+
+* Semantic reconciliation of Wikipedia pageviews through Wikidata sitelinks
+* Cross-language attention analysis across 300+ Wikipedia communities
+* Entity-centric analytical model supporting desktop and mobile traffic
+* Attention trend, burst, anomaly, and coverage analysis
+* Automated dbt pipeline running on AWS Fargate and BigQuery
+* Infrastructure-as-Code deployment through Terraform
+* End-to-end observability with cost attribution at the dbt model level
+* Interactive Power BI dashboards for attention exploration
+
+---
+
+# Technologies
+
+### Analytics
+
+![BigQuery](https://img.shields.io/badge/BigQuery-4285F4?style=for-the-badge\&logo=googlebigquery\&logoColor=white)
+![dbt](https://img.shields.io/badge/dbt-FF694B?style=for-the-badge\&logo=dbt\&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge\&logo=powerbi\&logoColor=black)
+
+### Cloud & Infrastructure
+
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge\&logo=amazonaws\&logoColor=white)
+![AWS Fargate](https://img.shields.io/badge/AWS_Fargate-FF9900?style=for-the-badge\&logo=amazonaws\&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-844FBA?style=for-the-badge\&logo=terraform\&logoColor=white)
+
+### CI/CD & Observability
+
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge\&logo=githubactions\&logoColor=white)
+![CloudWatch](https://img.shields.io/badge/CloudWatch-FF4F8B?style=for-the-badge\&logo=amazoncloudwatch\&logoColor=white)
+
+### Development
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-336791?style=for-the-badge)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge\&logo=git\&logoColor=white)
+
+---
+
+# Future Work
+
+* Incremental processing strategy
+* Additional attention dynamics research
+
+---
+
+# License
+
+MIT License

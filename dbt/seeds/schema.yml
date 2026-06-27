@@ -17,10 +17,6 @@ seeds:
         description: Human readable language name
         tests:
           - not_null
-      - name: base_wiki
-        description: Base language code stripped of mobile suffix (e.g. en.m → en)
-        tests:
-          - not_null
       - name: is_mobile
         description: TRUE if this is a mobile wiki variant
         tests:
@@ -29,13 +25,46 @@ seeds:
               arguments:
                 values: [true, false]
                 quote: false
-      - name: wiki_group
-        description: >
-          Grouping key that combines desktop and mobile variants 
-          (e.g. en and en.m both belong to en_all). Used for 
-          aggregating traffic across device types.
+
+  - name: dim_namespaces
+    description: >
+      Static lookup table mapping each wiki's localized namespace names to
+      their canonical (English) equivalents and numeric namespace IDs.
+      Sourced once per wiki edition from the MediaWiki siteinfo API
+      (action=query&meta=siteinfo&siprop=namespaces). Namespace IDs and
+      canonical names are constant across all MediaWiki installations;
+      only namespace_name varies by language. Desktop wiki codes only —
+      mobile variants (e.g. en.m) share their desktop counterpart's
+      namespaces and must be resolved via base wiki code
+      (SPLIT(wiki, '.')[OFFSET(0)]) before joining.
+    columns:
+      - name: wiki_code
+        description: Base wiki code, desktop form only (e.g. en, fr, ja). Mobile suffixes are never present here.
         tests:
           - not_null
+      - name: namespace_id
+        description: >
+          Numeric namespace identifier, constant across every MediaWiki
+          installation regardless of language (e.g. -1 = Special, 6 = File).
+        tests:
+          - not_null
+      - name: namespace_name
+        description: >
+          Localized namespace name as returned by the wiki's own siteinfo
+          API (e.g. "Spécial" for fr, "Special" for en). Empty string, not
+          null, for the main/article namespace (id 0).
+        tests:
+          - not_null
+      - name: canonical_namespace
+        description: >
+          Canonical (English) namespace name, used to rewrite localized
+          titles into a language-independent form (e.g. "Fichier:X.jpg"
+          -> "File:X.jpg"). Null for the main namespace and for any
+          wiki-specific custom namespace with no canonical equivalent.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [wiki_code, namespace_name]
+    
 
   - name: structural_roots
     description: >

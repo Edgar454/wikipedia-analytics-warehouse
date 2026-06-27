@@ -189,7 +189,7 @@ models:
 
       Grain:
       one row per
-      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile).
+      (date_id, analysis_key, language_name, is_mobile).
 
       This mart performs three successive transformations:
 
@@ -241,11 +241,6 @@ models:
         tests:
           - not_null
 
-      - name: wiki_group
-        description: >
-          Wikipedia language edition group contributing to this row.
-        tests:
-          - not_null
 
       - name: language_name
         description: >
@@ -297,8 +292,7 @@ models:
       - name: daily_views
         description: >
           Total number of pageviews aggregated at the mart grain.
-          Sum of all hourly views within the (date_id, analysis_key,
-          wiki_group, language_name, is_mobile, page_type) partition.
+          Sum of all hourly views within the (date_id, analysis_key, language_name, is_mobile) partition.
           For bucketed rows, represents the collapsed sum of all
           long-tail entities within that bucket.
         tests:
@@ -312,7 +306,7 @@ models:
 
       Grain:
       one row per
-      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile).
+      (date_id, analysis_key, language_name, is_mobile).
 
       This mart introduces:
       - 3-day rolling averages (raw and log-smoothed) for trend estimation
@@ -405,7 +399,7 @@ models:
 
       Grain:
       one row per
-      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      (date_id, analysis_key, language_name, is_mobile)
       restricted to is_matched = TRUE.
 
       This mart computes three complementary analytical signals:
@@ -470,7 +464,7 @@ models:
 
       Grain:
       one row per
-      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      (date_id, analysis_key , language_name, is_mobile)
       restricted to is_matched = FALSE.
 
       The smoothed_trend_score applies the same log-MA slope methodology
@@ -517,7 +511,7 @@ models:
 
       Grain:
       one row per
-      (date_id, analysis_key, page_type, wiki_group, language_name, is_mobile)
+      (date_id, analysis_key, language_name, is_mobile)
       restricted to is_matched = TRUE.
 
       Introduces two complementary breadth metrics:
@@ -527,7 +521,7 @@ models:
       on a given date. Measures breadth of cross-community reach.
 
       attention_share:
-      fraction of total daily views within a (date, wiki_group, is_mobile)
+      fraction of total daily views within a (date, is_mobile)
       partition attributable to this entity. Measures depth of attention
       within each community.
 
@@ -553,7 +547,7 @@ models:
 
       - name: attention_share
         description: >
-          Fraction of total daily views within the (date_id, wiki_group, is_mobile)
+          Fraction of total daily views within the (date_id, is_mobile)
           partition attributable to this entity.
-          Computed as daily_views / SUM(daily_views) OVER (PARTITION BY date_id, wiki_group, is_mobile).
+          Computed as daily_views / SUM(daily_views) OVER (PARTITION BY date_id, is_mobile).
           Measures relative depth of attention within a language community.

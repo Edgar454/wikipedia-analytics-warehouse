@@ -6,6 +6,10 @@ SELECT
     views,
     datehour
 FROM {{ ref('stg_pageviews_raw') }}
-WHERE title NOT IN ('-', 'Index.php')
-AND wiki != ''
-AND wiki IS NOT NULL
+WHERE  wiki != ''
+	AND wiki IS NOT NULL
+	AND title != '-'
+	AND REGEXP_CONTAINS(
+		LOWER(title),
+		r'\.(php|php3|php4|php5|phtml|cgi)$'
+	)

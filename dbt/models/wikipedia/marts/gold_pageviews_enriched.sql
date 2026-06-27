@@ -14,9 +14,7 @@ SELECT
     f.page_type,
 
     COALESCE(l.language_name, 'other') AS language_name ,
-    COALESCE(l.base_wiki, SPLIT(f.wiki, '.')[OFFSET(0)]) AS base_wiki,
     COALESCE(l.is_mobile, FALSE) AS is_mobile,
-    COALESCE(l.wiki_group, 'other') AS wiki_group,
 
     d.year,
     d.month,

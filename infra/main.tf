@@ -11,6 +11,7 @@ module "secrets" {
   project_name             = var.project_name
   tags                     = local.common_tags
   gcp_service_account_json = var.gcp_service_account_json
+  powerbi_credentials_json = var.powerbi_credentials_json
 }
 
 module "iam" {
@@ -19,7 +20,11 @@ module "iam" {
   project_name             = var.project_name
   tags                     = local.common_tags
   ecr_repository_arn       = module.ecr.repository_arn
-  gcp_service_account_secret_arn = module.secrets.gcp_service_account_secret_arn
+  secret_arns              = compact([
+    module.secrets.gcp_service_account_secret_arn,
+    module.secrets.powerbi_credentials_secret_arn,
+  ])
+
 }
 
 
