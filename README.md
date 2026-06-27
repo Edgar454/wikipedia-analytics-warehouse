@@ -84,7 +84,7 @@ The objective is to measure where collective attention is directed.
 
 # Architecture Overview
 
-![Infrastructure Diagram](assets/infrastructure_diagram.png)
+![Infrastructure Diagram](assets/architecture_diagram.png)
 
 The platform combines:
 
