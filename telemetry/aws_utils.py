@@ -1,15 +1,15 @@
+import os
 import boto3
 import json
 import time
-import uuid
 import re   
 from datetime import datetime, timezone
 
 
-LOG_GROUP = "/dbt/metrics"
-LOG_STREAM = "dbt-runner"
-SECRET_NAME = "wikipedia-analysis-gcp-service-account"
-REGION = "eu-west-1"
+LOG_GROUP = os.getenv("FARGATE_RUN_LOG_GROUP" , "/dbt/metrics")
+LOG_STREAM = os.getenv("FARGATE_RUN_STREAM" ,"dbt-runner")
+SECRET_NAME = os.getenv("GCP_SECRET_NAME","wikipedia-analysis-gcp-service-account")
+REGION = os.getenv("AWS_REGION","eu-north-1")
 
 def get_secret():
     client = boto3.client("secretsmanager", region_name=REGION)

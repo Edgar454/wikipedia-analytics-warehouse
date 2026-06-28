@@ -54,14 +54,16 @@ def test_get_secret():
     secrets_client = MagicMock()
     secrets_client.get_secret_value.return_value = response
 
+    obj = PowerBIClient.__new__(PowerBIClient)
+    obj.region = "eu-north-1"
+    obj.powerbi_secret = "dummy-secret"
+
     with patch(
         "boto3.client",
         return_value=secrets_client,
     ):
 
-        secret = PowerBIClient._get_secret(
-            PowerBIClient.__new__(PowerBIClient)
-        )
+        secret = obj._get_secret()
 
         assert secret == SECRET
 
@@ -108,9 +110,12 @@ def test_get_workspace_id(client):
         ]
     }
 
-    client.session.get.return_value = response
-
-    assert client._get_workspace_id() == "workspace-id"
+    with patch.object(
+        client.session,
+        "get",
+        return_value=response,
+    ):
+        assert client._get_workspace_id() == "workspace-id"
 
 
 def test_get_dataset_id(client):
@@ -128,9 +133,12 @@ def test_get_dataset_id(client):
         ]
     }
 
-    client.session.get.return_value = response
-
-    assert client._get_dataset_id() == "dataset-id"
+    with patch.object(
+        client.session,
+        "get",
+        return_value=response,
+    ):
+        assert client._get_dataset_id() == "dataset-id"
 
 
 def test_refresh(client):
@@ -140,9 +148,12 @@ def test_refresh(client):
     response.raise_for_status.return_value = None
     response.status_code = 202
 
-    client.session.post.return_value = response
-
-    assert client.refresh() is True
+    with patch.object(
+        client.session,
+        "post",
+        return_value=response,
+    ):
+        assert client.refresh() is True
 
 
 def test_try_create_returns_none():
