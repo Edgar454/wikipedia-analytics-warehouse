@@ -54,6 +54,7 @@ module "fargate" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   ecr_image     =  "${module.ecr.repository_url}:latest"
   gcp_secret_name = module.secrets.gcp_service_account_secret_name
+  powerbi_secret_name = module.secrets.powerbi_credentials
   log_group_name = module.cloudwatch.log_group_name
  
 }
