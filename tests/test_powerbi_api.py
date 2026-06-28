@@ -11,6 +11,7 @@ SECRET = {
     "TENANT_ID": "tenant",
     "CLIENT_ID": "client",
     "CLIENT_SECRET": "secret",
+    "FABRIC_EMAIL": "mail@to.com",
     "WORKSPACE_NAME": "workspace",
     "DATASET_NAME": "dataset",
 }
