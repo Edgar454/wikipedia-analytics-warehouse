@@ -266,7 +266,7 @@ jobs:
         run: pip install -r tests/requirements-test.txt
 
       - name: Deploy dashboard
-        run: python powerbi_api/deploy_dashboard.py
+        run: python -m powerbi_api.deploy_dashboard
       
 
     

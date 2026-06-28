@@ -10,6 +10,7 @@ RUN uv sync --locked --no-dev
 
 COPY dbt/ dbt/
 COPY telemetry/ telemetry/
+COPY powerbi_api/ powerbi_api/
 COPY scripts/run.sh ./run.sh
 
 RUN chmod +x run.sh
