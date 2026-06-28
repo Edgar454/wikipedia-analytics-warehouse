@@ -18,7 +18,7 @@ from typing import Optional
 import boto3
 import requests
 
-from powerbi_api.models import Credentials
+from models import Credentials
 
 
 logger = logging.getLogger(__name__)
