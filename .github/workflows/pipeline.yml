@@ -43,6 +43,7 @@ jobs:
               - "powerbi_api/**"
               - "tests/**"
             deploy_dashboard:
+              - "powerbi_api/**"
               - "dashboards/wikipedia_dashboard.pbix"
 
   terraform:
