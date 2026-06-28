@@ -121,7 +121,7 @@ Additional attributes such as entity type, parent entity, structural classificat
 
 ## dbt Lineage
 
-![dbt Lineage](assets/dbt_lineage.png)
+![dbt Lineage](assets/dbt_lineage.PNG)
 
 ---
 
@@ -255,7 +255,7 @@ No long-lived AWS credentials are stored in GitHub.
 
 ## CI/CD Pipeline
 
-![CI Pipeline](assets/github_actions_pipeline.png)
+![CI Pipeline](assets/github_actions_pipeline.PNG)
 
 The deployment workflow includes:
 
