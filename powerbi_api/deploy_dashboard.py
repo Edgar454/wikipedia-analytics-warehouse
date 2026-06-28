@@ -1,6 +1,6 @@
 import os
 import sys
-from deployer import PowerBIDeployer
+from powerbi_api.deployer import PowerBIDeployer
 
 
 pbix_path = os.getenv("DASHBOARD_PBIX_PATH", "dashboards/dashboard.pbix")

@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from client import PowerBIClient
+from powerbi_api.client import PowerBIClient
 from exceptions import PowerBIImportTimeoutError
 
 class PowerBIDeployer(PowerBIClient):
