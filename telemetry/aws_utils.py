@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 
 LOG_GROUP = os.getenv("FARGATE_RUN_LOG_GROUP" , "/dbt/metrics")
-LOG_STREAM = os.getenv("FARGATE_RUN_STREAM" ,"dbt-runner")
+LOG_STREAM_PREFIX = os.getenv("FARGATE_RUN_STREAM", "dbt-runner")
 SECRET_NAME = os.getenv("GCP_SECRET_NAME","wikipedia-analysis-gcp-service-account")
 REGION = os.getenv("AWS_REGION","eu-north-1")
 
@@ -32,7 +32,7 @@ def ensure_log_group_and_stream(client):
     try:
         client.create_log_stream(
             logGroupName=LOG_GROUP,
-            logStreamName=LOG_STREAM
+            logStreamName=LOG_STREAM_PREFIX
         )
     except client.exceptions.ResourceAlreadyExistsException:
         pass
@@ -67,7 +67,7 @@ def send_logs(client, rows):
     # get existing stream token if exists
     streams = client.describe_log_streams(
         logGroupName=LOG_GROUP,
-        logStreamNamePrefix=LOG_STREAM
+        logStreamNamePrefix=LOG_STREAM_PREFIX
     )
 
     if streams["logStreams"]:
@@ -85,7 +85,7 @@ def send_logs(client, rows):
 
     kwargs = {
         "logGroupName": LOG_GROUP,
-        "logStreamName": LOG_STREAM,
+        "logStreamName": LOG_STREAM_PREFIX,
         "logEvents": events,
     }
 

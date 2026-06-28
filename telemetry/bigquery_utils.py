@@ -26,7 +26,7 @@ def test_query(client):
 
 
 
-def run_metrics_query(client, project_id, user_email):
+def run_metrics_query(client, user_email):
     query = """
     SELECT
       creation_time,

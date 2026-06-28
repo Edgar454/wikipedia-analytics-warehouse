@@ -15,8 +15,20 @@ resource "aws_ecs_task_definition" "dbt_runner" {
 
       environment = [
         {
+          name  = "REGION"
+          value = var.region
+        },
+        {
           name  = "GCP_SECRET_NAME"
           value = var.gcp_secret_name
+        },
+        {
+          name  = "POWERBI_CREDENTIALS"
+          value = var.powerbi_secret_name
+        },
+        {
+          name  = "FARGATE_RUN_LOG_GROUP"
+          value = var.log_group_name
         }
       ]
 

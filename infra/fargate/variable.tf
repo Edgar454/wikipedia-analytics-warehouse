@@ -2,6 +2,15 @@ variable "project_name" {
   type = string
 }
 
+variable "region" {
+  type = string
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
 variable "ecs_execution_role_arn" {
   type = string
 }
@@ -18,15 +27,12 @@ variable "gcp_secret_name" {
   type = string
 }
 
+variable "powerbi_secret_name" {
+  type = string
+}
+
+
 variable "log_group_name" {
   type = string
 }
 
-variable "region" {
-  type = string
-}
-
-variable "tags" {
-  type    = map(string)
-  default = {}
-}

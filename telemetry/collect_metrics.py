@@ -7,7 +7,6 @@ def main():
     client = get_bq_client(secret)
     rows = run_metrics_query(
         client,
-        project_id=secret["project_id"],
         user_email=secret["client_email"]
     )
 
