@@ -155,8 +155,14 @@ class PowerBIDeployer(PowerBIClient):
                 },
                 timeout=300,
             )
-
-        response.raise_for_status()
+        if not response.ok:
+            logger.error(
+                "PBIX upload failed (%s): %s",
+                response.status_code,
+                response.text,
+            )
+            response.raise_for_status()
+        
         payload = response.json()
         logger.info(
             "Successfully uploaded PBIX '%s'.",
