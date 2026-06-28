@@ -11,6 +11,7 @@ execution responsibility is delegated to the Power BI service,
 allowing the ECS task to terminate immediately.
 """
 import os
+import sys
 import json
 import logging
 from typing import Optional
