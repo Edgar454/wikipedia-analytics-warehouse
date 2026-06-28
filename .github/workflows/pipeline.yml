@@ -17,6 +17,7 @@ jobs:
       dbt: ${{ steps.filter.outputs.dbt }}
       build: ${{ steps.filter.outputs.build }}
       telemetry: ${{ steps.filter.outputs.telemetry }}
+      deploy_dashboard: ${{ steps.filter.outputs.deploy_dashboard }}
 
     steps:
       - uses: actions/checkout@v4
