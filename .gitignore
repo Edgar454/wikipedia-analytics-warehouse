@@ -4,7 +4,6 @@ __pycache__/
 dbt/target/
 dbt_packages/
 logs/
-dashboards/
 .terraform/
 .terraform.lock.hcl
 *.tfstate

@@ -13,6 +13,7 @@ allowing the ECS task to terminate immediately.
 import os
 import json
 import logging
+from typing import Optional
 
 import boto3
 import requests
@@ -41,26 +42,33 @@ class PowerBIClient:
 
     BASE_URL = "https://api.powerbi.com/v1.0/myorg"
 
-    def __init__(self, secret_name: str):
-        self.region = os.getenv("AWS_REGION","eu-north-1")
+    def __init__(self,secret_name: Optional[str] = None ,resolve_assets: bool = True,secret_source: str = "aws",):
+        self.region = os.getenv(
+            "AWS_REGION",
+            "eu-west-1",
+        )
+
+        
         self.powerbi_secret = secret_name
 
         self.credentials = Credentials.model_validate(
-            self._get_secret()
+            self._get_secret(secret_source)
         )
 
         self.session = requests.Session()
-
         access_token = self._authenticate()
-
         self.session.headers.update(
             {
                 "Authorization": f"Bearer {access_token}"
             }
         )
 
-        self.workspace_id = self._get_workspace_id()
-        self.dataset_id = self._get_dataset_id()
+        self.workspace_id = None
+        self.dataset_id = None
+
+        if resolve_assets:
+            self.workspace_id = self._get_workspace_id()
+            self.dataset_id = self._get_dataset_id()
 
     @classmethod
     def try_create(cls, secret_name: str):
@@ -72,21 +80,46 @@ class PowerBIClient:
             )
             return None
     
-    def _get_secret(self):
+    def _get_secret(self, secret_source: str = "aws"):
         """
-        Retrieve Power BI credentials from AWS Secrets Manager.
+        Retrieve Power BI credentials.
 
-        Credentials are intentionally stored in AWS rather than
-        provided through environment variables in order to centralize
-        secret management and avoid exposing OAuth credentials in the
-        container configuration.
-
-        The retrieved payload is validated using Pydantic before
-        being used by the client.
+        Credentials may either be loaded from AWS Secrets Manager
+        or directly from an environment variable, depending on
+        the execution context.
         """
-        client = boto3.client("secretsmanager", region_name=self.region) 
-        response = client.get_secret_value(SecretId=self.powerbi_secret)
-        return json.loads(response["SecretString"])
+
+        if secret_source == "aws":
+            client = boto3.client(
+                "secretsmanager",
+                region_name=self.region,
+            )
+            response = client.get_secret_value(
+                SecretId=self.powerbi_secret,
+            )
+            return json.loads(response["SecretString"])
+
+        if secret_source == "env":
+            credentials = os.getenv("POWERBI_CREDENTIALS")
+            if credentials:
+                return json.loads(credentials)
+
+            logger.error(
+                "POWERBI_CREDENTIALS environment variable not found."
+            )
+
+            raise RuntimeError(
+                "POWERBI_CREDENTIALS environment variable not found."
+            )
+
+        logger.error(
+            "Unsupported secret source '%s'.",
+            secret_source,
+        )
+        raise ValueError(
+            f"Unsupported secret source '{secret_source}'."
+        )
+
 
     def _authenticate(self) -> str:
         """
@@ -215,6 +248,45 @@ class PowerBIClient:
                 "Failed to resolve Power BI dataset."
             )
             raise
+
+    def _get_datasources(self) -> list[dict]:
+        """
+        Retrieve all datasources attached to the configured dataset.
+        """
+
+        response = self.session.get(
+            f"{self.BASE_URL}/groups/"
+            f"{self.workspace_id}/datasets/"
+            f"{self.dataset_id}/datasources",
+            timeout=30,
+        )
+
+        response.raise_for_status()
+
+        return response.json()["value"]
+
+
+    def _get_bigquery_datasource(self) -> dict:
+        """
+        Resolve the Google BigQuery datasource attached to the dataset.
+        """
+
+        datasources = self._get_datasources()
+
+        for ds in datasources:
+
+            if (
+                ds.get("datasourceType") == "Extension"
+                and ds.get(
+                    "connectionDetails",
+                    {},
+                ).get("kind") == "GoogleBigQuery"
+            ):
+                return ds
+
+        raise ValueError(
+            "No Google BigQuery datasource found."
+        )
     
     def refresh(self) -> bool:
         """
