@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 from powerbi_api.client import PowerBIClient
 from powerbi_api.exceptions import PowerBIImportTimeoutError
+from powerbi_api.utils import check_pbix
 
 class PowerBIDeployer(PowerBIClient):
 
@@ -142,7 +143,7 @@ class PowerBIDeployer(PowerBIClient):
             f"?datasetDisplayName={display_name}"
             "&nameConflict=CreateOrOverwrite"
         )
-
+        check_pbix(pbix_path , logger)
         with open(pbix_path, "rb") as f:
             response = self.session.post(
                 url,
