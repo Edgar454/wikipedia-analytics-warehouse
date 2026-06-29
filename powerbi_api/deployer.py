@@ -188,6 +188,7 @@ class PowerBIDeployer(PowerBIClient):
                 raise RuntimeError(f"Import failed: {payload}")
 
             time.sleep(poll_interval)
+            attempt += 1
 
         raise PowerBIImportTimeoutError(import_id, state, max_attempts)
 
