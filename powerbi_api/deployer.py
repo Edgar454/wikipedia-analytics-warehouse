@@ -36,6 +36,7 @@ class PowerBIDeployer(PowerBIClient):
 
         self.service_account_json = json.dumps(content)
         self.service_account_email = content["client_email"]
+        self.project_id = content['project_id']
 
         logger.info(
             "Loaded Google service account '%s'.",
@@ -236,6 +237,41 @@ class PowerBIDeployer(PowerBIClient):
             response.raise_for_status()
 
         return True
+    def _update_parameter(self,parameter_name: str,value: str,) -> bool:
+        """
+        Update a single Power Query parameter on the deployed dataset.
+
+        The parameter must already exist inside the PBIX.
+
+        Changes become effective on the next dataset refresh.
+        """
+
+        body = {
+            "updateDetails": [
+                {
+                    "name": parameter_name,
+                    "newValue": value,
+                }
+            ]
+        }
+
+        response = self.session.post(
+            f"{self.BASE_URL}/groups/"
+            f"{self.workspace_id}/datasets/"
+            f"{self.dataset_id}/Default.UpdateParameters",
+            json=body,
+            timeout=30,
+        )
+
+        response.raise_for_status()
+
+        logger.info(
+            "Updated parameter '%s' to '%s'.",
+            parameter_name,
+            value,
+        )
+
+        return True
     
     def deploy(self):
         """
@@ -285,6 +321,16 @@ class PowerBIDeployer(PowerBIClient):
             self._set_bigquery_credentials(
                 bigquery_source["gatewayId"],
                 bigquery_source["datasourceId"],
+            )
+
+            self._update_parameter(
+                "ProjectId",
+                self.project_id,
+            )
+
+            self._update_parameter(
+                "DatasetName",
+                "dbt_dev",
             )
 
             self.refresh()
