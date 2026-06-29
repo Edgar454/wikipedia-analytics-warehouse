@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 from powerbi_api.client import PowerBIClient
 from powerbi_api.exceptions import PowerBIImportTimeoutError
-from powerbi_api.utils import check_pbix
 
 class PowerBIDeployer(PowerBIClient):
 
@@ -144,7 +143,7 @@ class PowerBIDeployer(PowerBIClient):
             f"?datasetDisplayName={display_name}"
             "&nameConflict=CreateOrOverwrite"
         )
-        check_pbix(pbix_path , logger)
+        
         with open(pbix_path, "rb") as f:
             response = self.session.post(
                 url,
@@ -177,7 +176,7 @@ class PowerBIDeployer(PowerBIClient):
         for attempt in range(max_attempts):
             response = self.session.get(
                 f"{self.BASE_URL}/groups/{workspace_id}/imports/{import_id}",
-                timeout=30,
+                timeout=60,
             )
             response.raise_for_status()
             payload = response.json()
