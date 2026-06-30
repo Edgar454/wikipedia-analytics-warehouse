@@ -171,7 +171,7 @@ class PowerBIDeployer(PowerBIClient):
         )
         return payload["id"]
     
-    def _wait_import(self, workspace_id, import_id, poll_interval=2, max_attempts=2000):
+    def _wait_import(self, workspace_id, import_id, poll_interval=5, max_attempts=2000):
 
         for attempt in range(max_attempts):
             response = self.session.get(
