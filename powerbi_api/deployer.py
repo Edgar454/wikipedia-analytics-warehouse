@@ -237,6 +237,7 @@ class PowerBIDeployer(PowerBIClient):
             response.raise_for_status()
 
         return True
+
     def _update_parameter(self,parameter_name: str,value: str,) -> bool:
         """
         Update a single Power Query parameter on the deployed dataset.
@@ -272,6 +273,19 @@ class PowerBIDeployer(PowerBIClient):
         )
 
         return True
+
+    def _update_parameters(self, parameters: dict[str, str]) -> None:
+        """
+        Update multiple Power Query parameters.
+
+        Parameters
+        ----------
+        parameters:
+            Mapping of parameter names to their new values.
+        """
+
+        for parameter, value in parameters.items():
+            self._update_parameter(parameter, value)
     
     def deploy(self):
         """
@@ -323,14 +337,11 @@ class PowerBIDeployer(PowerBIClient):
                 bigquery_source["datasourceId"],
             )
 
-            self._update_parameter(
-                "ProjectId",
-                self.project_id,
-            )
-
-            self._update_parameter(
-                "DatasetName",
-                "dbt_dev",
+            self._update_parameters(
+                {
+                    "ProjectId": self.project_id,
+                    "DatasetName": "dbt_dev",
+                }
             )
 
             self.refresh()

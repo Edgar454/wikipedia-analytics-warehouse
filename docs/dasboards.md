@@ -92,22 +92,6 @@ An entity attracting ten million views may be important, but an entity rapidly g
 
 The goal of this dashboard is therefore to identify movement rather than magnitude.
 
----
-
-## Defining Trend
-
-Trend appears intuitive until it must be translated into a metric.
-
-Several possible definitions exist:
-
-* Growth between the start and end of the period
-* Current acceleration
-* Sustained increase
-* Sudden bursts of activity
-
-Each captures a different behavior.
-
-The objective was to build a metric that rewards sustained recent movement while remaining robust to extreme differences in scale.
 
 ---
 
@@ -444,6 +428,32 @@ The dashboard includes:
 * Unmatched attention by community
 * Concentration analysis
 * Trending unmatched entities
+
+---
+## Optimizing the Semantic Model
+
+When the dashboards were first completed, the Power BI semantic model exceeded the size limits for deployment to Microsoft Fabric.
+The initial PBIX reached approximately 1.78 GB, exceeding the practical deployment limits of the target Microsoft Fabric environment.
+
+Rather than reducing the analytical scope of the project, I investigated the VertiPaq storage engine using DAX Studio.
+The analysis revealed several opportunities to reduce memory consumption while preserving the analytical capabilities of the model.
+
+Optimization techniques included:
+
+* removing unnecessary columns
+* reducing column cardinality
+* replacing high-cardinality text with surrogate keys where appropriate
+* reviewing encoding strategies
+* eliminating redundant calculated columns
+* simplifying relationships
+
+These changes reduced the compressed model size to approximately **550 MB**, allowing the report to be published while also improving refresh performance and interactive responsiveness.
+
+The exercise highlighted an important lesson:
+
+Building an analytical model is not only about producing correct results.
+
+It is also about designing a model that can be efficiently stored, refreshed, and queried.
 
 ---
 

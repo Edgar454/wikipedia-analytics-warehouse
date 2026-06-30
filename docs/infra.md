@@ -17,6 +17,7 @@ The project still requires a way to:
 * Deploy infrastructure consistently
 * Monitor execution
 * Publish documentation
+* Deploy analytical applications
 * Manage credentials securely
 * Reproduce the entire platform on another account
 
@@ -28,7 +29,7 @@ The objective was to build a reproducible analytics platform.
 
 # Design Principles
 
-The infrastructure was designed around five principles:
+The infrastructure was designed around five principles.
 
 ## 1. Reproducibility
 
@@ -40,7 +41,9 @@ After bootstrap, deployment requires only:
 
 * An AWS account
 * A GCP service account
-* Two GitHub secrets
+* Two required GitHub secrets
+
+The reporting layer can additionally be deployed automatically by providing an optional Power BI credential.
 
 Everything else is provisioned automatically.
 
@@ -58,7 +61,7 @@ This requirement drove the selection of AWS Fargate as the execution environment
 
 A typical pipeline execution costs approximately:
 
-$0.05 per run
+**$0.05 per run**
 
 Interestingly, AWS Secrets Manager costs more than the compute layer itself.
 
@@ -74,7 +77,8 @@ Every execution follows the same lifecycle:
 2. Execute transformations
 3. Collect metadata
 4. Publish telemetry
-5. Terminate resources
+5. Refresh the dashboard via api
+6. Terminate resources
 
 No manual intervention is required during normal operation.
 
@@ -88,9 +92,11 @@ Authentication between GitHub and AWS is performed through OpenID Connect (OIDC)
 
 As a result:
 
-* No AWS access keys are stored in GitHub
-* Credentials are generated dynamically
-* Permissions are controlled through IAM roles
+* No AWS access keys are stored in GitHub.
+* Credentials are generated dynamically.
+* Permissions are controlled through IAM roles.
+
+External service credentials (GCP and optionally Power BI) remain encrypted inside GitHub Secrets and are injected only during workflow execution.
 
 ---
 
@@ -108,16 +114,19 @@ The platform combines AWS and GCP.
 
 BigQuery performs analytical processing.
 
-AWS provides orchestration, scheduling, monitoring, and deployment.
+AWS provides orchestration, scheduling, monitoring, deployment, and secret management.
 
 GitHub Actions provides continuous integration and continuous delivery.
 
-The architecture can be divided into four layers:
+When Power BI credentials are available, the reporting layer is deployed automatically as part of the delivery pipeline.
+
+The architecture can be divided into five layers:
 
 * Bootstrap
 * Infrastructure Provisioning
 * Execution
 * Observability
+* Analytical Application Deployment
 
 ---
 
@@ -129,27 +138,38 @@ This solves a circular dependency problem.
 
 Terraform requires permissions to provision infrastructure.
 
-However, the IAM role used by Terraform must itself be provisioned.
+However, the IAM role used by Terraform must itself already exist.
 
-The bootstrap layer is executed locally and creates:
+Rather than asking users to manually configure AWS resources, the repository includes a dedicated `bootstrap/` infrastructure module.
+
+The only manual steps are:
+
+1. Authenticate locally with an AWS account.
+2. Navigate to the bootstrap directory.
+3. Execute the provided Terraform configuration.
+
+The bootstrap module automatically provisions:
 
 * Terraform state storage
 * GitHub OIDC trust configuration
 * Deployment IAM role
 
-Once completed, the bootstrap process outputs:
+Once completed, Terraform outputs:
 
+```text
 AWS_GITHUB_ROLE_ARN
+```
 
-This role becomes the primary deployment identity used by GitHub Actions.
-
+This value is added as a GitHub Secret and becomes the deployment identity used by GitHub Actions.
 Bootstrap is the only manual infrastructure step required by the project.
 
 ---
 
 # Reproducible Deployment
 
-After bootstrap, reproducing the platform requires only two secrets:
+After bootstrap, reproducing the platform requires only a minimal set of credentials.
+
+### Required
 
 ```text
 AWS_GITHUB_ROLE_ARN
@@ -170,10 +190,30 @@ These permissions allow the platform to:
 * Run dbt models
 * Query INFORMATION_SCHEMA for telemetry
 
-Once these secrets are configured, pushing to the repository is sufficient to redeploy the platform on another account.
+### Optional
 
-No manual AWS provisioning is required.
+```text
+POWER_BI_CREDENTIALS
+```
 
+Power BI deployment is entirely optional.
+
+When this secret is omitted, the analytical warehouse is deployed normally and remains fully operational.
+
+Providing the credential enables automatic deployment of the reporting layer.
+
+The secret contains a JSON document with the following structure:
+
+```json
+{
+  "TENANT_ID": "...",
+  "CLIENT_ID": "...",
+  "CLIENT_SECRET": "...",
+  "FABRIC_EMAIL": "mail@example.com",
+  "WORKSPACE_NAME": "New Wikipedia Analysis Workspace",
+  "DATASET_NAME": "wikipedia dashboard"
+}
+```
 ---
 
 # Infrastructure as Code
@@ -226,6 +266,7 @@ Examples:
 * Infrastructure changes trigger Terraform validation.
 * dbt changes trigger dbt validation.
 * Telemetry changes trigger Python unit tests.
+* Dashboard changes trigger Power BI deployment.
 * Documentation changes avoid unnecessary execution.
 
 This significantly reduces execution time while maintaining validation coverage.
@@ -238,10 +279,10 @@ Infrastructure deployments require approval through a protected GitHub environme
 
 Once approved:
 
-1. GitHub authenticates using OIDC
-2. Terraform initializes state
-3. Terraform generates a plan
-4. Terraform applies changes
+1. GitHub authenticates using OIDC.
+2. Terraform initializes state.
+3. Terraform generates a plan.
+4. Terraform applies changes.
 
 The deployed environment is automatically reconciled with repository definitions.
 
@@ -266,9 +307,9 @@ Successful validation produces a new container image.
 
 The image is:
 
-1. Built by GitHub Actions
-2. Published to ECR
-3. Pulled automatically during the next scheduled execution
+1. Built by GitHub Actions.
+2. Published to ECR.
+3. Pulled automatically during the next scheduled execution.
 
 The execution environment therefore remains synchronized with repository state.
 
@@ -284,6 +325,28 @@ Documentation therefore evolves alongside the project rather than becoming stale
 
 ---
 
+## Dashboard Deployment
+
+The reporting layer follows the same continuous delivery model as the analytical platform.
+
+When the optional `POWER_BI_CREDENTIALS` secret is available, changes affecting either the Power BI deployment package or the dashboard automatically trigger deployment.
+
+The workflow:
+
+1. Uploads the PBIX report.
+2. Creates the Power BI workspace if necessary.
+3. Grants administrator access to the configured Fabric user.
+4. Detects the automatically provisioned BigQuery datasource.
+5. Configures datasource credentials using the supplied Google service account.
+6. Updates Power Query deployment parameters.
+7. Triggers the initial dataset refresh.
+
+As a result, no manual configuration is required after importing the report.
+
+The reporting layer becomes fully reproducible and version-controlled alongside the analytical platform.
+
+---
+
 # Execution Layer
 
 Execution is intentionally simple.
@@ -292,12 +355,12 @@ An EventBridge schedule launches a Fargate task.
 
 The task:
 
-1. Retrieves the GCP service account from AWS Secrets Manager
-2. Creates a temporary credentials file
-3. Executes dbt transformations
-4. Executes telemetry collection
-5. Publishes operational metrics
-6. Terminates
+1. Retrieves the GCP service account from AWS Secrets Manager.
+2. Creates a temporary credentials file.
+3. Executes dbt transformations.
+4. Executes telemetry collection.
+5. Publishes operational metrics.
+6. Terminates.
 
 No persistent compute resources remain active after execution.
 
@@ -315,8 +378,8 @@ Moving several terabytes of source data into AWS would introduce unnecessary com
 
 Instead:
 
-* BigQuery performs analytical processing
-* AWS orchestrates execution
+* BigQuery performs analytical processing.
+* AWS orchestrates execution.
 
 This keeps computation close to the data while leveraging AWS services for operational management.
 
@@ -368,10 +431,15 @@ The final platform provides:
 * Secure cloud authentication
 * Continuous deployment
 * Automated documentation
+* Optional Power BI deployment
+* Automated workspace provisioning
+* Automated semantic model configuration
+* Automated datasource binding
+* Automated report parameterization
 * Cost attribution by dbt asset
 * Cloud-native observability
 * Cross-cloud orchestration
 
 while maintaining a very small operational footprint.
 
-The resulting system transforms a collection of scripts into a reproducible analytics platform capable of processing multi-terabyte public datasets with minimal operational overhead.
+The resulting system transforms a collection of scripts into a reproducible analytics platform capable of processing multi-terabyte public datasets while optionally delivering a fully configured Power BI analytical application.
