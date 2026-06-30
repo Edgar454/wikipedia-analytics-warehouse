@@ -233,7 +233,7 @@ class PowerBIDeployer(PowerBIClient):
                 "Successful  configured BigQuery datasource: %s",
                 datasource_id
         )
-        
+
         if not response.ok:
             logger.error(
                 "Failed to configure BigQuery datasource: %s %s",
@@ -291,6 +291,7 @@ class PowerBIDeployer(PowerBIClient):
         """
 
         for parameter, value in parameters.items():
+            logger.info(f"Parameter{parameter} , Value:{value}")
             self._update_parameter(parameter, value)
     
     def deploy(self):
