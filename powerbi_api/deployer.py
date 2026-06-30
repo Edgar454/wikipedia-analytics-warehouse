@@ -188,8 +188,7 @@ class PowerBIDeployer(PowerBIClient):
                 raise RuntimeError(f"Import failed: {payload}")
 
             time.sleep(poll_interval)
-            attempt += 1
-            logger.info(f"attempt {attempt}")
+
 
         raise PowerBIImportTimeoutError(import_id, state, max_attempts)
 
@@ -291,7 +290,6 @@ class PowerBIDeployer(PowerBIClient):
         """
 
         for parameter, value in parameters.items():
-            logger.info(f"Parameter{parameter} , Value:{value}")
             self._update_parameter(parameter, value)
     
     def deploy(self):
