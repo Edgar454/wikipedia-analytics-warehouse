@@ -227,19 +227,20 @@ As a result, orchestration remains intentionally lightweight and inexpensive.
 
 ## Reproducibility
 
-The platform can be redeployed on a new AWS account with minimal manual intervention.
+The platform can be recreated on a new cloud account with minimal manual intervention.
 
-A small bootstrap Terraform project creates:
+A small Terraform bootstrap project located in `bootstrap_infra/` provisions the only resources that cannot provision themselves:
 
 * Remote Terraform state storage
-* GitHub OpenID Connect trust relationship
+* GitHub OpenID Connect (OIDC) trust relationship
 * Deployment IAM role
 
-Once bootstrapped, the entire platform can be deployed automatically through GitHub Actions.
+After authenticating to AWS locally, running the bootstrap Terraform project produces the deployment role used by GitHub Actions.
 
-Required GitHub secrets:
+From that point onward, infrastructure, analytical models, documentation and dashboards are deployed automatically through CI/CD.
 
-* `AWS_GITHUB_ROLE_ARN`
+The only mandatory GitHub secret is:
+
 * `GCP_SERVICE_ACCOUNT_KEY`
 
 The GCP service account requires:
@@ -249,7 +250,30 @@ The GCP service account requires:
 * BigQuery Job User
 * Resource Viewer
 
-No long-lived AWS credentials are stored in GitHub.
+If AWS infrastructure is deployed from GitHub Actions, the following secret is also required:
+
+* `AWS_GITHUB_ROLE_ARN`
+
+Power BI deployment is completely optional.
+
+When the `POWER_BI_CREDENTIALS` secret is not configured, the analytical pipeline continues to execute normally and simply skips dashboard deployment.
+
+When provided, the secret must contain:
+
+```json
+{
+  "TENANT_ID": "...",
+  "CLIENT_ID": "...",
+  "CLIENT_SECRET": "...",
+  "FABRIC_EMAIL": "user@example.com",
+  "WORKSPACE_NAME": "New Wikipedia Analysis Workspace",
+  "DATASET_NAME": "wikipedia dashboard"
+}
+```
+
+No long-lived AWS credentials are stored inside GitHub.
+
+Authentication between GitHub Actions and AWS is performed dynamically through OpenID Connect (OIDC).
 
 ---
 
@@ -257,23 +281,36 @@ No long-lived AWS credentials are stored in GitHub.
 
 ![CI Pipeline](assets/github_actions_pipeline.PNG)
 
-The deployment workflow includes:
+The deployment workflow is organized around path-based change detection so that only the affected components are executed.
+
+Examples:
+
+* Infrastructure changes trigger Terraform validation and deployment.
+* dbt changes trigger model validation and testing.
+* Telemetry changes trigger Python unit tests.
+* Documentation changes avoid unnecessary infrastructure work.
+* Dashboard changes trigger Power BI deployment.
+
+The pipeline includes:
 
 * Infrastructure validation and deployment
 * dbt validation and testing
 * Python unit testing
 * Container publishing
-* Documentation deployment
+* Documentation publishing
+* Optional Power BI dashboard deployment
 
-Path-based change detection ensures that only impacted components are executed.
+The Power BI deployment workflow executes only when the dashboard or deployment code changes.
 
-Examples:
+It automatically:
 
-* Infrastructure changes trigger Terraform workflows
-* dbt changes trigger dbt validation
-* Telemetry changes trigger Python tests
-* Documentation changes avoid unnecessary infrastructure work
+1. Uploads the PBIX file
+2. Waits for import completion
+3. Configures the BigQuery datasource credentials
+4. Updates Power Query parameters
+5. Triggers the initial dataset refresh
 
+If the `POWER_BI_CREDENTIALS` secret is not present, this entire deployment stage is skipped while the remainder of the pipeline continues to execute normally.
 ---
 
 ## AWS Infrastructure
