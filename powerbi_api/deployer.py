@@ -338,12 +338,6 @@ class PowerBIDeployer(PowerBIClient):
                 bigquery_source["datasourceId"],
             )
 
-            self._update_parameters(
-                {
-                    "ProjectId": self.project_id,
-                    "DatasetName": "dbt_dev",
-                }
-            )
 
             self.refresh()
 
