@@ -267,7 +267,7 @@ class PowerBIDeployer(PowerBIClient):
             f"{self.workspace_id}/datasets/"
             f"{self.dataset_id}/Default.UpdateParameters",
             json=body,
-            timeout=30,
+            timeout=60,
         )
 
         response.raise_for_status()
