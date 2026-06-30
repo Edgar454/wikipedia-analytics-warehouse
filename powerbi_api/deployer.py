@@ -189,6 +189,7 @@ class PowerBIDeployer(PowerBIClient):
 
             time.sleep(poll_interval)
             attempt += 1
+            logger.info(f"attempt {attempt}")
 
         raise PowerBIImportTimeoutError(import_id, state, max_attempts)
 
@@ -337,14 +338,11 @@ class PowerBIDeployer(PowerBIClient):
                 bigquery_source["datasourceId"],
             )
 
-            self._update_parameter(
-                "ProjectId",
-                self.project_id,
-            )
-
-            self._update_parameter(
-                "DatasetName",
-                "dbt_dev",
+            self._update_parameters(
+                {
+                    "ProjectId": self.project_id,
+                    "DatasetName": "dbt_dev",
+                }
             )
 
             self.refresh()
