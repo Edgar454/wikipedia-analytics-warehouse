@@ -24,6 +24,6 @@ popd > /dev/null
 python telemetry/collect_metrics.py
 
 # refresh power bi dashboard
-python powerbi_api/refresh_dashboard
+python -m powerbi_api.refresh_dashboard
 
 exit $DBT_EXIT_CODE
