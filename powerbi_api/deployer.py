@@ -229,6 +229,11 @@ class PowerBIDeployer(PowerBIClient):
             timeout=30,
         )
 
+        logger.info(
+                "Successful  configured BigQuery datasource: %s",
+                datasource_id
+        )
+        
         if not response.ok:
             logger.error(
                 "Failed to configure BigQuery datasource: %s %s",
@@ -338,6 +343,12 @@ class PowerBIDeployer(PowerBIClient):
                 bigquery_source["datasourceId"],
             )
 
+            self._update_parameters(
+                {
+                    "ProjectId": self.project_id,
+                    "DatasetName": "dbt_dev",
+                }
+            )
 
             self.refresh()
 
