@@ -29,6 +29,7 @@ variable "gcp_secret_name" {
 
 variable "powerbi_secret_name" {
   type = string
+  default = null
 }
 
 

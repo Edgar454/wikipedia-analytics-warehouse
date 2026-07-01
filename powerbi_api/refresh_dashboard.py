@@ -1,7 +1,7 @@
 import os
-from client import PowerBIClient
+from powerbi_api.client import PowerBIClient
 
-powerbi_secret_name = os.getenv("POWERBI_CREDENTIALS" , "wikipedia-analysis-powerbi-credentials")
+powerbi_secret_name = os.getenv("POWERBI_SECRET_NAME" , "wikipedia-analysis-powerbi-credentials")
 
 powerbi = PowerBIClient.try_create(
     secret_name=powerbi_secret_name

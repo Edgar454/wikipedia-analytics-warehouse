@@ -6,8 +6,7 @@ variable "tags" {
   type = map(string)
 }
 
-variable "gcp_service_account_json" {
+variable "powerbi_credentials_json" {
   type      = string
   sensitive = true
 }
-

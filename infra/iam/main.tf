@@ -95,7 +95,7 @@ resource "aws_iam_policy" "secrets_access" {
         "secretsmanager:GetSecretValue"
       ]
 
-      Resource = var.secret_arns
+      Resource = [ var.gcp_secret_arn ]
     }]
   })
 }

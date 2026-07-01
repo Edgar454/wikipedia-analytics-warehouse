@@ -11,7 +11,6 @@ module "secrets" {
   project_name             = var.project_name
   tags                     = local.common_tags
   gcp_service_account_json = var.gcp_service_account_json
-  powerbi_credentials_json = var.powerbi_credentials_json
 }
 
 module "iam" {
@@ -20,11 +19,17 @@ module "iam" {
   project_name             = var.project_name
   tags                     = local.common_tags
   ecr_repository_arn       = module.ecr.repository_arn
-  secret_arns              = compact([
-    module.secrets.gcp_service_account_secret_arn,
-    module.secrets.powerbi_credentials_arn,
-  ])
+  gcp_secret_arn           = module.secrets.gcp_service_account_secret_arn 
+}
 
+module "powerbi_infra" {
+  source = "./powerbi"
+
+  count = var.powerbi_credentials_json != null ? 1 : 0
+  project_name             = var.project_name
+  tags                     = local.common_tags
+  ecs_task_role_name       = module.iam.ecs_task_role_name
+  powerbi_credentials_json = var.powerbi_credentials_json
 }
 
 
@@ -54,7 +59,7 @@ module "fargate" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   ecr_image     =  "${module.ecr.repository_url}:latest"
   gcp_secret_name = module.secrets.gcp_service_account_secret_name
-  powerbi_secret_name = module.secrets.powerbi_credentials
+  powerbi_secret_name = module.powerbi_infra.powerbi_credentials_secret_name
   log_group_name = module.cloudwatch.log_group_name
  
 }
