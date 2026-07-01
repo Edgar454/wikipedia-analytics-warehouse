@@ -17,7 +17,9 @@ jobs:
       dbt: ${{ steps.filter.outputs.dbt }}
       build: ${{ steps.filter.outputs.build }}
       telemetry: ${{ steps.filter.outputs.telemetry }}
+      powerbi_enabled: ${{ steps.check.outputs.enabled }}
       deploy_dashboard: ${{ steps.filter.outputs.deploy_dashboard }}
+      
 
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +47,15 @@ jobs:
             deploy_dashboard:
               - "powerbi_api/**"
               - "dashboards/wikipedia_dashboard.pbix"
+
+      - name: Check Power BI credentials
+        id: check
+        run: |
+          if [ -n "${{ secrets.POWER_BI_CREDENTIALS }}" ]; then
+            echo "enabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "enabled=false" >> $GITHUB_OUTPUT
+          fi
 
   terraform:
     needs: changes
@@ -242,6 +253,7 @@ jobs:
 
     if: |
       always() &&
+      needs.changes.outputs.powerbi_enabled == 'true' &&
       needs.changes.outputs.deploy_dashboard == 'true' &&
       (needs.dbt-tests.result == 'success' || needs.dbt-tests.result == 'skipped') &&
       (needs.unit_tests.result == 'success' || needs.unit_tests.result == 'skipped')
