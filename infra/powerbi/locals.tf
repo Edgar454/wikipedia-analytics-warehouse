@@ -1,3 +1,6 @@
 locals {
-  powerbi_enabled = trimspace(coalesce(var.powerbi_credentials_json, "")) != ""
+  powerbi_enabled = (
+    var.powerbi_credentials_json != null &&
+    trimspace(var.powerbi_credentials_json) != ""
+  )
 }
