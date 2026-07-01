@@ -7,7 +7,7 @@ resource "aws_secretsmanager_secret" "powerbi_credentials" {
 }
 
 resource "aws_secretsmanager_secret_version" "powerbi_credentials" {
-  count = var.enabled
+  count = var.enabled? 1 : 0
 
   secret_id     = aws_secretsmanager_secret.powerbi_credentials[0].id
   secret_string = var.powerbi_credentials_json
