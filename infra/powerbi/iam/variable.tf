@@ -1,3 +1,7 @@
+variable "enabled" {
+  type      = bool
+}
+
 variable "powerbi_secret_arn" {
   type = string
 }
