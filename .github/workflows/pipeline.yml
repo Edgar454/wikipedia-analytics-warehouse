@@ -50,11 +50,13 @@ jobs:
 
       - name: Check Power BI credentials
         id: check
+        env:
+          POWER_BI_CREDENTIALS: ${{ secrets.POWER_BI_CREDENTIALS }}
         run: |
-          if [ -n "${{ secrets.POWER_BI_CREDENTIALS }}" ]; then
-            echo "enabled=true" >> $GITHUB_OUTPUT
+          if [[ -n "$POWER_BI_CREDENTIALS" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "enabled=false" >> $GITHUB_OUTPUT
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
   terraform:
