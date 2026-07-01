@@ -10,5 +10,5 @@ module "iam" {
   source = "./iam"
 
   ecs_task_role_name       = var.ecs_task_role_name
-  powerbi_secret_arn       = module.secrets.powerbi_credentials_json 
+  powerbi_secret_arn       = module.secrets.powerbi_credentials_secret_arn 
 }
