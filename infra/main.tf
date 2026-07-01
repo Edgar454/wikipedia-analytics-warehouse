@@ -98,5 +98,4 @@ module "budget" {
   project_name = var.project_name
   monthly_budget = 10
   sns_topic_arn = module.sns.topic_arn
-
 }
