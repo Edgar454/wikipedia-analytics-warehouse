@@ -1,7 +1,11 @@
 output "powerbi_credentials_secret_arn" {
-  value = aws_secretsmanager_secret.powerbi_credentials[0].arn
+  value = length(aws_secretsmanager_secret.powerbi_credentials) > 0
+    ? aws_secretsmanager_secret.powerbi_credentials[0].arn
+    : null
 }
 
 output "powerbi_credentials_secret_name" {
-  value =  aws_secretsmanager_secret.powerbi_credentials[0].name
+  value = length(aws_secretsmanager_secret.powerbi_credentials) > 0
+    ? aws_secretsmanager_secret.powerbi_credentials[0].name
+    : null
 }
