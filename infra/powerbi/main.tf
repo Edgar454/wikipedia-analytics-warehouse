@@ -2,7 +2,7 @@ module "secrets" {
   source = "./secrets"
 
   project_name             = var.project_name
-  tags                     = local.common_tags
+  tags                     = var.tags
   powerbi_credentials_json = var.powerbi_credentials_json
 }
 
