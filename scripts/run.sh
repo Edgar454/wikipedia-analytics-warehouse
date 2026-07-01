@@ -16,7 +16,7 @@ pushd dbt > /dev/null
   dbt run \
     --profiles-dir . \
     --target dev \
-    --select tag:mart || DBT_EXIT_CODE=$?
+    --select tag:marts || DBT_EXIT_CODE=$?
 
 popd > /dev/null
 
