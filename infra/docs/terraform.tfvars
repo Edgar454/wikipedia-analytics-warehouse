@@ -1,1 +1,0 @@
-bucket_name = "edgar-mevaa-wikipedia-dbt-docs"

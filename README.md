@@ -27,7 +27,7 @@ Built with **dbt**, **BigQuery**, **Power BI**, **AWS Fargate**, **Terraform**, 
 
 | Resource              | Link                   |
 | --------------------- | ---------------------- |
-| 📊 Power BI Dashboard | YOUR_POWER_BI_LINK     |
+| 📊 Power BI Dashboard | [Dashboard Link](https://app.fabric.microsoft.com/view?r=eyJrIjoiYzVhYmFlYTctOWE4Zi00ZjgxLWIzYjgtNjI4NWRjODIzNGRiIiwidCI6ImNjNTA2ODBjLTBmZTctNGQ5YS04ZWVkLTRjNWE1NjZkYzYxNSJ9)     |
 | 📖 dbt Documentation  | https://edgar454.github.io/wikipedia-analytics-warehouse/ |
 
 ---
@@ -315,7 +315,7 @@ If the `POWER_BI_CREDENTIALS` secret is not present, this entire deployment stag
 
 ## AWS Infrastructure
 
-![AWS Infrastructure](assets/architecture_diagram.png)
+![AWS Infrastructure](assets/aws_infra.png)
 
 Infrastructure is provisioned through Terraform and deployed through GitHub Actions using OpenID Connect (OIDC).
 
