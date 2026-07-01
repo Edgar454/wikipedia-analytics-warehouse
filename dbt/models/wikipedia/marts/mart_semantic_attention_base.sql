@@ -15,7 +15,7 @@ WITH hourly AS (
         is_structural_entity,
         SUM(views) AS hourly_views
     FROM {{ ref('gold_pageviews_enriched') }}
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11
+    GROUP BY 1,2,3,4,5,6,7,8,9,10
 ),
 
 -- CTE 2: daily grain (derived from hourly, no gold scan)
@@ -32,7 +32,7 @@ daily AS (
         is_structural_entity,
         SUM(hourly_views) AS daily_views
     FROM hourly
-    GROUP BY 1,2,3,4,5,6,7,8,9,10
+    GROUP BY 1,2,3,4,5,6,7,8,9
 ),
 
 -- CTE 3: classify long tail
@@ -73,7 +73,7 @@ bucketed AS (
         CASE WHEN analysis_key_bucket LIKE 'OTHER%' THEN FALSE ELSE is_structural_entity END AS is_structural_entity,
         SUM(daily_views) AS daily_views
     FROM classified
-    GROUP BY 1,2,3,4,5,6,7,8,9,10
+    GROUP BY 1,2,3,4,5,6,7,8,9
 )
 
 -- FINAL

@@ -9,5 +9,5 @@ logs/
 *.tfstate
 *.tfstate.backup
 .terraform.
-key.json
+key*.json
 seed_code/*

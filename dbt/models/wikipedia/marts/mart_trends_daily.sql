@@ -5,7 +5,6 @@ SELECT
     analysis_key,
     entity_label,
     entity_type_label,
-    wiki_group,
     language_name,
     is_mobile,
     page_type,
@@ -20,13 +19,13 @@ SELECT
 
     (ma_log_3d_views
     - LAG(ma_log_3d_views, 1) OVER (
-        PARTITION BY analysis_key, wiki_group, language_name, is_mobile, page_type
+        PARTITION BY analysis_key, language_name, is_mobile, page_type
         ORDER BY UNIX_SECONDS(TIMESTAMP(date_id))
     )) * ma_log_3d_views AS smoothed_daily_trend_score_3d ,
 
     (ma_log_3d_views
     - LAG(ma_log_3d_views, 7) OVER (
-        PARTITION BY analysis_key, wiki_group, language_name, is_mobile, page_type
+        PARTITION BY analysis_key, language_name, is_mobile, page_type
         ORDER BY UNIX_SECONDS(TIMESTAMP(date_id))
     )) * ma_log_3d_views  / 7 AS smoothed_trend_score_3d ,
 
@@ -34,7 +33,6 @@ SELECT
         SAFE_DIVIDE(std_3d_views, ma_3d_views)
         - LAG(SAFE_DIVIDE(std_3d_views, ma_3d_views), 7) OVER (
             PARTITION BY analysis_key,
-                        wiki_group,
                         language_name,
                         is_mobile,
                         page_type
