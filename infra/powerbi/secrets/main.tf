@@ -8,3 +8,4 @@ resource "aws_secretsmanager_secret_version" "powerbi_credentials" {
   secret_id     = aws_secretsmanager_secret.powerbi_credentials.id
   secret_string = var.powerbi_credentials_json
 }
+
