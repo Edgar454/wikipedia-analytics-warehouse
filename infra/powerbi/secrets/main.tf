@@ -1,8 +1,5 @@
 resource "aws_secretsmanager_secret" "powerbi_credentials" {
-  count = (
-    var.powerbi_credentials_json != null &&
-    trimspace(var.powerbi_credentials_json) != ""
-  ) ? 1 : 0
+  count = var.enabled ? 1 : 0
 
   name        = "${var.project_name}-powerbi-credentials"
   description = "Power BI OAuth application credentials"
@@ -10,10 +7,7 @@ resource "aws_secretsmanager_secret" "powerbi_credentials" {
 }
 
 resource "aws_secretsmanager_secret_version" "powerbi_credentials" {
-  count = (
-    var.powerbi_credentials_json != null &&
-    trimspace(var.powerbi_credentials_json) != ""
-  ) ? 1 : 0
+  count = var.enabled
 
   secret_id     = aws_secretsmanager_secret.powerbi_credentials[0].id
   secret_string = var.powerbi_credentials_json
