@@ -33,7 +33,6 @@ jobs:
               - "infra/**"
             dbt:
               - "dbt/**"
-              - "scripts/**"
             build:
               - "Dockerfile"
               - "scripts/**"
